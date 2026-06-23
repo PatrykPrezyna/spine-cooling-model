@@ -11,9 +11,9 @@ SIGMA        = 5.67e-8  # W/(m^2*K^4)  Stefan-Boltzmann
 H_CONV       = 5.0  # W/(m^2*K)   natural convection (~5 still air, ~10-15 light air)
 
 # Temperatures [°C] TO MODIFY WHEN PARAM CHANGE
-T_INITIAL    = 37.0
-T_ENV        = 20.0
-T_TARGET     = 35.0
+T_INITIAL    = 36.0
+T_ENV        = 36.0
+T_TARGET     = 30.0
 
 Q_COOLING    = 5.0 # Cooling power
 T_TOTAL_S    = 2 * 3600 # Duration of simulation

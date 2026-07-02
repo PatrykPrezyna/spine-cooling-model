@@ -1,0 +1,7 @@
+a.	Run with -17 for 10min *pump was not running – repeat this part at the end
+b.	Min 11: increase speed to -10
+c.	Min 28: increase speed to 0
+d.	Min 40 : increase speed to +20
+e.	Min 58: increase speed to +40
+f.	Min 69: increase speed to +80, 
+g.	MIN 76: switched (off/on) the compressor for 10s manually 

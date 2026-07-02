@@ -49,33 +49,9 @@ print(f"Average power: {avg_power:.2f} W")
 print(f"Max power:     {max_power:.2f} W")
 print(f"Min power:     {min_power:.2f} W")
 
-# --- WINDOWED POWER ---
-# Instead of differentiating sample-to-sample (noisy), measure the temperature
-# drop across each fixed time window. Over several minutes the real change far
-# exceeds sensor noise, so the average power per window is much more reliable.
 ts = df.set_index("timestamp")
 
-
-def windowed_power(window):
-    b = ts["temp_avg"].resample(window).agg(["first", "last"])
-    b["duration_s"] = ts["temp_avg"].resample(window).apply(
-        lambda s: (s.index[-1] - s.index[0]).total_seconds() if len(s) > 1 else np.nan
-    )
-    b["delta_t_c"] = b["last"] - b["first"]
-    b["power_w"] = -MASS_KG * C * b["delta_t_c"] / b["duration_s"]
-    return b.dropna(subset=["power_w"])
-
-
-binned_by_window = {w: windowed_power(w) for w in WINDOWS}
-
-for w, b in binned_by_window.items():
-    print(f"\n=== Windowed Cooling Power (per {w}) ===")
-    print(f"{'window start':<22}{'dT (C)':>10}{'dur (s)':>10}{'power (W)':>12}")
-    for t, row in b.iterrows():
-        print(f"{str(t):<22}{row['delta_t_c']:>10.3f}{row['duration_s']:>10.1f}{row['power_w']:>12.2f}")
-    print(f"Mean of windowed power: {b['power_w'].mean():.2f} W")
-
-# --- SINGLE REPRESENTATIVE POWER OVER THE ACTIVE COOLING PERIOD ---
+# --- AUTO-SELECT THE ACTIVE COOLING PERIOD ---
 # The tank cools from a hot start toward an equilibrium plateau. A single,
 # defensible cooling-power number is the energy removed across the *active*
 # cooling phase divided by its duration. We auto-detect that phase as:
@@ -97,7 +73,34 @@ after_peak = ts.loc[peak_time:, "temp_avg"]
 reached = after_peak[after_peak <= threshold_temp]
 end_time = reached.index[0] if len(reached) else after_peak.index[-1]
 
-period = ts.loc[peak_time:end_time, "temp_avg"]
+# Restrict all subsequent analysis to the active cooling period
+ts_active = ts.loc[peak_time:end_time]
+
+# --- WINDOWED POWER (within the active period only) ---
+# Instead of differentiating sample-to-sample (noisy), measure the temperature
+# drop across each fixed time window. Over several minutes the real change far
+# exceeds sensor noise, so the average power per window is much more reliable.
+def windowed_power(window):
+    b = ts_active["temp_avg"].resample(window).agg(["first", "last"])
+    b["duration_s"] = ts_active["temp_avg"].resample(window).apply(
+        lambda s: (s.index[-1] - s.index[0]).total_seconds() if len(s) > 1 else np.nan
+    )
+    b["delta_t_c"] = b["last"] - b["first"]
+    b["power_w"] = -MASS_KG * C * b["delta_t_c"] / b["duration_s"]
+    return b.dropna(subset=["power_w"])
+
+
+binned_by_window = {w: windowed_power(w) for w in WINDOWS}
+
+for w, b in binned_by_window.items():
+    print(f"\n=== Windowed Cooling Power (per {w}, active period only) ===")
+    print(f"{'window start':<22}{'dT (C)':>10}{'dur (s)':>10}{'power (W)':>12}")
+    for t, row in b.iterrows():
+        print(f"{str(t):<22}{row['delta_t_c']:>10.3f}{row['duration_s']:>10.1f}{row['power_w']:>12.2f}")
+    print(f"Mean of windowed power: {b['power_w'].mean():.2f} W")
+
+# --- SINGLE REPRESENTATIVE POWER OVER THE ACTIVE COOLING PERIOD ---
+period = ts_active["temp_avg"]
 T_start = period.iloc[0]
 T_end = period.iloc[-1]
 duration_s = (period.index[-1] - period.index[0]).total_seconds()

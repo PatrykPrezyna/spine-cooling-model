@@ -8,10 +8,10 @@ INPUT_TEMP_C = 37.0          # Fluid inlet temperature [°C]
 OUTPUT_TEMP_C = 0.0          # Target outlet temperature [°C]
 PLATE_TEMP_C = -1.0          # Cooling plate temperature [°C]
 
-FLOWRATE_ML_MIN = 70      # Flow rate [mL/min]
+FLOWRATE_ML_MIN = 80      # Flow rate [mL/min]
 
 CHANNEL_GAP_MM = 10.0        # Internal fluid gap [mm]
-WALL_THICKNESS_MM = 1.0      # Polypropylene wall thickness [mm]
+WALL_THICKNESS_MM = 0.5      # Polypropylene wall thickness [mm]
 
 # Geometric constraint:
 # Length = ASPECT_RATIO × Height

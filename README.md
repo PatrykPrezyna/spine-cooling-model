@@ -1,62 +1,30 @@
 # Spine Cooling - Tissue Cooling Simulation
 
-A Python-based simulation and verification toolkit for analyzing thermal dynamics of spine/tissue cooling using physical heat transfer principles.
+Python toolkit for simulating and verifying thermal dynamics in tissue cooling systems using heat transfer principles.
 
-## Overview
+## Quick Start
 
-This project simulates temperature changes in tissue and cooling hardware over time, accounting for:
-
-- **Metabolic heat generation** — internal heat production in living tissue
-- **Radiative heat loss** — thermal radiation emitted by the tissue
-- **Convective heat loss** — heat transfer through the surrounding medium
-- **Applied cooling** — external cooling intervention (cartridge, heat exchanger, counterflow)
-
-
-The simulation tracks temperature changes and calculates power balance to determine how long it takes to cool tissue from its initial temperature to a target temperature.
-
-## Project Structure
-
-```
-spine-cooling-model/
-├── finalcombined.ipynb      # Main combined simulation (counterflow, tubular geometry)
-├── archive/                 # Original student team work (Spring 2026)
-└── verification/            # Experimental data visualization
-```
-
-## Features
-
-- Numerical ODE integration (Euler method and SciPy BVP solvers)
-- Customizable tissue parameters (mass, surface area, specific heat capacity)
-- Environmental condition settings (ambient temperature, convection coefficient)
-- Counterflow heat exchanger modeling in `finalcombined.ipynb`
-- Visualization of temperature evolution over time
-- Power analysis showing heat transfer at different time points
-- Sensor log plotting for hardware experiment validation
-
-## Installation
-
-1. Clone or download this repository
-2. Create a virtual environment:
+1. **Setup:** 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. Install dependencies:
-   ```bash
+   source venv/bin/activate  # Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
 
-## Usage
+2. **Run simulation:** Open `Models/SpringSemester_Body_and_Catheder/finalcombined.ipynb`
 
-### Combined simulation (notebook)
+3. **Validate with experiments:** Use notebooks in `Experiments/` to analyze sensor logs and compare against real measurements
 
-Open and run `finalcombined.ipynb` in Jupyter or VS Code. This notebook contains the full counterflow heat exchanger and tubular geometry models.
+## Features
 
+- Counterflow heat exchanger modeling
+- Tissue thermal dynamics (metabolic heat, radiation, convection, cooling)
+- ODE solvers (Euler & SciPy)
+- Temperature and power analysis visualization
+- Hardware validation against experimental sensor data
 
-### Sensor log visualization (verification)
+## Structure
 
-The `verification/` folder is for visualizing experimental sensor data collected from hardware runs. Use it to compare simulation predictions against real measurements.
-
-```bash
-python verification/visualize_sensor_log.py verification/sensor_log_20260612_132816_Experiement_1.csv
-```
+- **Models/** — Simulation models and core logic
+- **Experiments/** — Hardware experiments with sensor logs and analysis scripts
+- **Archive/** — Previous iterations and prototypes

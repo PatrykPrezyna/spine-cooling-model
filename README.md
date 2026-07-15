@@ -11,20 +11,9 @@ Python toolkit for simulating and verifying thermal dynamics in tissue cooling s
    pip install -r requirements.txt
    ```
 
-2. **Run simulation:** Open `Models/SpringSemester_Body_and_Catheder/finalcombined.ipynb`
-
-3. **Validate with experiments:** Use notebooks in `Experiments/` to analyze sensor logs and compare against real measurements
-
-## Features
-
-- Counterflow heat exchanger modeling
-- Tissue thermal dynamics (metabolic heat, radiation, convection, cooling)
-- ODE solvers (Euler & SciPy)
-- Temperature and power analysis visualization
-- Hardware validation against experimental sensor data
+2. **Run simulation or Experiment:** Example: `Models/SpringSemester_Body_and_Catheder/finalcombined.ipynb`
 
 ## Structure
-
-- **Models/** — Simulation models and core logic
-- **Experiments/** — Hardware experiments with sensor logs and analysis scripts
+- **Models/** — Simulation models
+- **Experiments/** — Experiments conducteddurint the work on Cool Spine prototype (see Dropbox for destribtion)
 - **Archive/** — Previous iterations and prototypes

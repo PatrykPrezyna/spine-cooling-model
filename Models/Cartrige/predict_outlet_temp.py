@@ -104,7 +104,7 @@ U = 1.0 / (
 
 results = {}
 for label, A in [("Cylinder (bare, upper bound)", A_CYLINDER),
-                 ("Fusion360 (primary)",           A_FUSION)]:
+                 ("Fusion360 (actual)",           A_FUSION)]:
     NTU    = U * A / (m_dot * FLUID_CP)
     T_out  = BATH_TEMP_C + (INPUT_TEMP_C - BATH_TEMP_C) * math.exp(-NTU)
     Q_cool = m_dot * FLUID_CP * (INPUT_TEMP_C - T_out)

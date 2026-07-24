@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "name": "2 Decomposition",
+  "elements": [
+    "CoolSpineSystem::CoolSpine",
+    "CoolSpineSystem::Battery",
+    "CoolSpineSystem::UPS",
+    "CoolSpineSystem::Controller",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit",
+    "CoolSpineSystem::FluidReservoir",
+    "CoolSpineSystem::Catheter",
+    "CoolSpineSystem::PeristalticPump",
+    "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::TemperatureSensor",
+    "CoolSpineSystem::PowerHat",
+    "CoolSpineSystem::RaspberryPi",
+    "CoolSpineSystem::AdafruitAnalogInput",
+    "CoolSpineSystem::TouchDisplay",
+    "CoolSpineSystem::Thermistor",
+    "CoolSpineSystem::Thermocouple",
+    "CoolSpineRequirements::PeakCoolingPower",
+    "CoolSpineRequirements::SteadyStateCoolingPower",
+    "CoolSpineRequirements::AppropriateUserInterface",
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes"
+  ],
+  "nodes": {
+    "CoolSpineSystem::CoolSpine": {
+      "x": 0,
+      "y": 0
+    },
+    "CoolSpineSystem::Battery": {
+      "x": -1485,
+      "y": 300
+    },
+    "CoolSpineSystem::UPS": {
+      "x": -1155,
+      "y": 300
+    },
+    "CoolSpineSystem::Controller": {
+      "x": -495,
+      "y": 300
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": -165,
+      "y": 300
+    },
+    "CoolSpineSystem::FluidReservoir": {
+      "x": 165,
+      "y": 300
+    },
+    "CoolSpineSystem::Catheter": {
+      "x": 495,
+      "y": 300
+    },
+    "CoolSpineSystem::PeristalticPump": {
+      "x": 825,
+      "y": 300
+    },
+    "CoolSpineSystem::PressureSensor": {
+      "x": 1157,
+      "y": 306
+    },
+    "CoolSpineSystem::TemperatureSensor": {
+      "x": 1485,
+      "y": 300
+    },
+    "CoolSpineSystem::PowerHat": {
+      "x": -825,
+      "y": 620
+    },
+    "CoolSpineSystem::RaspberryPi": {
+      "x": -495,
+      "y": 620
+    },
+    "CoolSpineSystem::AdafruitAnalogInput": {
+      "x": -165,
+      "y": 620
+    },
+    "CoolSpineSystem::TouchDisplay": {
+      "x": 165,
+      "y": 620
+    },
+    "CoolSpineSystem::Thermistor": {
+      "x": 1320,
+      "y": 620
+    },
+    "CoolSpineSystem::Thermocouple": {
+      "x": 1662,
+      "y": 608
+    },
+    "CoolSpineRequirements::AppropriateUserInterface": {
+      "x": 228,
+      "y": 709
+    },
+    "CoolSpineRequirements::SteadyStateCoolingPower": {
+      "x": -61,
+      "y": 399
+    },
+    "CoolSpineRequirements::PeakCoolingPower": {
+      "x": 274,
+      "y": 406
+    },
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
+      "x": 222,
+      "y": -15
+    }
+  },
+  "hiddenEdges": [
+    "connector|CoolSpineSystem::Battery|CoolSpineSystem::UPS|supplyBackupPower",
+    "connector|CoolSpineSystem::UPS|CoolSpineSystem::Controller|supplyControllerPower",
+    "connector|CoolSpineSystem::Controller|CoolSpineSystem::PeristalticPump|setFlowRate",
+    "connector|CoolSpineSystem::Controller|CoolSpineSystem::CustomMicroRefrigerationUnit|enableRefrigeration",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::Controller|sensePumpInletPressure",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::Controller|sensePumpOutletPressure",
+    "connector|CoolSpineSystem::TemperatureSensor|CoolSpineSystem::Controller|senseTemperature",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Catheter|coldSalineSupply",
+    "connector|CoolSpineSystem::Catheter|CoolSpineSystem::PressureSensor|warmSalineReturn",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::PeristalticPump|salineIntoPump",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::PressureSensor|salineFromPump",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::FluidReservoir|warmSalineToReservoir",
+    "connector|CoolSpineSystem::PowerHat|CoolSpineSystem::RaspberryPi|supplyPiPower",
+    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::AdafruitAnalogInput|adcInterface",
+    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::TouchDisplay|operatorInterface"
+  ],
+  "view": {
+    "tx": 858.6083569884963,
+    "ty": 176.9629315306564,
+    "s": 0.5138930625555889
+  },
+  "options": {
+    "attrs": false,
+    "parts": false
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "name": "3 Interconnections",
+  "elements": [
+    "CoolSpineSystem::Battery",
+    "CoolSpineSystem::UPS",
+    "CoolSpineSystem::UserInterface",
+    "CoolSpineSystem::Controller",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit",
+    "CoolSpineSystem::TemperatureSensor",
+    "CoolSpineSystem::FluidReservoir",
+    "CoolSpineSystem::Catheter",
+    "CoolSpineSystem::PeristalticPump",
+    "CoolSpineSystem::PressureSensor"
+  ],
+  "nodes": {
+    "CoolSpineSystem::Battery": {
+      "x": -1350,
+      "y": 0
+    },
+    "CoolSpineSystem::UPS": {
+      "x": -950,
+      "y": 0
+    },
+    "CoolSpineSystem::UserInterface": {
+      "x": -1350,
+      "y": 340
+    },
+    "CoolSpineSystem::Controller": {
+      "x": -950,
+      "y": 340
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": -1350,
+      "y": 680
+    },
+    "CoolSpineSystem::TemperatureSensor": {
+      "x": -950,
+      "y": 680
+    },
+    "CoolSpineSystem::FluidReservoir": {
+      "x": -150,
+      "y": 0
+    },
+    "CoolSpineSystem::Catheter": {
+      "x": 250,
+      "y": 0
+    },
+    "CoolSpineSystem::PeristalticPump": {
+      "x": -150,
+      "y": 340
+    },
+    "CoolSpineSystem::PressureSensor": {
+      "x": 250,
+      "y": 340
+    }
+  },
+  "hiddenEdges": [],
+  "view": {
+    "tx": 1357.2612507305669,
+    "ty": 197.79748684979546,
+    "s": 0.7611338398597312
+  },
+  "options": {
+    "attrs": false,
+    "parts": false,
+    "keywords": false,
+    "edgeLabels": true,
+    "packages": false,
+    "docsOnNode": false
+  }
+}

@@ -22,18 +22,25 @@ def process_file(csv_path: Path) -> None:
     temp = ts["csf_c"]
 
     # --- ACTIVE COOLING PERIOD: cool from 37°C down to 32°C (CSF sensor) ---
+    # Use the *last* downward crossing of each threshold (not the first),
+    # so rewarming / multiple passes pick the final 37→32 segment.
     peak_time = temp.idxmax()
     after_peak = temp.loc[peak_time:]
-    crossed_start = after_peak[after_peak <= T_START_C]
+
+    crossed_start = after_peak[
+        (after_peak.shift(1) > T_START_C) & (after_peak <= T_START_C)
+    ]
     if len(crossed_start) == 0:
         return
-    start_time = crossed_start.index[0]
+    start_time = crossed_start.index[-1]
 
-    reached_end = temp.loc[start_time:]
-    reached_end = reached_end[reached_end <= T_END_C]
-    if len(reached_end) == 0:
+    after_start = temp.loc[start_time:]
+    crossed_end = after_start[
+        (after_start.shift(1) > T_END_C) & (after_start <= T_END_C)
+    ]
+    if len(crossed_end) == 0:
         return
-    end_time = reached_end.index[0]
+    end_time = crossed_end.index[-1]
 
     duration_s = (end_time - start_time).total_seconds()
     if duration_s <= 0:

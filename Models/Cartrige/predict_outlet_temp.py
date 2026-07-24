@@ -9,7 +9,7 @@ import math
 # in Fusion360. (0.01632 m^2, ~88% of bare, straight cylinder)
 # ============================================================
 
-INPUT_TEMP_C = 17.7          # Fluid inlet temperature [°C]
+INPUT_TEMP_C = 30          # Fluid inlet temperature [°C]
 BATH_TEMP_C = 0.0            # Cold-water bath temperature [°C]
 FLOWRATE_ML_MIN = 46.9       # Flow rate [mL/min]
 

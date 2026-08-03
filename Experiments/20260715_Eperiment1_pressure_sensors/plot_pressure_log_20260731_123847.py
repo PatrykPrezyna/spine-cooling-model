@@ -7,8 +7,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
-CSV_PATH = HERE / "pressure_log_20260731_123847.csv"
+CSV_PATH = HERE / "pressure_log_20260731_123847_pulling_from_cath.csv"
 PUMP_OUTPUT_AVERAGE_WINDOW = "1s"
+# From sensor logs with measured pump_flow_ml_per_s (~0.7823 ml/s at 60 rpm)
+ML_PER_MIN_PER_RPM = 0.7823
 
 
 def plot_file(csv_path: Path) -> Path:
@@ -18,8 +20,15 @@ def plot_file(csv_path: Path) -> Path:
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     df = df.set_index("timestamp").sort_index()
 
+    avg_window = PUMP_OUTPUT_AVERAGE_WINDOW
     df["pump_output_avg_psi"] = (
-        df["pump_output_psi"].rolling(PUMP_OUTPUT_AVERAGE_WINDOW, center=True).mean()
+        df["pump_output_psi"].rolling(avg_window, center=True).mean()
+    )
+    df["catheder_input_avg_psi"] = (
+        df["catheder_input_psi"].rolling(avg_window, center=True).mean()
+    )
+    df["catheder_output_avg_psi"] = (
+        df["catheder_output_psi"].rolling(avg_window, center=True).mean()
     )
 
     fig, axes = plt.subplots(4, 1, sharex=True, figsize=(11, 10))
@@ -42,7 +51,7 @@ def plot_file(csv_path: Path) -> Path:
         df["pump_output_avg_psi"],
         color="tab:red",
         linewidth=1.5,
-        label=f"{PUMP_OUTPUT_AVERAGE_WINDOW} average",
+        label=f"{avg_window} average",
     )
     axes[1].set_ylabel("Pump output (psi)")
     axes[1].legend(loc="upper right")
@@ -52,27 +61,39 @@ def plot_file(csv_path: Path) -> Path:
         df.index,
         df["catheder_input_psi"],
         color="tab:blue",
-        linewidth=0.8,
-        label="input",
+        linewidth=0.5,
+        alpha=0.35,
+        label="input raw",
+    )
+    axes[2].plot(
+        df.index,
+        df["catheder_input_avg_psi"],
+        color="tab:blue",
+        linewidth=1.5,
+        label=f"input {avg_window} avg",
     )
     axes[2].plot(
         df.index,
         df["catheder_output_psi"],
         color="tab:orange",
-        linewidth=0.8,
-        label="output",
+        linewidth=0.5,
+        alpha=0.35,
+        label="output raw",
+    )
+    axes[2].plot(
+        df.index,
+        df["catheder_output_avg_psi"],
+        color="tab:orange",
+        linewidth=1.5,
+        label=f"output {avg_window} avg",
     )
     axes[2].set_ylabel("Catheter (psi)")
     axes[2].legend(loc="upper right")
     axes[2].grid(True, alpha=0.3)
 
-    axes[3].plot(
-        df.index,
-        df["peristaltic_pump_set_speed_rpm"],
-        color="tab:purple",
-        linewidth=0.8,
-    )
-    axes[3].set_ylabel("Pump set speed (rpm)")
+    flow_ml_per_min = df["peristaltic_pump_set_speed_rpm"] * ML_PER_MIN_PER_RPM
+    axes[3].plot(df.index, flow_ml_per_min, color="tab:purple", linewidth=0.8)
+    axes[3].set_ylabel("Pump flow (ml/min)")
     axes[3].set_xlabel("Time")
     axes[3].grid(True, alpha=0.3)
     axes[3].xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))

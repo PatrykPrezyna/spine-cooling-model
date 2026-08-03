@@ -9,17 +9,17 @@ import math
 # in Fusion360. (0.01632 m^2, ~88% of bare, straight cylinder)
 # ============================================================
 
-INPUT_TEMP_C = 30          # Fluid inlet temperature [°C]
+INPUT_TEMP_C = 21          # Fluid inlet temperature [°C]
 BATH_TEMP_C = 0.0            # Cold-water bath temperature [°C]
 FLOWRATE_ML_MIN = 46.9       # Flow rate [mL/min]
 
 # Tube geometry
 INNER_DIAMETER_MM = 9.0   # mm
 OUTER_DIAMETER_MM = 11.0  # mm
-LENGTH_M = 0.590  # m   (total path length)
+LENGTH_M = 2*0.590  # m   (total path length)
 
 A_CYLINDER = math.pi * (OUTER_DIAMETER_MM / 1000) * LENGTH_M
-A_FUSION = 0.01632 # m^2
+A_FUSION = 2*0.01632 # m^2
 
 # ============================================================
 # FLUID PROPERTIES (Water-like, channel fluid)

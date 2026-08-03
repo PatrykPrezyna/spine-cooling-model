@@ -1,4 +1,4 @@
-timestamp,csf_c,csf_2_c,cart_in_c,cart_out_c,heat_ex_c,heat_ex_2_c,temp_7_c,temp_8_c,set_temperature_c,peristaltic_pump_set_speed_rpm,pump_flow_ml_per_s,compressor_cooling,cartridge_input_psi,cartridge_output_psi,pump_input_psi,pump_output_psi
+timestamp,tank_c,csf_2_c,cart_in_c,cart_out_c,heat_ex_c,heat_ex_2_c,temp_7_c,temp_8_c,set_temperature_c,peristaltic_pump_set_speed_rpm,pump_flow_ml_per_s,compressor_cooling,cartridge_input_psi,cartridge_output_psi,pump_input_psi,pump_output_psi
 2026-07-16T11:28:09.188926,24.463,23.988,17.400,17.000,22.900,22.857,23.529,25.399,32.000,0.00,0.0000,0,-0.42,-0.42,-0.38,-0.38
 2026-07-16T11:28:09.278561,24.463,23.887,17.400,17.000,22.900,22.857,23.529,25.399,32.000,0.00,0.0000,0,-0.42,-0.42,-0.38,-0.37
 2026-07-16T11:28:09.373708,24.360,23.887,17.500,17.000,22.900,22.857,23.529,25.399,32.000,0.00,0.0000,0,-0.42,-0.43,-0.38,-0.38

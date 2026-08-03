@@ -1,4 +1,4 @@
-timestamp,csf_c,csf_2_c,cart_in_c,cart_out_c,heat_ex_c,heat_ex_2_c,temp_7_c,temp_8_c,set_temperature_c,peristaltic_pump_set_speed_rpm,pump_flow_ml_per_s,compressor_cooling
+timestamp,tank_c,csf_2_c,cart_in_c,cart_out_c,heat_ex_c,heat_ex_2_c,temp_7_c,temp_8_c,set_temperature_c,peristaltic_pump_set_speed_rpm,pump_flow_ml_per_s,compressor_cooling
 2026-07-01T10:30:39.801530,29.580,24.595,25.000,27.100,24.300,24.286,23.529,25.626,32.000,0.00,0.0000,0
 2026-07-01T10:30:39.905074,29.478,24.595,24.900,27.100,24.300,24.286,23.631,25.626,32.000,0.00,0.0000,0
 2026-07-01T10:30:40.010433,29.376,24.595,24.700,27.100,24.200,24.286,23.631,25.626,32.000,0.00,0.0000,0

@@ -19,7 +19,7 @@ catheter's thermal penalty.
 
 SENSORS USED
 ------------
-  csf_c          tank / CSF temperature
+  tank_c         tank / CSF temperature
   cart_in_c      fluid temperature entering the cartridge (return from tank side)
   cart_out_c     fluid temperature leaving the cartridge (toward tank side)
   pump_flow      volumetric flow
@@ -119,7 +119,7 @@ def analyze_file(csv_path: Path) -> dict | None:
         return None
 
     df = load_csv(csv_path)
-    temp = df.set_index("timestamp")["csf_c"]
+    temp = df.set_index("timestamp")["tank_c"]
     window = active_window(temp)
     if window is None:
         return None
@@ -134,9 +134,9 @@ def analyze_file(csv_path: Path) -> dict | None:
     a["mdot_kg_s"] = a["pump_flow_ml_per_s"] / 1000.0
     a["dT_cart"] = a["cart_in_c"] - a["cart_out_c"]
     a["power_w"] = a["mdot_kg_s"] * C * a["dT_cart"]
-    a["eps_return"] = a["dT_cart"] / (a["csf_c"] - a["cart_out_c"])
-    a["dT_a"] = a["csf_c"] - a["cart_out_c"]  # cold fluid enters tank-side path
-    a["dT_b"] = a["csf_c"] - a["cart_in_c"]   # return leaves tank-side path
+    a["eps_return"] = a["dT_cart"] / (a["tank_c"] - a["cart_out_c"])
+    a["dT_a"] = a["tank_c"] - a["cart_out_c"]  # cold fluid enters tank-side path
+    a["dT_b"] = a["tank_c"] - a["cart_in_c"]   # return leaves tank-side path
 
     t_rel = (a["timestamp"] - a["timestamp"].iloc[0]).dt.total_seconds().to_numpy()
     q_flow_j = float(np.trapezoid(a["power_w"].to_numpy(), t_rel))
@@ -164,11 +164,11 @@ def analyze_file(csv_path: Path) -> dict | None:
         "n_cart": 2 if "2xcart" in name_l else 1,
         "duration_s": duration_s,
         "flow_ml_min": float(a["pump_flow_ml_per_s"].mean() * 60.0),
-        "csf_mean_C": float(a["csf_c"].mean()),
+        "csf_mean_C": float(a["tank_c"].mean()),
         "cart_in_mean_C": float(a["cart_in_c"].mean()),
         "cart_out_mean_C": float(a["cart_out_c"].mean()),
         "dT_cart_mean_K": float(a["dT_cart"].mean()),
-        "tank_minus_cart_in_K": float((a["csf_c"] - a["cart_in_c"]).mean()),
+        "tank_minus_cart_in_K": float((a["tank_c"] - a["cart_in_c"]).mean()),
         "eps_return": float(a["eps_return"].replace([np.inf, -np.inf], np.nan).mean()),
         "P_tank_W": p_tank_w,
         "P_flow_W": p_flow_w,
@@ -356,7 +356,7 @@ def make_plots(summary: pd.DataFrame) -> None:
         style = "--" if r["open_lines"] else "-"
         ax.plot(
             t_rel,
-            a["csf_c"],
+            a["tank_c"],
             style,
             lw=1.6,
             label=f"{r['config']} {int(r['rpm'])}rpm" + (f" {r['n_cart']}x" if r["n_cart"] > 1 else ""),

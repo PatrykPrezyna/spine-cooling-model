@@ -70,7 +70,7 @@ def rpm_label_from_name(name: str) -> int:
 
 def analyze(csv_path: Path) -> dict:
     df = load_csv(csv_path)
-    temp = df.set_index("timestamp")["csf_c"]
+    temp = df.set_index("timestamp")["tank_c"]
     window = active_window(temp)
     if window is None:
         raise RuntimeError(f"No 37→32 window in {csv_path.name}")
@@ -135,7 +135,7 @@ def main() -> None:
         color = COLORS.get(r["rpm"], "gray")
         ax1.plot(
             a["t_min_active"],
-            a["csf_c"],
+            a["tank_c"],
             color=color,
             lw=1.8,
             label=(

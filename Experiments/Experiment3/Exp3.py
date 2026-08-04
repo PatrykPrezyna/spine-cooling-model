@@ -22,7 +22,7 @@ for f in os.listdir('.'):
 
 # Try to read the file
 try:
-    df = pd.read_csv('sensor_log_20260616_092249.csv')
+    df = pd.read_csv('sensor_log_20260616_111047.csv')
     print(f"\n✓ CSV file loaded successfully")
     print(f"  Shape: {df.shape}")
     print(f"  Columns: {list(df.columns)}")

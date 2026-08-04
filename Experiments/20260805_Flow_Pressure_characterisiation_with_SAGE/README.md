@@ -30,7 +30,7 @@ Pump speed ↔ flow uses the prior calibration **≈ 0.782 ml/min per rpm** (≈
 
 ## Setup
 
-![Benchtop test setup](Banchtop_test_setup.png)
+![Benchtop test setup](setup/setup.png)
 
 Pump always drives flow into the loop (push). Between the two characterisation runs, only the **catheter inlet/outlet plumbing is swapped** so fluid travels the opposite way through the catheter; pump placement and push direction stay the same.
 
@@ -38,7 +38,7 @@ Pump always drives flow into the loop (push). Between the two characterisation r
 
 | File | Notes |
 |------|--------|
-| `pressure_log_20260803_163716.csv` | Early sweep, **~11 min**, RPM steps **13 → 77** (~**10–60 ml/min**). One catheter orientation only — still need **80–100 ml/min** and the **reverse** (swapped in/out) run. |
+| `raw_data/pressure_log_20260803_163716_black_cath_direction_pumpout_cath_in.csv` | Early sweep, **~11 min**, RPM steps **13 → 77** (~**10–60 ml/min**). One catheter orientation only — still need **80–100 ml/min** and the **reverse** (swapped in/out) run. |
 
 Logged columns: `timestamp`, `peristaltic_pump_set_speed_rpm`, `pump_output_psi`, `pump_input_psi`, `catheder_input_psi`, `catheder_output_psi`.
 
@@ -62,23 +62,36 @@ python plot_flow_pressure.py
 python plot_pressure_vs_time.py
 ```
 
+Both process every `pressure_log_*.csv` in `raw_data/` and write one plot per log into `output_data/`:
+
 | Script | Output |
 |--------|--------|
-| `plot_flow_pressure.py` | Steady P–Q curve: **pressure (X) vs flow (Y)** for cath in/out/ΔP (last 30% of each RPM hold; 0.782 ml/min per rpm) |
-| `plot_pressure_vs_time.py` | Time series of raw + **1 s** rolling average (pump in/out, catheter in/out, commanded flow) |
+| `plot_flow_pressure.py` | `output_data/flow_pressure_<log_suffix>.png` — steady P–Q: **pressure (X) vs flow (Y)** for cath in/out/ΔP (last 30% of each RPM hold; 0.782 ml/min per rpm) |
+| `plot_pressure_vs_time.py` | `output_data/pressure_vs_time_<log_suffix>.png` — time series of raw + **1 s** rolling average (pump in/out, catheter in/out, commanded flow) |
 
-Both process every `pressure_log_*.csv` in the folder. Flow–pressure overlays multiple runs and labels `forward`/`reverse` from the filename.
+### Skip / re-run workflow
 
-## Files
+Scripts **skip** a CSV when its corresponding PNG already exists in `output_data/`. To re-run analysis for a log, **delete that plot** and run the script again. New CSVs dropped into `raw_data/` are processed on the next run; existing outputs are left alone.
 
-| File | Role |
+## Layout
+
+```
+├── README.md
+├── raw_data/                 # As-recorded pressure logs (do not edit)
+├── output_data/              # Regenerated plots
+├── setup/                    # Photos / schematics
+├── plot_flow_pressure.py
+└── plot_pressure_vs_time.py
+```
+
+| Path | Role |
 |------|------|
-| `Banchtop_test_setup.png` | Loop schematic |
-| `pressure_log_YYYYMMDD_HHMMSS.csv` | Raw pressure + pump-speed logs |
+| `setup/setup.png` | Loop schematic |
+| `raw_data/pressure_log_YYYYMMDD_HHMMSS_*.csv` | Raw pressure + pump-speed logs |
 | `plot_flow_pressure.py` | Flow–pressure characterisation plot |
 | `plot_pressure_vs_time.py` | Raw + 1 s avg time-series plot |
-| `flow_pressure_*.png` | Generated P–Q plot |
-| `pressure_vs_time_*.png` | Generated time-series plot |
+| `output_data/flow_pressure_*.png` | Generated P–Q plot |
+| `output_data/pressure_vs_time_*.png` | Generated time-series plot |
 | `README.md` | This note |
 
 Name completed runs clearly, e.g. `*_forward.csv` / `*_reverse.csv`.

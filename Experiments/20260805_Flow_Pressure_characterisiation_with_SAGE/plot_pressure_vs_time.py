@@ -2,6 +2,10 @@
 
 Same layout as Experiments/20260715_Eperiment1_pressure_sensors:
 pump input, pump output, catheter in/out, and commanded flow.
+
+Reads pressure_log_*.csv from raw_data/; writes one plot per log to
+output_data/. Skips a CSV when its corresponding output already exists;
+delete that PNG to force a re-run.
 """
 
 from pathlib import Path
@@ -11,8 +15,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
+RAW_DATA = HERE / "raw_data"
+OUTPUT_DATA = HERE / "output_data"
 AVERAGE_WINDOW = "1s"
 ML_PER_MIN_PER_RPM = 0.7823
+
+
+def _output_path(csv_path: Path) -> Path:
+    stem = csv_path.stem.removeprefix("pressure_log_")
+    return OUTPUT_DATA / f"pressure_vs_time_{stem}.png"
 
 
 def plot_file(csv_path: Path) -> Path:
@@ -109,8 +120,8 @@ def plot_file(csv_path: Path) -> Path:
     axes[3].grid(True, alpha=0.3)
     axes[3].xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
 
-    stem = csv_path.stem.removeprefix("pressure_log_")
-    out = HERE / f"pressure_vs_time_{stem}.png"
+    OUTPUT_DATA.mkdir(parents=True, exist_ok=True)
+    out = _output_path(csv_path)
     fig.tight_layout()
     fig.savefig(out, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -118,9 +129,13 @@ def plot_file(csv_path: Path) -> Path:
 
 
 if __name__ == "__main__":
-    csv_paths = sorted(HERE.glob("pressure_log_*.csv"))
+    csv_paths = sorted(RAW_DATA.glob("pressure_log_*.csv"))
     if not csv_paths:
-        raise FileNotFoundError(f"No pressure_log_*.csv in {HERE}")
+        raise FileNotFoundError(f"No pressure_log_*.csv in {RAW_DATA}")
     for csv_path in csv_paths:
-        out = plot_file(csv_path)
-        print(f"{csv_path.name} -> {out.name}")
+        out = _output_path(csv_path)
+        if out.exists():
+            print(f"skip {csv_path.name} (exists: {out.name})")
+            continue
+        plot_file(csv_path)
+        print(f"{csv_path.name} -> {out}")

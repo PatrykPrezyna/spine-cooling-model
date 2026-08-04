@@ -178,14 +178,10 @@ def plot_reversal(
     plt.close(fig)
     return out
 
-
-def _find_runs() -> tuple[Path, Path]:
-    csvs = sorted(RAW_DATA.glob("pressure_log_*.csv"))
-    return csvs[0], csvs[1]
-
-
 if __name__ == "__main__":
-    forward_csv, reverse_csv = _find_runs()
+    csvs = sorted(RAW_DATA.glob("pressure_log_*.csv"))
+    forward_csv = csvs[0]
+    reverse_csv = csvs[1]
     print(f"forward: {forward_csv.name}")
     print(f"reverse: {reverse_csv.name}")
     print(f"-> {plot_reversal(forward_csv, reverse_csv)}")

@@ -1,7 +1,7 @@
 """Plot catheter flow vs pressure characterisation curves.
 
-Pressure on X, flow rate on Y. One marker series per quantity (cath in, cath out,
-ΔP) for each pressure_log_*.csv in raw_data/. Uses the last fraction of each
+Pressure on X, flow rate on Y. One marker series per quantity (cath in, cath out)
+for each pressure_log_*.csv in raw_data/. Uses the last fraction of each
 RPM hold as the steady window. Writes one plot per log to output_data/.
 
 Skips a CSV when its corresponding output already exists; delete that PNG to
@@ -61,7 +61,6 @@ def steady_points(df: pd.DataFrame) -> pd.DataFrame:
                 "flow_ml_per_min": float(rpm) * ML_PER_MIN_PER_RPM,
                 "cath_in_psi": cath_in,
                 "cath_out_psi": cath_out,
-                "delta_p_psi": cath_in - cath_out,
                 "n_steady": len(steady),
             }
         )
@@ -72,7 +71,6 @@ def plot_file(csv_path: Path) -> Path:
     series_styles = {
         "cath_in_psi": ("Catheter input", "tab:blue", "o"),
         "cath_out_psi": ("Catheter output", "tab:orange", "s"),
-        "delta_p_psi": ("ΔP (in − out)", "tab:green", "D"),
     }
 
     df = _load(csv_path)

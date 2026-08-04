@@ -55,10 +55,22 @@ Run:
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import (
+    find_cooling_window,
+    flow_power,
+    load_sensor_csv,
+    tank_calorimetry,
+    time_weighted_mean,
+)
 
 # --- USER SETTINGS ---
 FOLDER = Path(__file__).resolve().parent
@@ -76,32 +88,7 @@ SKIP_SUBSTRINGS = (
 
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
-    df = pd.read_csv(csv_path)
-    df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-    return df
-
-
-def active_window(temp: pd.Series) -> tuple[pd.Timestamp, pd.Timestamp] | None:
-    """Last downward crossings of 37 C then 32 C after the CSF peak."""
-    peak_time = temp.idxmax()
-    after_peak = temp.loc[peak_time:]
-    crossed_start = after_peak[
-        (after_peak.shift(1) > T_START_C) & (after_peak <= T_START_C)
-    ]
-    if len(crossed_start) == 0:
-        return None
-    start_time = crossed_start.index[-1]
-    after_start = temp.loc[start_time:]
-    crossed_end = after_start[
-        (after_start.shift(1) > T_END_C) & (after_start <= T_END_C)
-    ]
-    if len(crossed_end) == 0:
-        return None
-    end_time = crossed_end.index[-1]
-    if (end_time - start_time).total_seconds() <= 0:
-        return None
-    return start_time, end_time
+    return load_sensor_csv(csv_path)
 
 
 def lmtd(dT_a: float, dT_b: float) -> float:
@@ -120,11 +107,11 @@ def analyze_file(csv_path: Path) -> dict | None:
 
     df = load_csv(csv_path)
     temp = df.set_index("timestamp")["tank_c"]
-    window = active_window(temp)
+    window = find_cooling_window(temp, T_START_C, T_END_C)
     if window is None:
         return None
-    start_time, end_time = window
-    duration_s = (end_time - start_time).total_seconds()
+    start_time, end_time = window.start, window.end
+    duration_s = window.duration_s
 
     active = (df["timestamp"] >= start_time) & (df["timestamp"] <= end_time)
     a = df.loc[active].copy()
@@ -133,19 +120,21 @@ def analyze_file(csv_path: Path) -> dict | None:
 
     a["mdot_kg_s"] = a["pump_flow_ml_per_s"] / 1000.0
     a["dT_cart"] = a["cart_in_c"] - a["cart_out_c"]
-    a["power_w"] = a["mdot_kg_s"] * C * a["dT_cart"]
+    a["power_w"] = flow_power(
+        a["pump_flow_ml_per_s"], a["cart_in_c"], a["cart_out_c"],
+        specific_heat_j_kg_k=C,
+    )
     a["eps_return"] = a["dT_cart"] / (a["tank_c"] - a["cart_out_c"])
     a["dT_a"] = a["tank_c"] - a["cart_out_c"]  # cold fluid enters tank-side path
     a["dT_b"] = a["tank_c"] - a["cart_in_c"]   # return leaves tank-side path
 
-    t_rel = (a["timestamp"] - a["timestamp"].iloc[0]).dt.total_seconds().to_numpy()
-    q_flow_j = float(np.trapezoid(a["power_w"].to_numpy(), t_rel))
-    p_flow_w = q_flow_j / duration_s
-
-    period = temp.loc[start_time:end_time]
-    dT_tank = float(period.iloc[0] - period.iloc[-1])
-    q_tank_j = MASS_KG * C * dT_tank
-    p_tank_w = q_tank_j / duration_s
+    p_flow_w = time_weighted_mean(
+        a["power_w"], a["timestamp"], duration_s=duration_s
+    )
+    tank_result = tank_calorimetry(
+        temp, window, mass_kg=MASS_KG, specific_heat_j_kg_k=C
+    )
+    p_tank_w = tank_result.average_power_w
 
     dT_a = float(a["dT_a"].mean())
     dT_b = float(a["dT_b"].mean())

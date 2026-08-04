@@ -1,4 +1,10 @@
-import pandas as pd
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import find_plateau_cooling_window, load_sensor_csv
 
 # --- USER SETTINGS ---
 print("Starting experiment 2")
@@ -18,11 +24,7 @@ PLATEAU_FRAC = 0.98      # fraction of total cooling that defines "active phase 
 flow_kg_s = (FLOW_ML_PER_MIN / 1000.0) / 60.0  # ml/min → kg/s
 
 # --- LOAD DATA ---
-df = pd.read_csv(FILE)
-
-# --- CLEAN COLUMN NAMES (in case of formatting issues) ---
-df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-df["timestamp"] = pd.to_datetime(df["timestamp"])
+df = load_sensor_csv(FILE)
 
 # Expected columns (based on your file)
 # cart_in_c = hot fluid entering HX
@@ -45,14 +47,15 @@ if USE_ACTIVE_PHASE:
     ts = df.set_index("timestamp")
     temp_avg = (ts["csf_c"] + ts["csf_2_c"]) / 2.0
 
-    plateau_start = ts.index[-1] - pd.Timedelta(minutes=PLATEAU_MINUTES)
-    plateau_temp = temp_avg.loc[plateau_start:].mean()
-    peak_time = temp_avg.idxmax()
-    peak_temp = temp_avg.max()
-    threshold_temp = peak_temp - PLATEAU_FRAC * (peak_temp - plateau_temp)
-    after_peak = temp_avg.loc[peak_time:]
-    reached = after_peak[after_peak <= threshold_temp]
-    end_time = reached.index[0] if len(reached) else after_peak.index[-1]
+    window_result = find_plateau_cooling_window(
+        temp_avg,
+        plateau_minutes=PLATEAU_MINUTES,
+        cooling_fraction=PLATEAU_FRAC,
+    )
+    if window_result is None:
+        raise RuntimeError("Could not find an active cooling period")
+    cooling_window, _ = window_result
+    peak_time, end_time = cooling_window.start, cooling_window.end
 
     active = (df["timestamp"] >= peak_time) & (df["timestamp"] <= end_time)
     df_active = df[active]

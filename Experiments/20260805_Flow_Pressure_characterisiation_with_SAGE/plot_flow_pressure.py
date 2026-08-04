@@ -9,9 +9,15 @@ force a re-run.
 """
 
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import load_sensor_csv, rpm_to_flow_ml_min
 
 HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
@@ -23,11 +29,7 @@ MIN_STEADY_SAMPLES = 50
 
 
 def _load(csv_path: Path) -> pd.DataFrame:
-    df = pd.read_csv(csv_path)
-    df = df.loc[:, ~df.columns.duplicated()]
-    df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-    return df.sort_values("timestamp").reset_index(drop=True)
+    return load_sensor_csv(csv_path)
 
 
 def _run_label(csv_path: Path) -> str:
@@ -58,7 +60,9 @@ def steady_points(df: pd.DataFrame) -> pd.DataFrame:
         rows.append(
             {
                 "rpm": float(rpm),
-                "flow_ml_per_min": float(rpm) * ML_PER_MIN_PER_RPM,
+                "flow_ml_per_min": rpm_to_flow_ml_min(
+                    float(rpm), ML_PER_MIN_PER_RPM
+                ),
                 "cath_in_psi": cath_in,
                 "cath_out_psi": cath_out,
                 "n_steady": len(steady),

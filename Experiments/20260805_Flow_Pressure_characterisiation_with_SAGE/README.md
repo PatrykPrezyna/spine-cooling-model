@@ -40,5 +40,8 @@ Pump always drives flow into the loop (push). Between the two characterisation r
 ![Reverse](output_data/flow_pressure_20260804_091152_black_cath_direction_pumpout_cath_out.png)
 
 
+![side-by-side](output_data/flow_pressure_reversal.png)
+All timepoints visualized (what look like bars are actually just very many dots). Fit performed on pressure with respect to flow rate. Implies that outlet pressure is more derivative of resistance to flow to atmosphere (back to the bucket) whereas input pressure can detect flow rate based changes in the path geometry (perhaps a deflection of the lumen on input pressure). Seems like the input join is more distal than the output join... (Grace's vibes judgement)
+
 ## Preliminary SAGE catheder
 

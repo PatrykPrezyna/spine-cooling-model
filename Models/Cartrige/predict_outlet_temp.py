@@ -9,17 +9,17 @@ import math
 # in Fusion360. (0.01632 m^2, ~88% of bare, straight cylinder)
 # ============================================================
 
-INPUT_TEMP_C = 17.7          # Fluid inlet temperature [°C]
+INPUT_TEMP_C = 21          # Fluid inlet temperature [°C]
 BATH_TEMP_C = 0.0            # Cold-water bath temperature [°C]
 FLOWRATE_ML_MIN = 46.9       # Flow rate [mL/min]
 
 # Tube geometry
 INNER_DIAMETER_MM = 9.0   # mm
 OUTER_DIAMETER_MM = 11.0  # mm
-LENGTH_M = 0.590  # m   (total path length)
+LENGTH_M = 2*0.590  # m   (total path length)
 
 A_CYLINDER = math.pi * (OUTER_DIAMETER_MM / 1000) * LENGTH_M
-A_FUSION = 0.01632 # m^2
+A_FUSION = 2*0.01632 # m^2
 
 # ============================================================
 # FLUID PROPERTIES (Water-like, channel fluid)
@@ -113,6 +113,15 @@ for label, A in [("Cylinder (bare, upper bound)", A_CYLINDER),
 #TODO: wall thermal mass if lag in calorimetric data
 
 # ============================================================
+# INTERNAL VOLUME (tube bore)
+# ============================================================
+# V = A_flow * L = (π/4) D_i² L
+
+volume_m3 = flow_area * LENGTH_M
+volume_ml = volume_m3 * 1e6
+residence_time_s = volume_m3 / flow_m3_s
+
+# ============================================================
 # RESULTS
 # ============================================================
 print("\n" + "=" * 60)
@@ -127,6 +136,8 @@ print(f"  Flow rate                  : {FLOWRATE_ML_MIN:.2f} mL/min")
 print(f"  Tube inner diameter        : {INNER_DIAMETER_MM:.1f} mm")
 print(f"  Tube outer diameter        : {OUTER_DIAMETER_MM:.1f} mm")
 print(f"  Path length                : {LENGTH_M*1000:.0f} mm")
+print(f"  Internal volume            : {volume_ml:.1f} mL")
+print(f"  Residence time             : {residence_time_s:.1f} s")
  
 print("\nFLOW")
 print("-" * 60)

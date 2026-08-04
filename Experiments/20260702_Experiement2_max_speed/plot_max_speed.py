@@ -1,7 +1,14 @@
 import glob
+from pathlib import Path
+import sys
+
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import load_sensor_csv, longest_true_block_start
 
 # Manual compressor speed changes made with the external potentiometer.
 # Times are minutes from cooling start (see speed_change.txt).
@@ -21,8 +28,7 @@ fig, ax = plt.subplots(figsize=(12, 6))
 for f in glob.glob("*.csv"):
     if f.startswith("_"):
         continue
-    df = pd.read_csv(f)
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = load_sensor_csv(f)
 
     # Cooling starts at the beginning of the longest continuous compressor-on
     # block; t=0 is that moment. Using the longest run (rather than the first
@@ -30,10 +36,7 @@ for f in glob.glob("*.csv"):
     cooling = df["compressor_cooling"] == 1
     if not cooling.any():
         continue
-    block = (cooling != cooling.shift()).cumsum()
-    on_blocks = block[cooling]
-    longest = on_blocks.value_counts().idxmax()
-    start = on_blocks.index[on_blocks == longest][0]
+    start = longest_true_block_start(cooling)
 
     minutes = (df["timestamp"] - df["timestamp"].loc[start]).dt.total_seconds() / 60.0
     heat_ex = df["heat_ex_c"]

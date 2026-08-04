@@ -1,5 +1,12 @@
-import pandas as pd
+from pathlib import Path
+import sys
+
 import matplotlib.pyplot as plt
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import load_sensor_csv
 
 # --- USER SETTINGS ---
 # Each entry: label shown in the legend -> CSV file for that use case.
@@ -20,9 +27,7 @@ SHOW_SENSORS = False   # also draw the individual csf / csf_2 sensors (faint)
 
 
 def load(path):
-    df = pd.read_csv(path)
-    df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = load_sensor_csv(path)
     df["csf_avg"] = (df["csf_c"] + df["csf_2_c"]) / 2.0
     t0 = df["timestamp"].iloc[0]
     df["elapsed_min"] = (df["timestamp"] - t0).dt.total_seconds() / 60.0

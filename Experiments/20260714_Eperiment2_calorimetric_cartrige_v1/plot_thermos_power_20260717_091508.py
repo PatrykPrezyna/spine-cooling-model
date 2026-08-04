@@ -1,11 +1,22 @@
 """Plot power draining from the thermos for one ice-bucket run."""
 
 from pathlib import Path
+import sys
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import (
+    find_cooling_window,
+    flow_power,
+    load_sensor_csv,
+    tank_calorimetry,
+    time_weighted_mean,
+)
 
 FOLDER = Path(__file__).resolve().parent
 CSV_PATH = FOLDER / "sensor_log_20260717_091508_ice_bucket_with_catheder_60rmp.csv"
@@ -18,39 +29,20 @@ T_END_C = 32.0
 SMOOTH_S = 30.0
 
 
-def active_window(temp: pd.Series) -> tuple[pd.Timestamp, pd.Timestamp]:
-    peak_time = temp.idxmax()
-    after_peak = temp.loc[peak_time:]
-    crossed_start = after_peak[
-        (after_peak.shift(1) > T_START_C) & (after_peak <= T_START_C)
-    ]
-    if len(crossed_start) == 0:
-        raise RuntimeError("No downward crossing of T_START_C")
-    start_time = crossed_start.index[-1]
-    after_start = temp.loc[start_time:]
-    crossed_end = after_start[
-        (after_start.shift(1) > T_END_C) & (after_start <= T_END_C)
-    ]
-    if len(crossed_end) == 0:
-        raise RuntimeError("No downward crossing of T_END_C")
-    end_time = crossed_end.index[-1]
-    if (end_time - start_time).total_seconds() <= 0:
-        raise RuntimeError("Invalid active window duration")
-    return start_time, end_time
-
-
 def main() -> None:
-    df = pd.read_csv(CSV_PATH)
-    df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-    df = df.sort_values("timestamp").reset_index(drop=True)
+    df = load_sensor_csv(CSV_PATH)
 
     temp = df.set_index("timestamp")["tank_c"].dropna()
-    start_time, end_time = active_window(temp)
-    duration_s = (end_time - start_time).total_seconds()
-    period = temp.loc[start_time:end_time]
-    dT_tank = float(period.iloc[0] - period.iloc[-1])
-    p_tank_avg = (MASS_KG * C * dT_tank) / duration_s
+    window = find_cooling_window(temp, T_START_C, T_END_C)
+    if window is None:
+        raise RuntimeError("No complete downward 37→32 °C cooling window")
+    start_time, end_time = window.start, window.end
+    tank_result = tank_calorimetry(
+        temp, window, mass_kg=MASS_KG, specific_heat_j_kg_k=C
+    )
+    duration_s = tank_result.duration_s
+    dT_tank = tank_result.delta_temp_c
+    p_tank_avg = tank_result.average_power_w
 
     t0 = df["timestamp"].iloc[0]
     df["t_s"] = (df["timestamp"] - t0).dt.total_seconds()
@@ -60,13 +52,16 @@ def main() -> None:
     dTdt = np.gradient(tank_s.to_numpy(), df["t_s"].to_numpy())
     df["p_thermos_w"] = -MASS_KG * C * dTdt
 
-    df["mdot"] = df["pump_flow_ml_per_s"] / 1000.0
-    df["p_flow_w"] = df["mdot"] * C * (df["cart_in_c"] - df["cart_out_c"])
+    df["p_flow_w"] = flow_power(
+        df["pump_flow_ml_per_s"], df["cart_in_c"], df["cart_out_c"],
+        specific_heat_j_kg_k=C,
+    )
 
     active = (df["timestamp"] >= start_time) & (df["timestamp"] <= end_time)
     a = df.loc[active].dropna(subset=["p_flow_w"])
-    t_rel = (a["timestamp"] - a["timestamp"].iloc[0]).dt.total_seconds().to_numpy()
-    p_flow_avg = float(np.trapezoid(a["p_flow_w"].to_numpy(), t_rel) / duration_s)
+    p_flow_avg = time_weighted_mean(
+        a["p_flow_w"], a["timestamp"], duration_s=duration_s
+    )
 
     print(f"Active window: {start_time} -> {end_time} ({duration_s:.0f} s)")
     print(f"dT_tank={dT_tank:.2f} C")

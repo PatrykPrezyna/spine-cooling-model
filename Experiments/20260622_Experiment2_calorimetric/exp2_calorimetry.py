@@ -1,5 +1,16 @@
-import pandas as pd
+from pathlib import Path
+import sys
+
 import numpy as np
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import (
+    find_plateau_cooling_window,
+    load_sensor_csv,
+    tank_calorimetry,
+)
 
 # --- USER SETTINGS ---
 FILE = "sensor_log_20260622_153100.csv"
@@ -8,13 +19,7 @@ C = 4186  # J/kg°C
 WINDOWS = ["2min", "5min", "10min"]  # averaging windows for windowed power
 
 # --- LOAD DATA ---
-df = pd.read_csv(FILE)
-
-# Clean column names
-df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-
-# Convert timestamp to datetime
-df["timestamp"] = pd.to_datetime(df["timestamp"])
+df = load_sensor_csv(FILE)
 
 # --- COMPUTE BULK TEMPERATURE ---
 # Average of two sensors to approximate tank temperature
@@ -62,16 +67,15 @@ ts = df.set_index("timestamp")
 PLATEAU_MINUTES = 5     # window used to estimate the equilibrium temperature
 PLATEAU_FRAC = 0.98     # fraction of total cooling that defines "active phase end"
 
-plateau_start = ts.index[-1] - pd.Timedelta(minutes=PLATEAU_MINUTES)
-plateau_temp = ts.loc[plateau_start:, "temp_avg"].mean()
-peak_time = ts["temp_avg"].idxmax()
-peak_temp = ts["temp_avg"].max()
-total_drop = peak_temp - plateau_temp
-
-threshold_temp = peak_temp - PLATEAU_FRAC * total_drop
-after_peak = ts.loc[peak_time:, "temp_avg"]
-reached = after_peak[after_peak <= threshold_temp]
-end_time = reached.index[0] if len(reached) else after_peak.index[-1]
+window_result = find_plateau_cooling_window(
+    ts["temp_avg"],
+    plateau_minutes=PLATEAU_MINUTES,
+    cooling_fraction=PLATEAU_FRAC,
+)
+if window_result is None:
+    raise RuntimeError("Could not find an active cooling period")
+cooling_window, plateau_temp = window_result
+peak_time, end_time = cooling_window.start, cooling_window.end
 
 # Restrict all subsequent analysis to the active cooling period
 ts_active = ts.loc[peak_time:end_time]
@@ -100,12 +104,14 @@ for w, b in binned_by_window.items():
     print(f"Mean of windowed power: {b['power_w'].mean():.2f} W")
 
 # --- SINGLE REPRESENTATIVE POWER OVER THE ACTIVE COOLING PERIOD ---
-period = ts_active["temp_avg"]
-T_start = period.iloc[0]
-T_end = period.iloc[-1]
-duration_s = (period.index[-1] - period.index[0]).total_seconds()
-q_removed_j = MASS_KG * C * (T_start - T_end)
-power_single_w = q_removed_j / duration_s
+calorimetry = tank_calorimetry(
+    ts["temp_avg"], cooling_window, mass_kg=MASS_KG, specific_heat_j_kg_k=C
+)
+T_start = calorimetry.start_temp_c
+T_end = calorimetry.end_temp_c
+duration_s = calorimetry.duration_s
+q_removed_j = calorimetry.energy_j
+power_single_w = calorimetry.average_power_w
 
 print("\n=== Single Representative Cooling Power (active period) ===")
 print(f"Equilibrium (plateau) temp : {plateau_temp:.2f} C  (last {PLATEAU_MINUTES} min)")

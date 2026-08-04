@@ -1,6 +1,13 @@
 import glob
-import pandas as pd
+from pathlib import Path
+import sys
+
 import matplotlib.pyplot as plt
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import load_sensor_csv
 
 T_HIGH = 37.0
 T_LOW = 30.0
@@ -13,8 +20,7 @@ fig2, ax2 = plt.subplots()   # cart_in - cart_out
 for f in glob.glob("*.csv"):
     if f.startswith("_"):
         continue
-    df = pd.read_csv(f)
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = load_sensor_csv(f)
     t = df["csf_c"]
 
     # Cooling starts at the peak (skips any initial warm-up). t=0 is the

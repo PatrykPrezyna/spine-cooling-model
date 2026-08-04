@@ -1,9 +1,21 @@
 from pathlib import Path
+import sys
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import (
+    find_cooling_window,
+    flow_power,
+    load_sensor_csv,
+    tank_calorimetry,
+    time_weighted_mean,
+)
 
 # --- USER SETTINGS ---
 FOLDER = Path(__file__).resolve().parent
@@ -43,9 +55,7 @@ def process_file(csv_path: Path) -> None:
         print(f"ERROR: output already exists, skipping: {out_png.name}")
         return
 
-    df = pd.read_csv(csv_path)
-    df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = load_sensor_csv(csv_path)
 
     in_col, out_col = resolve_flow_cols(df)
     in_label = in_col.replace("_c", "")
@@ -65,40 +75,28 @@ def process_file(csv_path: Path) -> None:
         return
 
     # --- ACTIVE COOLING PERIOD: cool from 37°C down to 32°C (tank sensor) ---
-    # Use the *last* downward crossing of each threshold (not the first),
-    # so rewarming / multiple passes pick the final 37→32 segment.
-    peak_time = temp.idxmax()
-    after_peak = temp.loc[peak_time:]
-
-    crossed_start = after_peak[
-        (after_peak.shift(1) > T_START_C) & (after_peak <= T_START_C)
-    ]
-    if len(crossed_start) == 0:
+    # Last crossings select the final pass if the log contains rewarming.
+    window = find_cooling_window(temp, T_START_C, T_END_C)
+    if window is None:
         return
-    start_time = crossed_start.index[-1]
-
-    after_start = temp.loc[start_time:]
-    crossed_end = after_start[
-        (after_start.shift(1) > T_END_C) & (after_start <= T_END_C)
-    ]
-    if len(crossed_end) == 0:
-        return
-    end_time = crossed_end.index[-1]
-
-    duration_tank_s = (end_time - start_time).total_seconds()
-    if duration_tank_s <= 0:
-        return
+    start_time, end_time = window.start, window.end
 
     # METHOD 1 - tank calorimetry
-    period = temp.loc[start_time:end_time]
-    delta_T_tank = period.iloc[0] - period.iloc[-1]
-    q_tank_j = MASS_KG * C * delta_T_tank
-    p_tank_avg_w = q_tank_j / duration_tank_s
+    tank_result = tank_calorimetry(
+        temp, window, mass_kg=MASS_KG, specific_heat_j_kg_k=C
+    )
+    duration_tank_s = tank_result.duration_s
+    delta_T_tank = tank_result.delta_temp_c
+    q_tank_j = tank_result.energy_j
+    p_tank_avg_w = tank_result.average_power_w
 
     # METHOD 2 - flow calorimetry
     df["mdot_kg_s"] = df["pump_flow_ml_per_s"] / 1000.0
     df["delta_T_flow"] = df[in_col] - df[out_col]
-    df["power_w"] = df["mdot_kg_s"] * C * df["delta_T_flow"]
+    df["power_w"] = flow_power(
+        df["pump_flow_ml_per_s"], df[in_col], df[out_col],
+        specific_heat_j_kg_k=C,
+    )
 
     active = (df["timestamp"] >= start_time) & (df["timestamp"] <= end_time)
     df_active = df.loc[active].copy()
@@ -112,9 +110,10 @@ def process_file(csv_path: Path) -> None:
     if duration_flow_s <= 0:
         return
 
-    t_rel_s = (df_active["timestamp"] - df_active["timestamp"].iloc[0]).dt.total_seconds().to_numpy()
-    q_flow_j = float(np.trapezoid(df_active["power_w"].to_numpy(), t_rel_s))
-    p_flow_avg_w = q_flow_j / duration_flow_s
+    p_flow_avg_w = time_weighted_mean(
+        df_active["power_w"], df_active["timestamp"]
+    )
+    q_flow_j = p_flow_avg_w * duration_flow_s
 
     mdot_mean = df_active["mdot_kg_s"].mean()
     delta_T_flow_mean = df_active["delta_T_flow"].mean()

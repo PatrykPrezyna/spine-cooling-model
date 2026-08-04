@@ -1,26 +1,29 @@
 """Plot thermistor form-factor comparison from sensor_log_20260803_135314.csv."""
 
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
-import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import elapsed_time, load_sensor_csv
 
 HERE = Path(__file__).resolve().parent
 CSV_PATH = HERE / "sensor_log_20260803_135314.csv"
 
 
 def plot_file(csv_path: Path) -> Path:
-    df = pd.read_csv(csv_path)
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-    df = df.set_index("timestamp").sort_index()
-    t_s = (df.index - df.index[0]).total_seconds()
-    err = df["White"] - df["Original"]
+    df = load_sensor_csv(csv_path, index_timestamp=True)
+    t_s = elapsed_time(df.index)
+    err = df["white"] - df["original"]
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
     fig.suptitle(f"Thermistor form-factor comparison\n{csv_path.name}")
 
-    ax1.plot(t_s, df["White"], color="tab:orange", linewidth=1.0, label="White")
-    ax1.plot(t_s, df["Original"], color="tab:green", linewidth=1.0, label="Original")
+    ax1.plot(t_s, df["white"], color="tab:orange", linewidth=1.0, label="White")
+    ax1.plot(t_s, df["original"], color="tab:green", linewidth=1.0, label="Original")
     ax1.axhline(50, color="0.5", linestyle="--", linewidth=0.8, label="50 °C target")
     ax1.set_ylabel("Temperature (°C)")
     ax1.legend(loc="best")

@@ -7,10 +7,10 @@
 ## Protocol
 
 1. Set up an open discharge: pump draws from a reservoir and delivers into a collection vessel on a scale (tare the vessel before each run).
-2. Choose a set speed (RPM). Start the pump and collection together; run for **exactly 2.0 min**.
+2. Choose a set speed (RPM). Start the pump and collection together; run for **exactly 2.0 min** (some repeats used 5.0 min).
 3. Stop the pump and collection together. Record the collected mass (g).
 4. Empty / re-tare the vessel. Repeat at the next speed.
-5. Suggested sweep (adjust as needed): **20, 40, 60, 80, 100, 120, 160, 200, 240 rpm** — one 2 min hold each.
+5. Suggested sweep (adjust as needed): **10–240 rpm** — one timed hold each.
 6. Enter each run in `raw_data/gravimetric_runs.csv` (copy from the template if needed).
 
 Flow rate from mass (water ≈ 1.000 g/ml at room temperature):
@@ -44,10 +44,17 @@ python plot_speed_vs_flow.py
 
 | Finding | Value |
 |---------|-------|
-| ml/min per rpm (linear fit) | *TBD* |
-| Prior estimate (for comparison) | ≈ 0.782 ml/min per rpm |
+| Adopted ml/min per rpm | **0.5862** |
+| Through-origin fit (all holds) | 0.5801 ml/min per rpm |
+| Free fit | 0.5778·rpm + 0.29 ml/min |
+| Example | 60 rpm → ≈ **35 ml/min** |
+| Prior estimate (2026-06-22) | 0.7823 ml/min per rpm |
+
+The adopted constant is the mean \(Q/\mathrm{RPM}\) on the 2 min holds at ≤ 180 rpm (matches the ~0.586 slope used elsewhere in the repo).
+
+![Pump speed vs flow rate](output_data/pump_speed_vs_flowrate.png)
 
 ## Conclusion
 
-- *TBD after data*
-- Update other experiments that hard-code `ML_PER_MIN_PER_RPM` if the new fit differs meaningfully.
+- Delivery is still linear enough for a single factor, but the true slope is **~25% lower** than the June estimate (0.7823 → 0.5862).
+- Repo analyses should use `ML_PER_MIN_PER_RPM = 0.5862` from `Experiments/experiment_tools.py` (sensor logs that embed the old factor are recalibrated from RPM on load).

@@ -2,16 +2,20 @@
 """
 
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import rpm_to_flow_ml_min
+
 HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
 OUTPUT_DATA = HERE / "output_data"
-# Prior calibration: ~0.7823 ml/min per rpm (approx 60 rpm -> 47 ml/min)
-ML_PER_MIN_PER_RPM = 0.7823
 
 RPM_COL = "peristaltic_pump_set_speed_rpm"
 
@@ -30,7 +34,7 @@ def raw_points(df: pd.DataFrame, col: str) -> pd.DataFrame:
     out = pd.DataFrame(
         {
             "rpm": rpm,
-            "flow_ml_per_min": rpm * ML_PER_MIN_PER_RPM,
+            "flow_ml_per_min": rpm_to_flow_ml_min(rpm),
             "pressure_psi": df[col],
         }
     )

@@ -53,10 +53,10 @@ Configuration checks:
 | 2 | Diameter reduction | No meaningful difference |
 | 3 | Catheter on path | Small difference only |
 
-This slope is the `ML_PER_MIN_PER_RPM = 0.7823` constant reused in later experiments (pressure / flow characterisation).
+This slope was the original `ML_PER_MIN_PER_RPM = 0.7823` constant reused in later experiments. It is **superseded** by the 2026-08-04 gravimetric recalibration (`20260804_Pump_speed_vs_flowrate`): **0.5862 ml/min per rpm** (60 rpm ≈ 35 ml/min). Use `Experiments.experiment_tools.ML_PER_MIN_PER_RPM`.
 
 ## Conclusion
 
 - Pump delivery is linear enough that a single ml/min-per-rpm factor is fine for converting set speed to flow.
 - Downstream diameter steps and the catheter do not materially change that calibration for this tubing set — flow is pump-dominated.
-- Residuals stay within ~±2 ml/min across the sweep; use the linear model unless a higher-precision recalibration is needed (see `20260804_Pump_speed_vs_flowrate` for a follow-up gravimetric sweep).
+- Residuals stay within ~±2 ml/min across the sweep; the follow-up gravimetric sweep in `20260804_Pump_speed_vs_flowrate` revised the slope downward to **0.5862**.

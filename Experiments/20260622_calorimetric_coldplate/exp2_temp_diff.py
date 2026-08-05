@@ -4,7 +4,11 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from Experiments.experiment_tools import find_plateau_cooling_window, load_sensor_csv
+from Experiments.experiment_tools import (
+    find_plateau_cooling_window,
+    flow_power,
+    load_sensor_csv,
+)
 
 # --- USER SETTINGS ---
 print("Starting experiment 2")
@@ -12,7 +16,6 @@ HERE = Path(__file__).resolve().parent
 #FILE = HERE / "sensor_log_20260622_153100.csv"
 #FILE = HERE / "sensor_log_20260624_092838.csv"
 FILE = HERE / "sensor_log_20260624_141620.csv"
-FLOW_ML_PER_MIN = 46.0  # ~60 rpm from pump calibration (0.7823 ml/min per rpm)
 C = 4186  # J/kg°C for water
 MASS_KG = 0.838  # tank mass (used only to detect the active cooling phase)
 
@@ -21,11 +24,11 @@ USE_ACTIVE_PHASE = False  # set False to analyze/plot the full record only
 PLATEAU_MINUTES = 5      # window used to estimate the equilibrium temperature
 PLATEAU_FRAC = 0.98      # fraction of total cooling that defines "active phase end"
 
-# --- CONVERSIONS ---
-flow_kg_s = (FLOW_ML_PER_MIN / 1000.0) / 60.0  # ml/min → kg/s
-
 # --- LOAD DATA ---
+# pump_flow_ml_per_s is recalibrated from RPM (see Experiments.experiment_tools)
 df = load_sensor_csv(FILE)
+FLOW_ML_PER_MIN = float(df["pump_flow_ml_per_s"].mean() * 60.0)
+flow_kg_s = FLOW_ML_PER_MIN / 1000.0 / 60.0  # mean ml/min → kg/s
 
 # Expected columns (based on your file)
 # cart_in_c = hot fluid entering HX
@@ -35,7 +38,10 @@ df = load_sensor_csv(FILE)
 df["delta_t"] = df["cart_in_c"] - df["cart_out_c"]
 
 # --- COMPUTE INSTANTANEOUS POWER (W) ---
-df["power_w"] = flow_kg_s * C * df["delta_t"]
+df["power_w"] = flow_power(
+    df["pump_flow_ml_per_s"], df["cart_in_c"], df["cart_out_c"],
+    specific_heat_j_kg_k=C,
+)
 
 # --- AUTO-SELECT THE ACTIVE COOLING PERIOD (optional) ---
 # Use the CSF tank temperature (same as the calorimetric script) so both methods

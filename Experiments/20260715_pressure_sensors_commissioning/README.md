@@ -16,7 +16,7 @@
 |------|--------|
 | Loop | Closed coolant circuit with cartridge + peristaltic pump |
 | Pressure channels | `cartridge_input_psi`, `cartridge_output_psi`, `pump_input_psi`, `pump_output_psi` |
-| Flow | `pump_flow_ml_per_s` (reported; ≈ 0.78 ml/min per rpm → 60 rpm ≈ 47 ml/min) |
+| Flow | from set RPM via **0.5862 ml/min per rpm** (60 rpm ≈ **35 ml/min**; logged `pump_flow_ml_per_s` used the older 0.782 factor) |
 | Sample rate | typically ~10 Hz (`110327`, `111143`); `113216` denser (~30 Hz); long hold `120635` ~4–5 Hz |
 
 Raw logs live in `raw_data/`. Plots go to `output_data/`.
@@ -39,16 +39,16 @@ Cartridge mean pressure rises roughly with flow; pump inlet vacuum deepens; pump
 | RPM | Flow (ml/min) | Cart in | Cart out | Pump in | Pump out |
 |-----|---------------|---------|----------|---------|----------|
 | 0 | 0 | 0.12 | 0.08 | 0.12 | 0.12 |
-| 60 | 47 | 0.58 | 0.51 | −3.0 | 0.75 |
-| 120 | 94 | 1.01 | 0.92 | −6.9 | 2.0 |
-| 200 | 156 | 1.54 | 1.44 | −8.5 | 4.8 |
-| 260 | 203 | 1.50 | 1.39 | −8.4 | 3.7 |
+| 60 | 35 | 0.58 | 0.51 | −3.0 | 0.75 |
+| 120 | 70 | 1.01 | 0.92 | −6.9 | 2.0 |
+| 200 | 117 | 1.54 | 1.44 | −8.5 | 4.8 |
+| 260 | 152 | 1.50 | 1.39 | −8.4 | 3.7 |
 
 Across the cartridge, ΔP stays small (**~0.05–0.15 psi**). At high speed the pump inlet sits near **−8.5 psi** (suction limit / cavitation risk worth watching). Pump outlet **max** on this sweep reached **~25 psi**.
 
 ### Steady 60 rpm (long hold, `120635`)
 
-Over ~36 min at 60 rpm / ~47 ml/min:
+Over ~36 min at 60 rpm / ~35 ml/min:
 
 | Channel | Mean (psi) | Peak–peak (psi) |
 |---------|------------|-----------------|

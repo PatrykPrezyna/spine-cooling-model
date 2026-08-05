@@ -9,7 +9,7 @@
 2. **Test 2 — flow sweep** (`sensor_log_20260624_141620.csv`): vary pump speed (~20–120 rpm) at moderate tank temperature.
 3. **Test 3 — cartridge / plate check** (`sensor_log_20260624_092838.csv`): second hot-start run (~73 °C); plate ran warmer (~0 °C). Cartridge inlet/outlet routing was also changed during this day.
 
-Notes: thermocouples were **uncalibrated**. Tank mass **0.838 kg**, \(c = 4186\) J/kg·°C. Flow for 60 rpm taken as ≈ **46 ml/min** (from pump calibration).
+Notes: thermocouples were **uncalibrated**. Tank mass **0.838 kg**, \(c = 4186\) J/kg·°C. Flow for 60 rpm taken as ≈ **35 ml/min** (2026-08-04 gravimetric calibration, 0.5862 ml/min per rpm).
 
 ## Setup
 
@@ -25,8 +25,8 @@ Thermos → pump → cold plate / cartridge → return to thermos. CSF / CSF 2 a
 
 | Run | Condition | \(P_\mathrm{tank}\) | \(P_\mathrm{flow}\) |
 |-----|-----------|---------------------|---------------------|
-| 2026-06-22 | Plate ≈ −5 °C, 60 rpm, 75 → 25 °C in 41 min | **71 W** | **67 W** |
-| 2026-06-24 AM | Plate ≈ 0 °C, 60 rpm, 73 → 24 °C in 57 min | **50 W** | **39 W** |
+| 2026-06-22 | Plate ≈ −5 °C, 60 rpm, 75 → 25 °C in 41 min | **71 W** | **50 W** |
+| 2026-06-24 AM | Plate ≈ 0 °C, 60 rpm, 73 → 24 °C in 57 min | **50 W** | **29 W** |
 
 ![Tank calorimetry 2026-06-22](output_data/tank_calorimetry_20260622_153100.png)
 
@@ -34,9 +34,9 @@ Flow sweep (2026-06-24 afternoon) — flow power from cart ΔT and pump calibrat
 
 | RPM | ≈ Flow | Typical \(P_\mathrm{flow}\) |
 |-----|--------|-----------------------------|
-| 20–30 | 16–24 ml/min | ~11–18 W |
-| 40–60 | 31–47 ml/min | ~16–22 W |
-| 120 | ~94 ml/min | ΔT collapses; inferred power unreliable |
+| 20–30 | 12–18 ml/min | ~8–13 W |
+| 40–60 | 23–35 ml/min | ~12–16 W |
+| 120 | ~70 ml/min | ΔT collapses; inferred power unreliable |
 
 ![Flow calorimetry sweep](output_data/flow_calorimetry_20260624_141620.png)
 

@@ -17,6 +17,11 @@ import pandas as pd
 
 WATER_SPECIFIC_HEAT_J_KG_K = 4186.0
 
+# Gravimetric pump calibration (2026-08-04): Q [ml/min] ≈ k · RPM.
+# Supersedes the 2026-06-22 estimate of 0.7823 ml/min per rpm.
+ML_PER_MIN_PER_RPM = 0.5862
+LEGACY_ML_PER_MIN_PER_RPM = 0.7823
+
 
 @dataclass(frozen=True)
 class CoolingWindow:
@@ -50,8 +55,16 @@ def load_sensor_csv(
     *,
     timestamp_col: str = "timestamp",
     index_timestamp: bool = False,
+    recalibrate_pump_flow: bool = True,
+    ml_per_min_per_rpm: float = ML_PER_MIN_PER_RPM,
 ) -> pd.DataFrame:
-    """Load a sensor CSV with consistent columns and chronological timestamps."""
+    """Load a sensor CSV with consistent columns and chronological timestamps.
+
+    When ``recalibrate_pump_flow`` is True and a pump set-speed column is
+    present, ``pump_flow_ml_per_s`` is recomputed from RPM using the current
+    gravimetric calibration. Logged flow values were historically derived from
+    the superseded 0.7823 ml/min-per-rpm factor.
+    """
 
     df = pd.read_csv(path)
     df = df.loc[:, ~df.columns.duplicated()].copy()
@@ -62,6 +75,13 @@ def load_sensor_csv(
 
     df[timestamp_col] = pd.to_datetime(df[timestamp_col])
     df = df.sort_values(timestamp_col).reset_index(drop=True)
+
+    rpm_col = "peristaltic_pump_set_speed_rpm"
+    if recalibrate_pump_flow and rpm_col in df.columns:
+        df["pump_flow_ml_per_s"] = rpm_to_flow_ml_s(
+            df[rpm_col], ml_per_min_per_rpm
+        )
+
     if index_timestamp:
         df = df.set_index(timestamp_col)
     return df
@@ -223,11 +243,20 @@ def time_weighted_mean(
 
 def rpm_to_flow_ml_min(
     rpm: pd.Series | np.ndarray | float,
-    ml_per_min_per_rpm: float,
+    ml_per_min_per_rpm: float = ML_PER_MIN_PER_RPM,
 ):
-    """Convert commanded pump speed to an estimated volumetric flow."""
+    """Convert commanded pump speed to an estimated volumetric flow [ml/min]."""
 
     return rpm * ml_per_min_per_rpm
+
+
+def rpm_to_flow_ml_s(
+    rpm: pd.Series | np.ndarray | float,
+    ml_per_min_per_rpm: float = ML_PER_MIN_PER_RPM,
+):
+    """Convert commanded pump speed to an estimated volumetric flow [ml/s]."""
+
+    return rpm_to_flow_ml_min(rpm, ml_per_min_per_rpm) / 60.0
 
 
 def add_rolling_means(

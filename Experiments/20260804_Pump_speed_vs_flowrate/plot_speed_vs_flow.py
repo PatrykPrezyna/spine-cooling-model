@@ -6,10 +6,16 @@ and free intercept, and writes output_data/pump_speed_vs_flowrate.png.
 """
 
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from Experiments.experiment_tools import LEGACY_ML_PER_MIN_PER_RPM, ML_PER_MIN_PER_RPM
 
 HERE = Path(__file__).resolve().parent
 RAW_CSV = HERE / "raw_data" / "gravimetric_runs.csv"
@@ -18,8 +24,10 @@ OUTPUT_PNG = OUTPUT_DATA / "pump_speed_vs_flowrate.png"
 
 # Water density [g/ml] at ~20 °C; override if using a different fluid.
 WATER_DENSITY_G_PER_ML = 1.0
-# Prior calibration used elsewhere in the repo (for overlay).
-PRIOR_ML_PER_MIN_PER_RPM = 0.7823
+# Prior (2026-06-22) calibration for overlay.
+PRIOR_ML_PER_MIN_PER_RPM = LEGACY_ML_PER_MIN_PER_RPM
+# Adopted repo constant (mean Q/RPM on 2 min holds ≤ 180 rpm).
+ADOPTED_ML_PER_MIN_PER_RPM = ML_PER_MIN_PER_RPM
 
 
 def load_runs(path: Path) -> pd.DataFrame:
@@ -88,6 +96,13 @@ def plot(df: pd.DataFrame, fit: dict[str, float]) -> Path:
     )
     ax.plot(
         x,
+        ADOPTED_ML_PER_MIN_PER_RPM * x,
+        color="tab:green",
+        linestyle="-.",
+        label=f"Adopted: {ADOPTED_ML_PER_MIN_PER_RPM:.4f} ml/min per rpm",
+    )
+    ax.plot(
+        x,
         PRIOR_ML_PER_MIN_PER_RPM * x,
         color="0.5",
         linestyle=":",
@@ -120,6 +135,7 @@ def main() -> None:
         f"Free fit:             {fit['slope_free']:.4f} ml/min per rpm "
         f"(intercept {fit['intercept_ml_per_min']:.2f} ml/min)"
     )
+    print(f"Adopted constant:     {ADOPTED_ML_PER_MIN_PER_RPM:.4f} ml/min per rpm")
     print(f"Wrote {out}")
 
 

@@ -17,13 +17,17 @@ import matplotlib.pyplot as plt
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from Experiments.experiment_tools import add_rolling_means, load_sensor_csv, rpm_to_flow_ml_min
+from Experiments.experiment_tools import (
+    ML_PER_MIN_PER_RPM,
+    add_rolling_means,
+    load_sensor_csv,
+    rpm_to_flow_ml_min,
+)
 
 HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
 OUTPUT_DATA = HERE / "output_data"
 AVERAGE_WINDOW = "1s"
-ML_PER_MIN_PER_RPM = 0.7823
 
 
 def _output_path(csv_path: Path) -> Path:

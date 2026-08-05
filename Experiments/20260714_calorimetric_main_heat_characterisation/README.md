@@ -33,6 +33,8 @@
 1. **Tank calorimetry:** \(P_\mathrm{tank} = m\,c\,\Delta T / \Delta t\) over the 37→32 °C window  
 2. **Flow calorimetry:** \(P_\mathrm{flow} = \dot{m}\,c\,(T_\mathrm{in}-T_\mathrm{out})\) integrated over the same window (`cart_in`/`cart_out`, or `cath_in`/`cath_out`)
 
+Flow uses the 2026-08-04 gravimetric calibration **0.5862 ml/min per rpm** (60 rpm ≈ **35 ml/min**), recomputed from set speed when loading logs (see `Experiments/experiment_tools.py`). Older tables that assumed 0.7823 ml/min per rpm overstated \(\dot{m}\) and \(P_\mathrm{flow}\).
+
 Prefer **\(P_\mathrm{tank}\)** as the net cooling delivered to the CSF tank. **\(P_\mathrm{flow}\)** is the heat picked up across the cartridge / cold section (can differ when sensors were swapped, lines exchange heat with room, or the catheter is the bottleneck).
 
 ---
@@ -72,8 +74,8 @@ Meeting notes: *“the certify in and out were switched.”* Flow sign is theref
 
 | Run | RPM | \(P_\mathrm{tank}\) | \|P_flow\| |
 |-----|-----|---------------------|------------|
-| `3_cold_plate_60rmp_0C_` | 60 | **14.2 W** | 24.4 W |
-| `3_cold_plate_120rmp_0C` | 120 | **17.6 W** | 31.7 W |
+| `3_cold_plate_60rmp_0C_` | 60 | **14.2 W** | 18.3 W |
+| `3_cold_plate_120rmp_0C` | 120 | **17.6 W** | 23.7 W |
 
 ![Cold plate 60 rpm](output_data/3_cold_plate_60rmp_0C_.png)
 
@@ -81,11 +83,11 @@ Meeting notes: *“the certify in and out were switched.”* Flow sign is theref
 
 | Run | RPM | Flow | Δt | \(P_\mathrm{tank}\) | \(P_\mathrm{flow}\) |
 |-----|-----|------|----|---------------------|---------------------|
-| `4_1_single_cartrige_60rmp` | 60 | 47 ml/min | 1217 s | **14.5 W** | 20.9 W |
-| `4_2_single_cartrige_120rmp` | 120 | 94 ml/min | 1069 s | **16.5 W** | 22.3 W |
-| `4_3_single_cartrige__240rmp` | 240 | 188 ml/min | 967 s | **18.2 W** | 28.3 W |
-| `4_4_single_cartrige_360rmp` | 360 | 282 ml/min | 1055 s | **16.7 W** | 42.0 W |
-| `4_5_2x_cart_60rmp_v1` | 60 | 47 ml/min | 1147 s | **15.3 W** | 32.0 W |
+| `4_1_single_cartrige_60rmp` | 60 | 35 ml/min | 1217 s | **14.5 W** | 15.6 W |
+| `4_2_single_cartrige_120rmp` | 120 | 70 ml/min | 1069 s | **16.5 W** | 16.7 W |
+| `4_3_single_cartrige__240rmp` | 240 | 141 ml/min | 967 s | **18.2 W** | 21.2 W |
+| `4_4_single_cartrige_360rmp` | 360 | 211 ml/min | 1055 s | **16.7 W** | 31.5 W |
+| `4_5_2x_cart_60rmp_v1` | 60 | 35 ml/min | 1147 s | **15.3 W** | 24.0 W |
 
 Tank cooling peaks near **240 rpm (~18 W)** and drops slightly at 360 rpm, while cartridge flow power keeps rising — more heat exchange in the tubing / less effective delivery to the tank at high flow. A second cartridge **with the catheter still in** barely helps (~15 W).
 
@@ -95,11 +97,11 @@ Tank cooling peaks near **240 rpm (~18 W)** and drops slightly at 360 rpm, while
 
 | Run | Config | \(P_\mathrm{tank}\) | \(P_\mathrm{flow}\) |
 |-----|--------|---------------------|---------------------|
-| `5_1_single_cart_60rmp_open_lines_without_catheder` | 1× cart, no catheter | **33.3 W** | 32.7 W |
-| `5_2_2x_cart_60rmp_open_lines_without_catheder` | 2× cart | **49.7 W** | 47.9 W |
-| `5_2_2x_cart_60rmp_open_lines_without_catheder_v2` | 2× cart (repeat) | **52.5 W** | 50.9 W |
+| `5_1_single_cart_60rmp_open_lines_without_catheder` | 1× cart, no catheter | **33.3 W** | 24.5 W |
+| `5_2_2x_cart_60rmp_open_lines_without_catheder` | 2× cart | **49.7 W** | 35.9 W |
+| `5_2_2x_cart_60rmp_open_lines_without_catheder_v2` | 2× cart (repeat) | **52.5 W** | 38.1 W |
 
-Removing the catheter roughly **doubles** single-cart tank power (~14 → 33 W). A second cartridge on open lines pushes tank power to **~50 W**. With the catheter back in (series 4, `4_5`), tank power collapses toward the single-cart range — the catheter remains the bottleneck. On open lines, \(P_\mathrm{tank}\) ≈ \(P_\mathrm{flow}\).
+Removing the catheter roughly **doubles** single-cart tank power (~14 → 33 W). A second cartridge on open lines pushes tank power to **~50 W**. With the catheter back in (series 4, `4_5`), tank power collapses toward the single-cart range — the catheter remains the bottleneck.
 
 ![Open lines 1× cart](output_data/5_1_single_cart_60rmp_open_lines_without_catheder.png)
 
@@ -107,8 +109,8 @@ Removing the catheter roughly **doubles** single-cart tank power (~14 → 33 W).
 
 | Run | RPM | \(P_\mathrm{tank}\) | \(P_\mathrm{flow}\) |
 |-----|-----|---------------------|---------------------|
-| `6_1_no_cart_ice_bucket_with_catheder_60rmp` | 60 | **18.3 W** | 41.6 W |
-| `6_1_no_cart_ice_bucket_with_catheder_120rmp` | 120 | **28.5 W** | 61.2 W |
+| `6_1_no_cart_ice_bucket_with_catheder_60rmp` | 60 | **18.3 W** | 31.2 W |
+| `6_1_no_cart_ice_bucket_with_catheder_120rmp` | 120 | **28.5 W** | 45.9 W |
 
 ![Ice bucket 60 rpm](output_data/6_1_no_cart_ice_bucket_with_catheder_60rmp.png)
 
@@ -116,7 +118,7 @@ Removing the catheter roughly **doubles** single-cart tank power (~14 → 33 W).
 
 | Run | Condition | \(P_\mathrm{tank}\) | \(P_\mathrm{flow}\) |
 |-----|-----------|---------------------|---------------------|
-| `sensor_log_20260717_142931` | White cart, 60 rpm | **17.5 W** | 32.5 W |
+| `sensor_log_20260717_142931` | White cart, 60 rpm | **17.5 W** | 24.4 W |
 
 ---
 

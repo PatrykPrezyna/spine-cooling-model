@@ -15,18 +15,18 @@
    - **Reverse** — swap the catheter connections so flow enters the former output and exits the former input (sensors stay with their ports: what the log calls input/output follows the fittings)
 5. Final deliverable: **pressure on X**, **flow rate (ml/min) on Y** — inlet, outlet for both orientations overlaid.
 
-Pump speed ↔ flow uses the prior calibration **≈ 0.782 ml/min per rpm** (≈ 60 rpm → 47 ml/min). Target steps roughly:
+Pump speed ↔ flow uses the 2026-08-04 gravimetric calibration **0.5862 ml/min per rpm** (≈ 60 rpm → 35 ml/min). The RPM steps below were planned against the older 0.782 factor; plotted flow rates are recomputed with the new constant:
 
-| Flow (ml/min) | ≈ RPM |
-|---------------|-------|
-| 10 | 13 |
-| 20 | 26 |
-| 30 | 38 |
-| 40 | 51 |
-| 50 | 64 |
-| 60 | 77 |
-| 80 | 102 |
-| 100 | 128 |
+| Target flow (old plan) | Set RPM | Actual flow (0.5862) |
+|------------------------|---------|----------------------|
+| 10 | 13 | ≈ 8 ml/min |
+| 20 | 26 | ≈ 15 ml/min |
+| 30 | 38 | ≈ 22 ml/min |
+| 40 | 51 | ≈ 30 ml/min |
+| 50 | 64 | ≈ 38 ml/min |
+| 60 | 77 | ≈ 45 ml/min |
+| 80 | 102 | ≈ 60 ml/min |
+| 100 | 128 | ≈ 75 ml/min |
 
 ## Setup
 

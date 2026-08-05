@@ -17,13 +17,15 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from Experiments.experiment_tools import load_sensor_csv, rpm_to_flow_ml_min
+from Experiments.experiment_tools import (
+    ML_PER_MIN_PER_RPM,
+    load_sensor_csv,
+    rpm_to_flow_ml_min,
+)
 
 HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
 OUTPUT_DATA = HERE / "output_data"
-# Prior calibration: ~0.7823 ml/min per rpm (≈ 60 rpm → 47 ml/min)
-ML_PER_MIN_PER_RPM = 0.7823
 STEADY_TAIL_FRACTION = 0.3  # use last 30% of each RPM step
 MIN_STEADY_SAMPLES = 50
 

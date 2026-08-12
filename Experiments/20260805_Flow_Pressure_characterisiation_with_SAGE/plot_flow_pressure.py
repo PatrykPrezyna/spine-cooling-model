@@ -97,6 +97,16 @@ def plot_file(csv_path: Path) -> Path:
             markersize=7,
             label=series_name,
         )
+        for x, y in zip(pts[col], pts["flow_ml_per_min"]):
+            ax.annotate(
+                f"{x:.2f}",
+                (x, y),
+                textcoords="offset points",
+                xytext=(5, 3),
+                fontsize=7,
+                color=color,
+                alpha=0.9,
+            )
 
     ax.set_xlabel("Pressure (psi)")
     ax.set_ylabel("Flow rate (ml/min)")

@@ -20,7 +20,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from Experiments.experiment_tools import ML_PER_MIN_PER_RPM
+from Experiments.experiment_tools import ML_PER_MIN_PER_RPM, ML_PER_MIN_PER_RPM_20260804
 
 HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
@@ -163,10 +163,10 @@ def plot_config(
     )
     ax.plot(
         x,
-        ML_PER_MIN_PER_RPM * x,
+        ML_PER_MIN_PER_RPM_20260804 * x,
         color="0.45",
         linestyle=":",
-        label=f"2026-08-04 adopted: {ML_PER_MIN_PER_RPM:.4f} ml/min per rpm",
+        label=f"2026-08-04: {ML_PER_MIN_PER_RPM_20260804:.4f} ml/min per rpm",
     )
 
     ax.set_xlim(0, max(rpm_max * 1.05, 1.0))
@@ -190,7 +190,7 @@ def plot_all(df: pd.DataFrame, slopes: dict[str, float]) -> list[Path]:
                 [
                     df["flow_ml_per_min"].to_numpy(),
                     df["keyence_ml_per_min"].to_numpy(),
-                    np.array([ML_PER_MIN_PER_RPM * rpm_max]),
+                    np.array([ML_PER_MIN_PER_RPM_20260804 * rpm_max]),
                     np.array([max(slopes.values()) * rpm_max]),
                 ]
             )
@@ -238,7 +238,8 @@ def main() -> None:
     print()
     for config, slope in slopes.items():
         print(f"{config:20s}  through-origin: {slope:.4f} ml/min per rpm")
-    print(f"2026-08-04 adopted:  {ML_PER_MIN_PER_RPM:.4f} ml/min per rpm")
+    print(f"2026-08-04 previous: {ML_PER_MIN_PER_RPM_20260804:.4f} ml/min per rpm")
+    print(f"Adopted (SAGE prototype 2): {ML_PER_MIN_PER_RPM:.4f} ml/min per rpm")
     for out in outs:
         print(f"Wrote {out}")
 

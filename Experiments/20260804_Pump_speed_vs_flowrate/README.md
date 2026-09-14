@@ -57,4 +57,4 @@ The adopted constant is the mean \(Q/\mathrm{RPM}\) on the 2 min holds at ≤ 18
 ## Conclusion
 
 - Delivery is still linear enough for a single factor, but the true slope is **~25% lower** than the June estimate (0.7823 → 0.5862).
-- Repo analyses should use `ML_PER_MIN_PER_RPM = 0.5862` from `Experiments/experiment_tools.py` (sensor logs that embed the old factor are recalibrated from RPM on load).
+- This factor is **superseded** by the 2026-09-14 Tygon PVC + SAGE prototype 2 gravimetric sweep (`20260914_Pump_speed_vs_flowrate_Tygon_PVC`): **0.8034 ml/min per rpm** (60 rpm ≈ 48 ml/min). Use `Experiments.experiment_tools.ML_PER_MIN_PER_RPM`.

@@ -15,7 +15,10 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from Experiments.experiment_tools import LEGACY_ML_PER_MIN_PER_RPM, ML_PER_MIN_PER_RPM
+from Experiments.experiment_tools import (
+    LEGACY_ML_PER_MIN_PER_RPM,
+    ML_PER_MIN_PER_RPM_20260804,
+)
 
 HERE = Path(__file__).resolve().parent
 RAW_CSV = HERE / "raw_data" / "gravimetric_runs.csv"
@@ -26,8 +29,8 @@ OUTPUT_PNG = OUTPUT_DATA / "pump_speed_vs_flowrate.png"
 WATER_DENSITY_G_PER_ML = 1.0
 # Prior (2026-06-22) calibration for overlay.
 PRIOR_ML_PER_MIN_PER_RPM = LEGACY_ML_PER_MIN_PER_RPM
-# Adopted repo constant (mean Q/RPM on 2 min holds ≤ 180 rpm).
-ADOPTED_ML_PER_MIN_PER_RPM = ML_PER_MIN_PER_RPM
+# Constant adopted from this experiment (mean Q/RPM on 2 min holds ≤ 180 rpm).
+ADOPTED_ML_PER_MIN_PER_RPM = ML_PER_MIN_PER_RPM_20260804
 
 
 def load_runs(path: Path) -> pd.DataFrame:

@@ -40,9 +40,9 @@ Through-origin slopes (scale, 5 min holds):
 
 | Configuration | ml/min per rpm |
 |---------------|----------------|
-| No catheter | **0.8168** |
-| SAGE prototype 2 | **0.8034** |
-| 2026-08-04 adopted | 0.5862 |
+| No catheter | 0.8168 |
+| SAGE prototype 2 (adopted) | **0.8034** |
+| 2026-08-04 (previous tubing) | 0.5862 |
 
 Raw logs (open the file to see the table; Markdown cannot embed a CSV the way it does a PNG):
 
@@ -53,5 +53,6 @@ Raw logs (open the file to see the table; Markdown cannot embed a CSV the way it
 
 ## Conclusion
 
-- the calculation shoul be updated from x to y
-- if the catheder is connected the meassuremensts 
+- Adopt `ML_PER_MIN_PER_RPM = 0.8034` from the SAGE prototype 2 gravimetric sweep (`Experiments/experiment_tools.py`). Example: 60 rpm → ≈ **48 ml/min**.
+- That is the intended use case (Tygon PVC pump tubing + catheter). No-catheter was similar (0.8168).
+- The 2026-08-04 factor **0.5862** was for different pump tubing and is superseded.

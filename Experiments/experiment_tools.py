@@ -17,10 +17,12 @@ import pandas as pd
 
 WATER_SPECIFIC_HEAT_J_KG_K = 4186.0
 
-# Gravimetric pump calibration (2026-08-04): Q [ml/min] ≈ k · RPM.
-# Supersedes the 2026-06-22 estimate of 0.7823 ml/min per rpm.
-ML_PER_MIN_PER_RPM = 0.5862
-LEGACY_ML_PER_MIN_PER_RPM = 0.7823
+# Gravimetric pump calibration (2026-09-14): Tygon PVC 1/8" ID pump tubing,
+# SAGE prototype 2 connected. Q [ml/min] ≈ k · RPM.
+# Supersedes 2026-08-04 (0.5862, previous pump tubing) and 2026-06-22 (0.7823).
+ML_PER_MIN_PER_RPM = 0.8034
+ML_PER_MIN_PER_RPM_20260804 = 0.5862  # previous pump tubing
+LEGACY_ML_PER_MIN_PER_RPM = 0.7823  # 2026-06-22
 
 
 @dataclass(frozen=True)
@@ -63,7 +65,7 @@ def load_sensor_csv(
     When ``recalibrate_pump_flow`` is True and a pump set-speed column is
     present, ``pump_flow_ml_per_s`` is recomputed from RPM using the current
     gravimetric calibration. Logged flow values were historically derived from
-    the superseded 0.7823 ml/min-per-rpm factor.
+    older ml/min-per-rpm factors (0.7823, then 0.5862).
     """
 
     df = pd.read_csv(path)

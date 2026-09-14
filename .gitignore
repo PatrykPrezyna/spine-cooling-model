@@ -1,1 +1,2 @@
 *.png
+!Experiments/20260914_Pump_speed_vs_flowrate_Tygon_PVC/output_data/*.png

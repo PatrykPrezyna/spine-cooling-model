@@ -1,4 +1,10 @@
 """Catheter flow-pressure characterisation: forward vs reverse comparison.
+
+CONNECTION MISTAKE (do not edit raw_data/):
+If logged catheder_output_psi is higher than catheder_input_psi, the catheter
+pressure fittings / channels were swapped on the bench. The reverse black-
+catheter log is that case. Columns are swapped before plotting so both
+panels use physical upstream (input, higher P) vs downstream (output, lower P).
 """
 
 from pathlib import Path
@@ -8,24 +14,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+HERE = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT))
 
 from Experiments.experiment_tools import rpm_to_flow_ml_min
+from plot_flow_pressure import (
+    CATHETER_IN_COL,
+    CATHETER_OUT_COL,
+    CONNECTION_MISTAKE_NOTE,
+    correct_swapped_catheter_pressures,
+)
 
-HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
 OUTPUT_DATA = HERE / "output_data"
 
 RPM_COL = "peristaltic_pump_set_speed_rpm"
 
 
-def _load(csv_path: Path) -> pd.DataFrame:
+def _load(csv_path: Path) -> tuple[pd.DataFrame, bool]:
     df = pd.read_csv(csv_path)
     df = df.loc[:, ~df.columns.duplicated()]
     df.columns = [c.strip().replace("\\", "").lower() for c in df.columns]
     df["timestamp"] = pd.to_datetime(df["timestamp"])
-    return df.sort_values("timestamp").reset_index(drop=True)
+    df = df.sort_values("timestamp").reset_index(drop=True)
+    return correct_swapped_catheter_pressures(df, csv_path)
 
 
 def raw_points(df: pd.DataFrame, col: str) -> pd.DataFrame:
@@ -117,29 +131,44 @@ def _draw_pair(ax, series, title):
 def plot_reversal(
     forward_csv: Path, reverse_csv: Path, out: Path | None = None
 ) -> Path:
-    fwd = _load(forward_csv)
-    rev = _load(reverse_csv)
+    fwd, fwd_swapped = _load(forward_csv)
+    rev, rev_swapped = _load(reverse_csv)
 
     fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
 
+    # After correcting a connection mistake, both logs use physical channels:
+    # input = upstream (higher P), output = downstream (lower P).
     _draw_pair(
         ax_l,
         [
-            ("Forward", raw_points(fwd, "catheder_input_psi"), "tab:blue", "o"),
-            ("Reverse", raw_points(rev, "catheder_output_psi"), "tab:orange", "s"),
+            ("Forward", raw_points(fwd, CATHETER_IN_COL), "tab:blue", "o"),
+            ("Reverse", raw_points(rev, CATHETER_IN_COL), "tab:orange", "s"),
         ],
-        title="Upstream",
+        title="Upstream (catheter input)",
     )
     _draw_pair(
         ax_r,
         [
-            ("Forward", raw_points(fwd, "catheder_output_psi"), "tab:blue", "o"),
-            ("Reverse", raw_points(rev, "catheder_input_psi"), "tab:orange", "s"),
+            ("Forward", raw_points(fwd, CATHETER_OUT_COL), "tab:blue", "o"),
+            ("Reverse", raw_points(rev, CATHETER_OUT_COL), "tab:orange", "s"),
         ],
-        title="Downstream",
+        title="Downstream (catheter output)",
     )
 
-    fig.suptitle("Catheter flow-pressure characterisation -- reversal comparison")
+    title = "Catheter flow-pressure characterisation -- reversal comparison"
+    if fwd_swapped or rev_swapped:
+        which = []
+        if fwd_swapped:
+            which.append(forward_csv.name)
+        if rev_swapped:
+            which.append(reverse_csv.name)
+        title += (
+            "\nCONNECTION MISTAKE: plotted with in/out swapped for "
+            + ", ".join(which)
+            + " (raw_data/ not modified)"
+        )
+        print(CONNECTION_MISTAKE_NOTE)
+    fig.suptitle(title)
 
     OUTPUT_DATA.mkdir(parents=True, exist_ok=True)
     if out is None:

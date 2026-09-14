@@ -1,0 +1,7 @@
+{
+  "k_ref": 1.8856,
+  "n_exponent": 0.3254,
+  "reference_flow_ml_min": 60.0,
+  "fitted_from": "20260821_144040_sensors_calibration.csv",
+  "fitted_at": "2026-08-21T19:57:52+00:00"
+}

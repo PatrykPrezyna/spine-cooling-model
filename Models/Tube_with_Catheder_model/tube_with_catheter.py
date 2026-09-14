@@ -37,10 +37,12 @@ Governing equation in each material (axisymmetric conduction):
 
 import math
 import sys
+from io import BytesIO
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -116,24 +118,27 @@ OUTER_WALL_FIXED_TO_EXTERNAL_TEMPERATURE = False
 END_BOUNDARY_CONDITION = "insulated"
 
 # --- Catheter (preferred: effective-conductance representation) ---
-# "effective_conductance" uses G_CATHETER_W_PER_K directly (default).
-# "detailed" builds G from the film coefficient and outer surface area.
-CATHETER_REPRESENTATION = "effective_conductance"
-
-# ASSUMED conductance.  Benchtop calorimetry of a similar immersed catheter
-# at ~47–60 mL/min gave UA of order 0.8–1.3 W/K.  Replace with the value
-# characterised for this catheter in this geometry.
-G_CATHETER_W_PER_K = 1.0
+# G is the INTERNAL conductance from the catheter OUTER WALL to the coolant
+# (both lumens + polymer).  It must NOT include mixed-tank film resistance:
+# the 2-D water grid is the external path.
+#
+# Dual-lumen model at 60 mL/min with fitted K = 1.89, 33 cm catheter:
+#     G_wall_to_coolant ≈ 3.22 W/K
+# Scaled to this 30 cm active length: 3.22 * 30/33 ≈ 2.93 W/K.
+# Do not use G_eff = Q / (T_tank − T_inlet) ≈ 1.3 W/K here.  That value
+# already includes tank-side convection and is defined on bulk tank
+# temperature, not on the wall or the first water cell.
+G_CATHETER_W_PER_K = 2.93
 
 CATHETER_COOLANT_INLET_TEMPERATURE_C = 5.0
 CATHETER_COOLANT_FLOW_ML_MIN = 60.0
 CATHETER_COOLANT_DENSITY_KG_M3 = 998.0          # assumed, water at 20 °C
 CATHETER_COOLANT_SPECIFIC_HEAT_J_KG_K = 4182.0  # assumed, water at 20 °C
 
-# Coolant temperature along the active length.
-#   True  : T_coolant = inlet temperature everywhere (simplest)
-#   False : coolant warms as it picks up heat (energy balance along z)
-USE_CONSTANT_COOLANT_TEMPERATURE = True
+# Coolant warms along the active length (energy balance).  Using a constant
+# 5 °C reference over-cools the wall: the characterised catheter outlet is
+# ~15 °C at 60 mL/min in a 36 °C tank.
+USE_CONSTANT_COOLANT_TEMPERATURE = False
 CATHETER_FLOW_TOWARD_POSITIVE_Z = True          # inlet at axial start
 
 # Detailed-representation parameters (used only if CATHETER_REPRESENTATION
@@ -161,6 +166,10 @@ FOURIER_SAFETY_FACTOR = 0.40                    # explicit-step stability margin
 # Output
 SAVE_PLOTS = True
 SHOW_PLOTS = True
+SAVE_GIF = True
+GIF_N_FRAMES = 5
+GIF_SOURCE_FRAME_COUNT = 10
+GIF_FRAME_DURATION_S = 1.0
 OUTPUT_DIRECTORY = Path(__file__).resolve().parent
 
 
@@ -185,7 +194,10 @@ catheter_body_end_m = catheter_active_end_m + catheter_body_after_active_m
 sensor_offset_from_catheter_m = SENSOR_OFFSET_FROM_CATHETER_MM / 1000.0
 
 # Requested probe coordinates (m).  The solver samples the nearest water cell.
-probe_1_r_m = catheter_outer_radius_m
+# P1: centreline at the catheter tip (middle of the rounded end).
+# P2: 3 mm radially outward from the catheter outer wall, at the end of
+#     the active cooling length.
+probe_1_r_m = 0.0
 probe_1_z_m = catheter_body_end_m
 probe_2_r_m = catheter_outer_radius_m + sensor_offset_from_catheter_m
 probe_2_z_m = catheter_active_end_m
@@ -221,29 +233,11 @@ T_polymer_initial = POLYMER_INITIAL_TEMPERATURE_C
 T_external = EXTERNAL_WATER_TEMPERATURE_C
 T_coolant_inlet = CATHETER_COOLANT_INLET_TEMPERATURE_C
 
-# Catheter conductance actually used by the solver.
+# Catheter INTERNAL conductance used by the solver (wall to coolant).
+G_catheter = G_CATHETER_W_PER_K
 catheter_surface_area_m2 = (
     2.0 * math.pi * catheter_outer_radius_m * catheter_active_length_m
 )
-if CATHETER_REPRESENTATION == "effective_conductance":
-    G_catheter = G_CATHETER_W_PER_K
-elif CATHETER_REPRESENTATION == "detailed":
-    # First-version detailed option: film conductance on the outer surface.
-    # Internal lumens are still not resolved.  G_CATHETER_W_PER_K is ignored.
-    G_catheter = H_CATHETER_TO_WATER_W_M2_K * catheter_surface_area_m2
-    print(
-        "Using detailed catheter representation: "
-        f"G = h * A_outer = {G_catheter:.4f} W/K "
-        f"(h = {H_CATHETER_TO_WATER_W_M2_K:.1f} W/m²K)."
-    )
-    if CATHETER_THERMAL_CAPACITANCE_J_K > 0.0:
-        print(
-            "NOTE: catheter thermal capacitance is listed but not used in "
-            "this first version.  The modelled domain starts at the catheter "
-            "outer surface."
-        )
-else:
-    raise ValueError("CATHETER_REPRESENTATION must be 'effective_conductance' or 'detailed'.")
 
 coolant_heat_capacity_rate_W_PER_K = (
     CATHETER_COOLANT_DENSITY_KG_M3
@@ -336,7 +330,13 @@ def nearest_water_cell(r_target_m, z_target_m):
     return int(i_found), int(j_found)
 
 
-i_probe_1, j_probe_1 = nearest_water_cell(probe_1_r_m, probe_1_z_m)
+i_probe_1 = 0
+j_probe_1 = int(np.where(z_center >= catheter_body_end_m - 1.0e-12)[0][0])
+if not is_water_2d[i_probe_1, j_probe_1]:
+    # First cell after the tip can still be blocked if z_center == z_body;
+    # step forward until we are in open water on the centreline.
+    while j_probe_1 < n_z - 1 and not is_water_2d[i_probe_1, j_probe_1]:
+        j_probe_1 += 1
 i_probe_2, j_probe_2 = nearest_water_cell(probe_2_r_m, probe_2_z_m)
 probe_1_r_used_m = r_center[i_probe_1]
 probe_1_z_used_m = z_center[j_probe_1]
@@ -392,17 +392,27 @@ else:
     )
 G_outer = 1.0 / R_outer
 
-# --- Catheter cooling on the cylindrical surface, active length only ---
-# The 2 cm body past the active section has no cooling (adiabatic wall).
-# The tip face is also adiabatic.  Heat still reaches the wake by conduction
-# through the water around the tip.
-overlap_m = np.maximum(
+# --- Catheter wall: internal cooling + conduction to the adjacent water ---
+# G_catheter_j : wall → coolant, active length only (integrates to G_catheter).
+# G_face_j     : first water cell centre → outer wall, along the whole body.
+# The previous model applied G_catheter to (T_water − T_inlet).  That put the
+# polymer ΔT onto the water and made the near-catheter water look ~15 °C.
+# A thermistor on the real wall sees T_wall, which sits between the coolant
+# and the local water.
+overlap_active_m = np.maximum(
     0.0,
     np.minimum(z_face[1:], catheter_active_end_m)
     - np.maximum(z_face[:-1], catheter_axial_start_m),
 )
-G_catheter_j = G_catheter * overlap_m / catheter_active_length_m
+G_catheter_j = G_catheter * overlap_active_m / catheter_active_length_m
 G_catheter_integrated = float(G_catheter_j.sum())
+
+along_body = z_center < catheter_body_end_m
+R_half_to_wall = np.log(
+    r_center[i_annulus_water] / catheter_outer_radius_m
+) / (2.0 * math.pi * k_water * dz)
+G_face_j = np.zeros(n_z)
+G_face_j[along_body] = 1.0 / R_half_to_wall[along_body]
 
 # --- Tube-end boundary ---
 A_end_m2 = ring_area_m2.copy()
@@ -419,7 +429,7 @@ G_end_left[is_blocked[:, 0]] = 0.0
 
 # --- Explicit time-step stability (active cells only) ---
 sum_G = np.zeros((n_r, n_z))
-sum_G[i_annulus_water, :] += G_catheter_j
+sum_G[i_annulus_water, :] += G_face_j
 sum_G[-1, :] += G_outer
 sum_G[:-1, :] += G_radial_interior
 sum_G[1:, :] += G_radial_interior
@@ -450,34 +460,53 @@ T[is_polymer_2d] = T_polymer_initial
 T[is_blocked] = T_water_initial
 T_initial = T.copy()
 
+T_wall = np.full(n_z, T_water_initial)          # catheter outer-wall T, °C
+T_wall[np.logical_not(along_body)] = np.nan
 T_coolant_axial = np.full(n_z, T_coolant_inlet)
+T_wall_initial = T_wall.copy()
 
 
-def coolant_temperature_along_catheter(T_wall_water):
-    """Local coolant temperature in each axial cell, °C."""
-    if USE_CONSTANT_COOLANT_TEMPERATURE:
-        return np.full(n_z, T_coolant_inlet)
+def update_catheter_wall_and_coolant(T_water_at_wall):
+    """Quasi-steady outer-wall T and local coolant T along the catheter.
 
+    At each axial station:
+        T_wall = (G_face * T_water + G_internal * T_coolant)
+                 / (G_face + G_internal)
+    Coolant then warms by the heat taken from the wall.
+    """
+    T_wall_line = np.full(n_z, np.nan)
     T_c_line = np.full(n_z, T_coolant_inlet)
-    axial_order = range(n_z) if CATHETER_FLOW_TOWARD_POSITIVE_Z else range(n_z - 1, -1, -1)
+    axial_order = (
+        range(n_z) if CATHETER_FLOW_TOWARD_POSITIVE_Z
+        else range(n_z - 1, -1, -1)
+    )
     T_c = T_coolant_inlet
     for j in axial_order:
         T_c_line[j] = T_c
-        heat_into_coolant_W = G_catheter_j[j] * (T_wall_water[j] - T_c)
-        if coolant_heat_capacity_rate_W_PER_K > 0.0:
-            T_c = T_c + heat_into_coolant_W / coolant_heat_capacity_rate_W_PER_K
-    return T_c_line
+        g_face = G_face_j[j]
+        g_internal = G_catheter_j[j]
+        if g_face + g_internal > 0.0:
+            T_c_used = T_c if not USE_CONSTANT_COOLANT_TEMPERATURE else T_coolant_inlet
+            T_wall_line[j] = (
+                g_face * T_water_at_wall[j] + g_internal * T_c_used
+            ) / (g_face + g_internal)
+            if (not USE_CONSTANT_COOLANT_TEMPERATURE) and g_internal > 0.0:
+                heat_into_coolant_W = g_internal * (T_wall_line[j] - T_c)
+                if coolant_heat_capacity_rate_W_PER_K > 0.0:
+                    T_c = T_c + heat_into_coolant_W / coolant_heat_capacity_rate_W_PER_K
+        elif along_body[j]:
+            T_wall_line[j] = T_water_at_wall[j]
+    return T_wall_line, T_c_line
 
 
 # =============================================================================
 # 7. Boundary conditions  (encoded as face conductances above)
 # =============================================================================
 #
-# Inner radial face along the active catheter length:
-#     Q_removed = G_j * (T_water_at_surface − T_coolant)
-#     The 2 cm inactive body and the tip face have G = 0 (adiabatic).
-#     Past the tip, r = 0 is a symmetry axis (dT/dr = 0) and the core
-#     is ordinary water, so cooling wraps around the end.
+# Inner radial face along the catheter body:
+#     Water cell --G_face--> T_wall --G_internal--> T_coolant
+#     G_internal is zero on the 2 cm inactive body (no cooling).
+#     Past the tip, r = 0 is a symmetry axis and the core is open water.
 #
 # Outer polymer face:
 #     Q_into_wall = G_outer * (T_external − T_outer_cell)
@@ -498,6 +527,7 @@ def coolant_temperature_along_catheter(T_wall_water):
 
 snapshot_times_s = [0.0]
 snapshot_fields = [T_initial.copy()]
+snapshot_wall_fields = [T_wall_initial.copy()]
 next_snapshot_s = SNAPSHOT_INTERVAL_S
 
 heat_from_external_J = 0.0
@@ -526,19 +556,21 @@ print(
     f"tube length {tube_length_m*100:.1f} cm"
 )
 print(
-    f"  P1 body tip: requested "
+    f"  P1 catheter tip (centreline): requested "
     f"z = {probe_1_z_m*100:.2f} cm, r = {probe_1_r_m*1000:.2f} mm "
     f"→ cell z = {probe_1_z_used_m*100:.2f} cm, r = {probe_1_r_used_m*1000:.2f} mm"
 )
 print(
-    f"  P2 cooling zone +{SENSOR_OFFSET_FROM_CATHETER_MM:.1f} mm: requested "
+    f"  P2, 3 mm from catheter wall: requested "
     f"z = {probe_2_z_m*100:.2f} cm, r = {probe_2_r_m*1000:.2f} mm "
     f"→ cell z = {probe_2_z_used_m*100:.2f} cm, r = {probe_2_r_used_m*1000:.2f} mm"
 )
 print()
 
 for step in range(1, max_steps + 1):
-    T_coolant_axial = coolant_temperature_along_catheter(T[i_annulus_water, :])
+    T_wall, T_coolant_axial = update_catheter_wall_and_coolant(
+        T[i_annulus_water, :]
+    )
 
     # Face heat rates, positive in the +r or +z direction, watts.
     Q_r_face = np.zeros((n_r + 1, n_z))
@@ -550,9 +582,9 @@ for step in range(1, max_steps + 1):
     # Interior radial conduction (already zero on catheter-blocked faces).
     Q_r_face[1:-1, :] = G_radial_interior * (T[:-1, :] - T[1:, :])
 
-    # Active-length cooling at the catheter outer surface.
-    Q_r_face[i_catheter_face, :] += -G_catheter_j * (
-        T[i_annulus_water, :] - T_coolant_axial
+    # Water ↔ catheter outer wall (only along the body, where G_face > 0).
+    Q_r_face[i_catheter_face, along_body] = G_face_j[along_body] * (
+        T_wall[along_body] - T[i_annulus_water, along_body]
     )
 
     # Outer wall: heat flowing +r (out of the domain).
@@ -574,7 +606,7 @@ for step in range(1, max_steps + 1):
     Q_net_W[is_blocked] = 0.0
 
     Q_catheter_W = float(
-        np.sum(G_catheter_j * (T[i_annulus_water, :] - T_coolant_axial))
+        np.nansum(G_catheter_j * (T_wall - T_coolant_axial))
     )
     Q_external_W = float(-Q_r_face[-1, :].sum())
     Q_ends_W = float(Q_z_face[:, 0].sum() - Q_z_face[:, -1].sum())
@@ -597,6 +629,7 @@ for step in range(1, max_steps + 1):
     if time_s + 0.5 * dt >= next_snapshot_s:
         snapshot_times_s.append(time_s)
         snapshot_fields.append(T.copy())
+        snapshot_wall_fields.append(T_wall.copy())
         next_snapshot_s += SNAPSHOT_INTERVAL_S
 
     # 9. Steady-state detection
@@ -623,15 +656,21 @@ for step in range(1, max_steps + 1):
         progress_marker += 0.10
 
 T_final = T.copy()
+T_wall_final = T_wall.copy()
 if time_s not in snapshot_times_s:
     snapshot_times_s.append(time_s)
     snapshot_fields.append(T_final.copy())
+    snapshot_wall_fields.append(T_wall_final.copy())
 
 probe_1_history_C = np.array(
     [field[i_probe_1, j_probe_1] for field in snapshot_fields]
 )
 probe_2_history_C = np.array(
     [field[i_probe_2, j_probe_2] for field in snapshot_fields]
+)
+j_wall_probe = int(np.where(G_catheter_j > 0.0)[0][-1])
+wall_at_cooling_end_history_C = np.array(
+    [wall[j_wall_probe] for wall in snapshot_wall_fields]
 )
 probe_times_s = np.array(snapshot_times_s)
 
@@ -659,23 +698,31 @@ t_plot_intermediate_s = INTERMEDIATE_FRACTION_OF_STEADY_STATE * t_plot_steady_s
 
 def nearest_snapshot(target_s):
     index = int(np.argmin(np.abs(snapshot_times - target_s)))
-    return snapshot_times[index], snapshot_fields[index]
+    return snapshot_times[index], snapshot_fields[index], snapshot_wall_fields[index]
 
 
-t_initial_used_s, T_plot_initial = nearest_snapshot(t_plot_initial_s)
-t_intermediate_used_s, T_plot_intermediate = nearest_snapshot(t_plot_intermediate_s)
-t_steady_used_s, T_plot_steady = nearest_snapshot(t_plot_steady_s)
+t_initial_used_s, T_plot_initial, T_wall_initial_plot = nearest_snapshot(t_plot_initial_s)
+t_intermediate_used_s, T_plot_intermediate, T_wall_intermediate_plot = nearest_snapshot(
+    t_plot_intermediate_s
+)
+t_steady_used_s, T_plot_steady, T_wall_steady_plot = nearest_snapshot(t_plot_steady_s)
 
-# Shared colour scale from the three selected fields.
+# Shared colour scale from the three selected fields, including the wall.
 T_color_min = min(
     float(np.nanmin(T_plot_initial[is_active])),
     float(np.nanmin(T_plot_intermediate[is_active])),
     float(np.nanmin(T_plot_steady[is_active])),
+    float(np.nanmin(T_wall_initial_plot)),
+    float(np.nanmin(T_wall_intermediate_plot)),
+    float(np.nanmin(T_wall_steady_plot)),
 )
 T_color_max = max(
     float(np.nanmax(T_plot_initial[is_active])),
     float(np.nanmax(T_plot_intermediate[is_active])),
     float(np.nanmax(T_plot_steady[is_active])),
+    float(np.nanmax(T_wall_initial_plot)),
+    float(np.nanmax(T_wall_intermediate_plot)),
+    float(np.nanmax(T_wall_steady_plot)),
 )
 if abs(T_color_max - T_color_min) < 1.0e-6:
     T_color_min -= 0.5
@@ -709,18 +756,21 @@ colormap = "RdYlBu_r"
 plot_jobs = [
     (
         T_plot_initial,
+        T_wall_initial_plot,
         t_initial_used_s,
         "Initial temperature distribution",
         "tube_with_catheter_initial.png",
     ),
     (
         T_plot_intermediate,
+        T_wall_intermediate_plot,
         t_intermediate_used_s,
         "Intermediate temperature distribution",
         "tube_with_catheter_intermediate.png",
     ),
     (
         T_plot_steady,
+        T_wall_steady_plot,
         t_steady_used_s,
         "Steady-state temperature distribution",
         "tube_with_catheter_steady.png",
@@ -729,40 +779,18 @@ plot_jobs = [
 
 
 def draw_geometry_overlays(ax):
-    """Catheter body, active length, interfaces, outer wall."""
-    ax.fill_between(
-        [z_active_start_cm, z_body_end_cm],
-        -catheter_r_mm,
-        catheter_r_mm,
-        color="0.82",
-        zorder=4,
-        label="Catheter body (not resolved)",
-    )
-    ax.fill_between(
-        [z_active_start_cm, z_active_end_cm],
-        -catheter_r_mm,
-        catheter_r_mm,
-        color="0.45",
-        zorder=5,
-        label="Active cooling length",
-    )
+    """Catheter shaft, interfaces, and outer wall.  Round tip is drawn later."""
     ax.plot(
         [z_active_start_cm, z_body_end_cm],
         [catheter_r_mm, catheter_r_mm],
         color="k",
         linewidth=1.2,
         zorder=6,
+        label="Catheter outer wall",
     )
     ax.plot(
         [z_active_start_cm, z_body_end_cm],
         [-catheter_r_mm, -catheter_r_mm],
-        color="k",
-        linewidth=1.2,
-        zorder=6,
-    )
-    ax.plot(
-        [z_body_end_cm, z_body_end_cm],
-        [-catheter_r_mm, catheter_r_mm],
         color="k",
         linewidth=1.2,
         zorder=6,
@@ -799,43 +827,138 @@ def draw_geometry_overlays(ax):
         linewidth=1.6,
         zorder=6,
     )
-    ax.axvline(z_active_end_cm, color="k", linewidth=1.0, linestyle=":", zorder=6)
+    ax.axvline(
+        z_active_end_cm, color="k", linewidth=1.0, linestyle=":", zorder=6,
+        label="End of active cooling",
+    )
     ax.axvline(z_body_end_cm, color="k", linewidth=1.0, linestyle=":", zorder=6)
 
-    # Measuring points (shown on both sides of the mirrored cut).
-    # Measuring points, shown once on the +r side of each time snapshot.
+
+def visual_length_cm_for_mm(ax, length_mm):
+    """Convert a radial millimetre length to an axial cm length that looks
+    the same number of pixels on this axes (so a tip drawn this way is round)."""
+    ax.figure.canvas.draw()
+    bbox = ax.get_window_extent()
+    x0, x1 = ax.get_xlim()
+    y0, y1 = ax.get_ylim()
+    return abs(length_mm * ((x1 - x0) / bbox.width) * (bbox.height / (y1 - y0)))
+
+
+def draw_round_tip_and_sensors(ax):
+    """Rounded catheter end, simple sensor markers, and 3 mm / 20 mm callouts."""
+    dz_cap_cm = visual_length_cm_for_mm(ax, catheter_r_mm)
+    phi = np.linspace(-0.5 * math.pi, 0.5 * math.pi, 81)
+    z_cap_cm = z_body_end_cm + dz_cap_cm * np.cos(phi)
+    r_cap_mm = catheter_r_mm * np.sin(phi)
+    ax.plot(z_cap_cm, r_cap_mm, color="k", linewidth=1.2, zorder=6)
+
+    p1_z_cm = z_body_end_cm + dz_cap_cm
+    p1_r_mm = 0.0
+    p2_z_cm = probe_2_z_used_m * 100.0
+    p2_r_mm = probe_2_r_used_m * 1000.0
+
     ax.plot(
-        probe_1_z_used_m * 100.0,
-        probe_1_r_used_m * 1000.0,
+        p1_z_cm,
+        p1_r_mm,
         marker="o",
-        markersize=8,
+        markersize=10,
         markerfacecolor="white",
         markeredgecolor="black",
-        markeredgewidth=1.2,
+        markeredgewidth=1.4,
         linestyle="None",
         zorder=8,
-        label="P1 body tip",
+        label="P1 catheter tip (centre)",
     )
     ax.plot(
-        probe_2_z_used_m * 100.0,
-        probe_2_r_used_m * 1000.0,
+        p2_z_cm,
+        p2_r_mm,
         marker="s",
-        markersize=8,
-        markerfacecolor="yellow",
+        markersize=10,
+        markerfacecolor="gold",
         markeredgecolor="black",
-        markeredgewidth=1.2,
+        markeredgewidth=1.4,
         linestyle="None",
         zorder=8,
-        label="P2 cooling zone, +3 mm",
+        label="P2, 3 mm from catheter",
+    )
+
+    # 3 mm from catheter outer wall to P2 (radial).
+    ax.annotate(
+        "",
+        xy=(p2_z_cm, p2_r_mm),
+        xytext=(p2_z_cm, catheter_r_mm),
+        arrowprops={
+            "arrowstyle": "<->",
+            "color": "black",
+            "lw": 1.1,
+            "shrinkA": 2,
+            "shrinkB": 2,
+        },
+        zorder=8,
+    )
+    ax.text(
+        p2_z_cm - 0.35,
+        0.5 * (catheter_r_mm + p2_r_mm),
+        "3 mm",
+        fontsize=9,
+        fontweight="bold",
+        va="center",
+        ha="right",
+        color="black",
+        zorder=8,
+        bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.8, "pad": 1.5},
+    )
+
+    # 20 mm from the end of the cooling zone to the tip sensor (axial).
+    r_dim_mm = -catheter_r_mm - 3.2
+    ax.annotate(
+        "",
+        xy=(p1_z_cm, r_dim_mm),
+        xytext=(z_active_end_cm, r_dim_mm),
+        arrowprops={
+            "arrowstyle": "<->",
+            "color": "black",
+            "lw": 1.1,
+            "shrinkA": 0,
+            "shrinkB": 0,
+        },
+        zorder=8,
+    )
+    ax.plot(
+        [z_active_end_cm, z_active_end_cm],
+        [r_dim_mm, 0.0],
+        color="black",
+        linewidth=0.8,
+        linestyle=":",
+        zorder=7,
+    )
+    ax.plot(
+        [p1_z_cm, p1_z_cm],
+        [r_dim_mm, 0.0],
+        color="black",
+        linewidth=0.8,
+        linestyle=":",
+        zorder=7,
+    )
+    ax.text(
+        0.5 * (z_active_end_cm + p1_z_cm),
+        r_dim_mm - 1.5,
+        "20 mm",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="top",
+        color="black",
+        zorder=8,
+        bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.8, "pad": 1.5},
     )
 
 
-saved_plot_paths = []
-for T_plot, t_plot, title_prefix, filename in plot_jobs:
-    fig, ax = plt.subplots(figsize=(14.0, 5.8))
-
+def draw_temperature_field(ax, T_plot, T_wall_plot, t_plot, title_prefix):
+    """Full-diameter temperature cut at one instant, drawn onto an existing axes."""
     T_pos = T_plot.copy()
-    T_pos[is_blocked] = np.nan
+    wall_j = np.broadcast_to(np.arange(n_z), (n_r, n_z))
+    T_pos[is_blocked] = T_wall_plot[wall_j[is_blocked]]
     T_neg = T_pos[::-1, :]
 
     mesh_pos = ax.pcolormesh(
@@ -860,17 +983,11 @@ for T_plot, t_plot, title_prefix, filename in plot_jobs:
     )
 
     draw_geometry_overlays(ax)
-
-    colorbar = fig.colorbar(mesh_pos, ax=ax, pad=0.02)
-    colorbar.set_label("Temperature (°C)")
-    colorbar.set_ticks(np.linspace(T_color_min, T_color_max, 6))
-
     ax.set_xlabel("Axial position (cm)")
     ax.set_ylabel("Radial position (mm)")
     ax.set_title(f"{title_prefix}  —  t = {t_plot:.1f} s")
     ax.set_xlim(z_left_cm, z_right_cm)
     ax.set_ylim(-outer_r_mm * 1.08, outer_r_mm * 1.08)
-    ax.legend(loc="upper right", fontsize=8, framealpha=0.92)
     ax.text(
         0.01,
         0.02,
@@ -879,8 +996,102 @@ for T_plot, t_plot, title_prefix, filename in plot_jobs:
         fontsize=8,
         va="bottom",
     )
-    fig.tight_layout()
+    return mesh_pos
 
+
+def add_field_colorbar(fig, ax, mesh_pos):
+    colorbar = fig.colorbar(mesh_pos, ax=ax, pad=0.02)
+    colorbar.set_label("Temperature (°C)")
+    colorbar.set_ticks(np.linspace(T_color_min, T_color_max, 6))
+    return colorbar
+
+
+def make_temperature_field_figure(T_plot, T_wall_plot, t_plot, title_prefix):
+    """Full-diameter temperature cut at one instant."""
+    fig, ax = plt.subplots(figsize=(14.0, 5.8))
+    mesh_pos = draw_temperature_field(ax, T_plot, T_wall_plot, t_plot, title_prefix)
+    add_field_colorbar(fig, ax, mesh_pos)
+    fig.tight_layout()
+    draw_round_tip_and_sensors(ax)
+    ax.legend(loc="upper right", fontsize=8, framealpha=0.92)
+    return fig, ax
+
+
+def draw_live_sensor_traces(ax, t_now_s, t_xlim_s, T_ylim):
+    """P1 and P2 traces from t = 0 up to the current GIF frame."""
+    keep = probe_times_s <= t_now_s + 1.0e-9
+    t_hist = probe_times_s[keep]
+    T1_hist = probe_1_history_C[keep]
+    T2_hist = probe_2_history_C[keep]
+
+    ax.plot(
+        t_hist,
+        T1_hist,
+        color="0.15",
+        linewidth=2.0,
+        label=f"P1 tip  {T1_hist[-1]:.2f} °C",
+    )
+    ax.plot(
+        t_hist,
+        T2_hist,
+        color="darkgoldenrod",
+        linewidth=2.0,
+        label=f"P2, 3 mm  {T2_hist[-1]:.2f} °C",
+    )
+    ax.plot(
+        t_hist[-1],
+        T1_hist[-1],
+        marker="o",
+        markersize=9,
+        markerfacecolor="white",
+        markeredgecolor="black",
+        markeredgewidth=1.3,
+        linestyle="None",
+        zorder=5,
+    )
+    ax.plot(
+        t_hist[-1],
+        T2_hist[-1],
+        marker="s",
+        markersize=9,
+        markerfacecolor="gold",
+        markeredgecolor="black",
+        markeredgewidth=1.3,
+        linestyle="None",
+        zorder=5,
+    )
+    ax.axvline(t_now_s, color="0.35", linewidth=1.0, linestyle=":", zorder=2)
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Temperature (°C)")
+    ax.set_title("Live sensor traces")
+    ax.set_xlim(0.0, t_xlim_s)
+    ax.set_ylim(T_ylim[0], T_ylim[1])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best", fontsize=8, framealpha=0.92)
+
+
+def make_gif_frame_figure(T_plot, T_wall_plot, t_plot, t_xlim_s, T_ylim):
+    fig, (ax_field, ax_trace) = plt.subplots(
+        2,
+        1,
+        figsize=(14.0, 8.4),
+        gridspec_kw={"height_ratios": [2.4, 1.0]},
+        layout="constrained",
+    )
+    mesh_pos = draw_temperature_field(
+        ax_field, T_plot, T_wall_plot, t_plot, "Temperature distribution"
+    )
+    add_field_colorbar(fig, ax_field, mesh_pos)
+    fig.canvas.draw()
+    draw_round_tip_and_sensors(ax_field)
+    ax_field.legend(loc="upper right", fontsize=8, framealpha=0.92)
+    draw_live_sensor_traces(ax_trace, t_plot, t_xlim_s, T_ylim)
+    return fig
+
+
+saved_plot_paths = []
+for T_plot, T_wall_plot, t_plot, title_prefix, filename in plot_jobs:
+    fig, ax = make_temperature_field_figure(T_plot, T_wall_plot, t_plot, title_prefix)
     plot_path = OUTPUT_DIRECTORY / filename
     if SAVE_PLOTS:
         fig.savefig(plot_path, dpi=160)
@@ -888,6 +1099,49 @@ for T_plot, t_plot, title_prefix, filename in plot_jobs:
         print(f"Saved plot: {plot_path}")
     if not SHOW_PLOTS:
         plt.close(fig)
+
+if SAVE_GIF:
+    gif_target_times_s = np.linspace(
+        0.0, t_plot_steady_s, GIF_SOURCE_FRAME_COUNT
+    )[:GIF_N_FRAMES]
+    gif_t_max_s = float(gif_target_times_s[-1])
+    gif_keep = probe_times_s <= gif_t_max_s + 1.0e-9
+    gif_T_span = np.concatenate(
+        [probe_1_history_C[gif_keep], probe_2_history_C[gif_keep]]
+    )
+    gif_T_pad = 0.08 * max(float(np.ptp(gif_T_span)), 1.0)
+    gif_T_ylim = (float(np.min(gif_T_span)) - gif_T_pad, float(np.max(gif_T_span)) + gif_T_pad)
+
+    gif_frames = []
+    for t_target in gif_target_times_s:
+        t_used, T_frame, T_wall_frame = nearest_snapshot(t_target)
+        fig = make_gif_frame_figure(
+            T_frame,
+            T_wall_frame,
+            t_used,
+            gif_t_max_s,
+            gif_T_ylim,
+        )
+        buf = BytesIO()
+        fig.savefig(buf, format="png", dpi=110)
+        plt.close(fig)
+        buf.seek(0)
+        gif_frames.append(Image.open(buf).convert("RGB").copy())
+
+    gif_path = OUTPUT_DIRECTORY / "tube_with_catheter_temperature.gif"
+    gif_frames[0].save(
+        gif_path,
+        save_all=True,
+        append_images=gif_frames[1:],
+        duration=int(round(GIF_FRAME_DURATION_S * 1000.0)),
+        loop=0,
+    )
+    saved_plot_paths.append(gif_path)
+    print(
+        f"Saved GIF: {gif_path}  "
+        f"({GIF_N_FRAMES} frames, {GIF_FRAME_DURATION_S:.1f} s/frame, "
+        f"t = 0–{gif_t_max_s:.1f} s)"
+    )
 
 
 # Time history at the two measuring points.
@@ -902,8 +1156,19 @@ ax_probe.plot(
     markerfacecolor="white",
     markeredgecolor="black",
     label=(
-        f"P1 body tip  "
+        f"P1 catheter tip (centreline)  "
         f"(z = {probe_1_z_used_m*100:.2f} cm, r = {probe_1_r_used_m*1000:.2f} mm)"
+    ),
+)
+ax_probe.plot(
+    probe_times_s,
+    wall_at_cooling_end_history_C,
+    color="tab:red",
+    linewidth=2.0,
+    linestyle="--",
+    label=(
+        f"Catheter outer wall at cooling-zone end  "
+        f"(z = {z_center[j_wall_probe]*100:.2f} cm)"
     ),
 )
 ax_probe.plot(
@@ -916,7 +1181,7 @@ ax_probe.plot(
     markerfacecolor="yellow",
     markeredgecolor="black",
     label=(
-        f"P2 cooling zone +{SENSOR_OFFSET_FROM_CATHETER_MM:.1f} mm  "
+        f"P2, 3 mm from catheter wall  "
         f"(z = {probe_2_z_used_m*100:.2f} cm, r = {probe_2_r_used_m*1000:.2f} mm)"
     ),
 )
@@ -967,10 +1232,14 @@ T_run_min = min(float(field[is_active].min()) for field in snapshot_fields)
 T_run_max = max(float(field[is_active].max()) for field in snapshot_fields)
 
 # Recompute final heat rates from T_final for the printed energy numbers.
-T_coolant_final = coolant_temperature_along_catheter(T_final[i_annulus_water, :])
+T_coolant_final = T_coolant_axial.copy()
 Q_catheter_final_W = float(
-    np.sum(G_catheter_j * (T_final[i_annulus_water, :] - T_coolant_final))
+    np.nansum(G_catheter_j * (T_wall_final - T_coolant_final))
 )
+T_wall_active = T_wall_final[G_catheter_j > 0.0]
+T_wall_mean_C = float(np.nanmean(T_wall_active))
+T_wall_min_C = float(np.nanmin(T_wall_active))
+T_wall_max_C = float(np.nanmax(T_wall_active))
 Q_external_final_W = float(np.sum(G_outer * (T_external - T_final[-1, :])))
 Q_ends_final_W = float(
     np.sum(G_end_left * (T_external - T_final[:, 0]))
@@ -1005,16 +1274,24 @@ print(f"Final volume-averaged water T         : {T_water_final_avg:.4f} °C")
 print(f"Minimum steady-state water T          : {T_water_final_min:.4f} °C")
 print(f"Maximum steady-state water T          : {T_water_final_max:.4f} °C")
 print(
-    f"P1 body tip                            : "
+    f"P1 catheter tip (centreline)            : "
     f"z = {probe_1_z_used_m*100:.2f} cm, r = {probe_1_r_used_m*1000:.2f} mm, "
     f"T(t=0) = {probe_1_history_C[0]:.3f} °C, "
     f"T(final) = {probe_1_history_C[-1]:.3f} °C"
 )
 print(
-    f"P2 cooling zone +{SENSOR_OFFSET_FROM_CATHETER_MM:.0f} mm             : "
+    f"P2, 3 mm from catheter wall             : "
     f"z = {probe_2_z_used_m*100:.2f} cm, r = {probe_2_r_used_m*1000:.2f} mm, "
     f"T(t=0) = {probe_2_history_C[0]:.3f} °C, "
     f"T(final) = {probe_2_history_C[-1]:.3f} °C"
+)
+print(
+    f"Catheter outer wall (active length)     : "
+    f"min {T_wall_min_C:.3f} °C, mean {T_wall_mean_C:.3f} °C, "
+    f"max {T_wall_max_C:.3f} °C"
+)
+print(
+    f"Catheter wall at cooling-zone end       : {wall_at_cooling_end_history_C[-1]:.3f} °C"
 )
 if steady_state_reached:
     print(f"Steady-state time                     : {time_to_steady_state_s:.1f} s")
@@ -1085,9 +1362,9 @@ MAIN LIMITATIONS
   "convection".
 - Water and polymer properties are constant and, for the polymer, assumed
   handbook values for clear acrylic until measured data are supplied.
-- Catheter thermal capacitance is neglected; the body is a blocked
-  cylinder with cooling only on the active outer surface.  The 2 cm
-  inactive body and the tip face are adiabatic.
+- Catheter thermal capacitance is neglected; the outer wall is a
+  quasi-steady temperature between the coolant and the adjacent water.
+  Internal lumens are represented only by G_catheter (wall-to-coolant).
 - Past the catheter tip the water fills the centreline, so heat can
   wrap around the end by conduction, similar in kind to the radial
   side gradient.

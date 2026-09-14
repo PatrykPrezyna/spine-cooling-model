@@ -6,6 +6,11 @@ pump input, pump output, catheter in/out, and commanded flow.
 Reads pressure_log_*.csv from raw_data/; writes one plot per log to
 output_data/. Skips a CSV when its corresponding output already exists;
 delete that PNG to force a re-run.
+
+CONNECTION MISTAKE (do not edit raw_data/):
+If logged catheder_output_psi is higher than catheder_input_psi, the catheter
+pressure fittings / channels were swapped on the bench. Columns are swapped
+for plotting so input = upstream (higher P) and output = downstream (lower P).
 """
 
 from pathlib import Path
@@ -14,7 +19,9 @@ import sys
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
+HERE = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT))
 
 from Experiments.experiment_tools import (
@@ -23,8 +30,8 @@ from Experiments.experiment_tools import (
     load_sensor_csv,
     rpm_to_flow_ml_min,
 )
+from plot_flow_pressure import correct_swapped_catheter_pressures
 
-HERE = Path(__file__).resolve().parent
 RAW_DATA = HERE / "raw_data"
 OUTPUT_DATA = HERE / "output_data"
 AVERAGE_WINDOW = "1s"
@@ -36,7 +43,9 @@ def _output_path(csv_path: Path) -> Path:
 
 
 def plot_file(csv_path: Path) -> Path:
-    df = load_sensor_csv(csv_path, index_timestamp=True)
+    df, swapped = correct_swapped_catheter_pressures(
+        load_sensor_csv(csv_path, index_timestamp=True), csv_path
+    )
 
     avg = AVERAGE_WINDOW
     pressure_columns = [
@@ -50,7 +59,10 @@ def plot_file(csv_path: Path) -> Path:
     )
 
     fig, axes = plt.subplots(4, 1, sharex=True, figsize=(11, 10))
-    fig.suptitle(f"Pressure Sensors and Pump Speed vs Time\n{csv_path.name}")
+    title = f"Pressure Sensors and Pump Speed vs Time\n{csv_path.name}"
+    if swapped:
+        title += "\nplotted with catheter in/out swapped (connection mistake in log)"
+    fig.suptitle(title)
 
     axes[0].plot(
         df.index, df["pump_input_psi"], color="tab:green", linewidth=0.5, alpha=0.35, label="raw"
@@ -118,6 +130,18 @@ def plot_file(csv_path: Path) -> Path:
     axes[2].set_ylabel("Catheter (psi)")
     axes[2].legend(loc="upper right")
     axes[2].grid(True, alpha=0.3)
+    if swapped:
+        axes[2].text(
+            0.01,
+            0.97,
+            "CONNECTION MISTAKE in log: output > input. "
+            "Plotted with channels swapped. raw_data/ not modified.",
+            transform=axes[2].transAxes,
+            va="top",
+            ha="left",
+            fontsize=8,
+            color="tab:red",
+        )
 
     flow_ml_per_min = rpm_to_flow_ml_min(
         df["peristaltic_pump_set_speed_rpm"], ML_PER_MIN_PER_RPM

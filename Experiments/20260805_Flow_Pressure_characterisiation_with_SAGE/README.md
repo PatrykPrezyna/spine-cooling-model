@@ -15,6 +15,10 @@
    - **Reverse** — swap the catheter connections so flow enters the former output and exits the former input (sensors stay with their ports: what the log calls input/output follows the fittings)
 5. Final deliverable: **pressure on X**, **flow rate (ml/min) on Y** — inlet, outlet for both orientations overlaid.
 
+**Connection mistake — do not edit `raw_data/`:** physically, catheter **input** (upstream) pressure must be **higher** than catheter **output** (downstream). If a log has `catheder_output_psi` > `catheder_input_psi`, the fittings / channels were swapped on the bench. That is the case for `pressure_log_20260804_091152_black_cath_direction_pumpout_cath_out.csv` (reverse black catheter: output > input on every RPM step). Leave the CSV as recorded. The plot scripts swap those two columns for figures only, and label the plot.
+
+Never hand-edit `raw_data/`; regenerate analysis into `output_data/`.
+
 Pump speed ↔ flow uses the 2026-08-04 gravimetric calibration **0.5862 ml/min per rpm** (≈ 60 rpm → 35 ml/min). The RPM steps below were planned against the older 0.782 factor; plotted flow rates are recomputed with the new constant:
 
 | Target flow (old plan) | Set RPM | Actual flow (0.5862) |
@@ -35,6 +39,8 @@ Pump speed ↔ flow uses the 2026-08-04 gravimetric calibration **0.5862 ml/min 
 Pump always drives flow into the loop (push). Between the two characterisation runs, only the **catheter inlet/outlet plumbing is swapped** so fluid travels the opposite way through the catheter; pump placement and push direction stay the same.
 
 ## Preliminary data black catheder
+
+Forward log is oriented correctly (input > output). Reverse log is the **connection mistake** above; the reverse figure below is plotted with in/out swapped so blue = physical inlet and orange = physical outlet.
 
 ![Forward](output_data/flow_pressure_20260803_163716_black_cath_direction_pumpout_cath_in.png)
 ![Reverse](output_data/flow_pressure_20260804_091152_black_cath_direction_pumpout_cath_out.png)

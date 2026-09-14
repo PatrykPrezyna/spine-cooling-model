@@ -73,7 +73,7 @@ def load_sensor_csv(
     if timestamp_col not in df.columns:
         raise KeyError(f"Missing timestamp column {timestamp_col!r} in {path}")
 
-    df[timestamp_col] = pd.to_datetime(df[timestamp_col])
+    df[timestamp_col] = pd.to_datetime(df[timestamp_col], format="ISO8601")
     df = df.sort_values(timestamp_col).reset_index(drop=True)
 
     rpm_col = "peristaltic_pump_set_speed_rpm"

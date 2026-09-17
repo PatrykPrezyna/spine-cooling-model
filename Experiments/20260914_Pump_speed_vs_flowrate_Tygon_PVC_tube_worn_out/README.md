@@ -4,6 +4,8 @@
 **Operator:**  
 **Goal:** Characterise peristaltic pump set speed (RPM) against volumetric flow with McMaster Tygon PVC 1/8" ID × 1/4" OD tubing on the pump section. Repeat the same gravimetric + Keyence sweep with SAGE prototype 2 connected.
 
+> **Not accurate.** After this run we found the **peristaltic-pump tubing was worn**, so delivered flow vs set RPM is not trustworthy. Do **not** adopt `0.8034 ml/min per rpm` from these data. Repeat with new pump tubing and the catheter attached only: [`20260915_Pump_speed_vs_flowrate_Tygon_PVC_Catheter`](../20260915_Pump_speed_vs_flowrate_Tygon_PVC_Catheter/).
+
 ## Protocol
 
 1. Fit **McMaster Tygon PVC 1/8" ID × 1/4" OD** on the peristaltic-pump section. Fill with water and purge air until flow is steady.
@@ -36,12 +38,12 @@ python plot_speed_vs_flow.py
 
 ![SAGE prototype 2](output_data/pump_speed_vs_flowrate_sage_prototype_2.png)
 
-Through-origin slopes (scale, 5 min holds):
+Through-origin slopes (scale, 5 min holds) — **worn pump tubing, not for design**:
 
 | Configuration | ml/min per rpm |
 |---------------|----------------|
 | No catheter | 0.8168 |
-| SAGE prototype 2 (adopted) | **0.8034** |
+| SAGE prototype 2 | 0.8034 |
 | 2026-08-04 (previous tubing) | 0.5862 |
 
 Raw logs (open the file to see the table; Markdown cannot embed a CSV the way it does a PNG):
@@ -53,6 +55,6 @@ Raw logs (open the file to see the table; Markdown cannot embed a CSV the way it
 
 ## Conclusion
 
-- Adopt `ML_PER_MIN_PER_RPM = 0.8034` from the SAGE prototype 2 gravimetric sweep (`Experiments/experiment_tools.py`). Example: 60 rpm → ≈ **48 ml/min**.
-- That is the intended use case (Tygon PVC pump tubing + catheter). No-catheter was similar (0.8168).
-- The 2026-08-04 factor **0.5862** was for different pump tubing and is superseded.
+- **Do not use these slopes for design.** The peristaltic-pump tubing was worn, so both configurations (no catheter 0.8168 and SAGE prototype 2 0.8034 ml/min per rpm) are invalid.
+- Repeat is [`20260915_Pump_speed_vs_flowrate_Tygon_PVC_Catheter`](../20260915_Pump_speed_vs_flowrate_Tygon_PVC_Catheter/) — new pump tubing, catheter attached only.
+- Keep the plots and CSVs here as an archive of the worn-tubing run.

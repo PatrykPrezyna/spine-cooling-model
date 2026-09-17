@@ -19,6 +19,8 @@ WATER_SPECIFIC_HEAT_J_KG_K = 4186.0
 
 # Gravimetric pump calibration (2026-09-14): Tygon PVC 1/8" ID pump tubing,
 # SAGE prototype 2 connected. Q [ml/min] ≈ k · RPM.
+# WARNING: 2026-09-14 pump tubing was worn — this factor is provisional.
+# Repeat: Experiments/20260915_Pump_speed_vs_flowrate_Tygon_PVC_Catheter
 # Supersedes 2026-08-04 (0.5862, previous pump tubing) and 2026-06-22 (0.7823).
 ML_PER_MIN_PER_RPM = 0.8034
 ML_PER_MIN_PER_RPM_20260804 = 0.5862  # previous pump tubing

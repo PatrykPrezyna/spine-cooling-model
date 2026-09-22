@@ -47,16 +47,63 @@ SETTLE_BAND = 0.05
 
 RUNS = [
     {
-        "name": "original_tubing",
-        "label": "Original tubing length",
-        "csv": RAW_DATA / "20260916_120302_sensors.csv",
+        "name": "original_tubing_50mlmin",
+        "label": "Original tubing, ~50 ml/min",
+        "csv": RAW_DATA / "20260916_120302_sensors_50mlmin_original_tubing.csv",
         "tubing": "original product length",
+        "compare": "original_tubing",
+        "fit": False,
     },
     {
-        "name": "short_26cm",
-        "label": "Shortened tubing 26 cm",
-        "csv": RAW_DATA / "20260916_123901_sensors.csv",
+        "name": "short_26cm_50mlmin",
+        "label": "26 cm tubing, ~50 ml/min",
+        "csv": RAW_DATA / "20260916_123901_sensors_50mlmin_26cm.csv",
         "tubing": "26 cm pump-to-catheter",
+        "compare": "26cm",
+        "fit": True,
+    },
+    {
+        "name": "short_26cm_22mlmin",
+        "label": "26 cm tubing, ~22 ml/min",
+        "csv": RAW_DATA / "20260918_142602_sensors_22mlmin.csv",
+        "tubing": "inlet matches 26 cm run",
+        "compare": "26cm",
+        "fit": True,
+    },
+    {
+        "name": "short_26cm_70mlmin",
+        "label": "26 cm tubing, ~70 ml/min",
+        "csv": RAW_DATA / "20260921_093450_sensors_70mlmin.csv",
+        "tubing": "inlet matches 26 cm run",
+        "compare": "26cm",
+        "fit": True,
+    },
+    {
+        "name": "other_catheter_50mlmin",
+        "label": "Other catheter, ~50 ml/min",
+        "csv": RAW_DATA / "20260921_101547_sensors_50mlmin_other_catheter.csv",
+        "tubing": "different catheter",
+        "compare": "26cm",
+        "fit": False,
+    },
+]
+
+COMPARE_PLOTS = [
+    {
+        "compare": "original_tubing",
+        "out_name": "heat_power_vs_bath_temperature_original_tubing.png",
+        "title": (
+            "Original tubing — heat power vs bath temperature\n"
+            "~50 ml/min, last 45 s of each hold"
+        ),
+    },
+    {
+        "compare": "26cm",
+        "out_name": "heat_power_vs_bath_temperature.png",
+        "title": (
+            "26 cm tubing — heat power vs bath temperature\n"
+            "last 45 s of each hold"
+        ),
     },
 ]
 
@@ -120,7 +167,7 @@ def detect_plateaus(df: pd.DataFrame) -> list[tuple[float, float, float]]:
 
     merged: list[tuple[float, float, float]] = []
     for t0, t1, bath in plateaus:
-        if merged and t0 - merged[-1][1] < 20 and abs(bath - merged[-1][2]) < 0.55:
+        if merged and t0 - merged[-1][1] < 90 and abs(bath - merged[-1][2]) < 0.55:
             p0, _, pb = merged[-1]
             span = df[(df["t_s"] >= p0) & (df["t_s"] <= t1)]
             merged[-1] = (p0, t1, float(span["bath_c"].mean()))
@@ -253,25 +300,65 @@ def plot_run(df: pd.DataFrame, steps: list[dict], csv_path: Path, label: str) ->
     return out
 
 
-def plot_power_vs_bath(results: pd.DataFrame) -> Path:
-    """Heat power (y) vs measured bath temperature (x) for both runs."""
+def plot_power_vs_bath(
+    results: pd.DataFrame,
+    *,
+    out_name: str,
+    title: str,
+) -> Path:
+    """Heat power (y) vs measured bath temperature (x) for a comparison group."""
     fig, ax = plt.subplots(figsize=(8, 5))
     styles = {
-        "original_tubing": {
+        "original_tubing_50mlmin": {
             "color": "tab:blue",
             "marker": "o",
-            "label": "Original tubing (Keyence flow)",
+            "label": "Original tubing, ~50 ml/min (Keyence)",
+            "offset_y": 8,
+            "va": "bottom",
         },
-        "short_26cm": {
+        "short_26cm_50mlmin": {
             "color": "tab:orange",
             "marker": "s",
-            "label": "26 cm tubing (rpm flow fit)",
+            "label": "26 cm tubing, ~50 ml/min (rpm fit)",
+            "offset_y": -14,
+            "va": "top",
+        },
+        "short_26cm_22mlmin": {
+            "color": "tab:green",
+            "marker": "^",
+            "label": "26 cm tubing, ~22 ml/min (Keyence)",
+            "offset_y": -14,
+            "va": "top",
+        },
+        "short_26cm_70mlmin": {
+            "color": "tab:red",
+            "marker": "D",
+            "label": "26 cm tubing, ~70 ml/min (Keyence)",
+            "offset_y": 8,
+            "va": "bottom",
+        },
+        "other_catheter_50mlmin": {
+            "color": "tab:brown",
+            "marker": "P",
+            "label": "Other catheter, ~50 ml/min (Keyence)",
+            "offset_y": 8,
+            "va": "bottom",
         },
     }
-    for run_name, style in styles.items():
+    fallback_cycle = [
+        {"color": "tab:purple", "marker": "D", "offset_y": 8, "va": "bottom"},
+        {"color": "tab:red", "marker": "v", "offset_y": -14, "va": "top"},
+    ]
+    run_names = [name for name in styles if name in set(results["run"])]
+    run_names.extend(name for name in results["run"].unique() if name not in styles)
+    for i, run_name in enumerate(run_names):
         group = results[results["run"] == run_name].sort_values("t_bath_c")
         if group.empty:
             continue
+        style = styles.get(run_name, {
+            **fallback_cycle[i % len(fallback_cycle)],
+            "label": str(group["label"].iloc[0]),
+        })
         ax.plot(
             group["t_bath_c"],
             group["power_w"],
@@ -282,34 +369,153 @@ def plot_power_vs_bath(results: pd.DataFrame) -> Path:
             label=style["label"],
             zorder=3,
         )
-        offset_y = 8 if run_name == "short_26cm" else -14
         for _, row in group.iterrows():
             ax.annotate(
                 f"{row['power_w']:.1f} W",
                 (row["t_bath_c"], row["power_w"]),
                 textcoords="offset points",
-                xytext=(0, offset_y),
+                xytext=(0, style["offset_y"]),
                 ha="center",
-                va="bottom" if run_name == "short_26cm" else "top",
+                va=style["va"],
                 fontsize=8,
                 color=style["color"],
             )
 
     ax.set_xlabel("Bath temperature (°C)")
     ax.set_ylabel("Heat power (W)")
-    ax.set_title(
-        "Catheter heat power vs bath temperature\n"
-        "~50 ml/min, last 45 s of each hold"
-    )
+    ax.set_title(title)
     ax.grid(True, alpha=0.3)
     ax.legend(loc="upper left", framealpha=0.9)
     ymax = float(results["power_w"].max())
     ax.set_ylim(0, ymax * 1.12)
     OUTPUT_DATA.mkdir(parents=True, exist_ok=True)
-    out = OUTPUT_DATA / "heat_power_vs_bath_temperature.png"
+    out = OUTPUT_DATA / out_name
     fig.tight_layout()
     fig.savefig(out, dpi=150, bbox_inches="tight")
     plt.close(fig)
+    return out
+
+
+def mdot_cp_w_per_k(flow_ml_min: pd.Series | float):
+    return (flow_ml_min / 60.0) * RHO_KG_PER_ML * CP_J_KG_K
+
+
+def predicted_power_w(flow_ml_min, t_bath_c: float, t_in_c: float, ua_w_per_k: float):
+    """P = ṁ cp (T_bath − T_in) (1 − exp(−UA / ṁ cp)) for a constant-T bath."""
+    cap = mdot_cp_w_per_k(flow_ml_min)
+    ntu = ua_w_per_k / cap
+    eps = 1.0 - np.exp(-ntu)
+    return cap * eps * (t_bath_c - t_in_c)
+
+
+def nearest_bath_steps(results: pd.DataFrame, t_bath_c: float) -> pd.DataFrame:
+    rows = []
+    for run_name, group in results.groupby("run"):
+        idx = (group["t_bath_c"] - t_bath_c).abs().idxmin()
+        rows.append(group.loc[idx])
+    return pd.DataFrame(rows).sort_values("flow_ml_min")
+
+
+def plot_power_vs_flow(
+    results: pd.DataFrame,
+    *,
+    t_bath_c: float = 36.0,
+    flow_step_ml_min: float = 10.0,
+) -> Path:
+    """Measured 36 °C setpoints plus predicted P every 10 ml/min."""
+    measured = nearest_bath_steps(results, t_bath_c)
+    measured = measured[measured["run"] != "other_catheter_50mlmin"]
+    if measured.empty:
+        raise ValueError("no bath steps to plot")
+
+    t_bath = float(measured["t_bath_c"].mean())
+    fit = measured[measured["fit"] == True] if "fit" in measured.columns else measured
+    if fit.empty:
+        fit = measured
+    q_max = max(
+        80.0,
+        float(np.ceil(measured["flow_ml_min"].max() / flow_step_ml_min) * flow_step_ml_min),
+    )
+    q_pred = np.arange(flow_step_ml_min, q_max + 0.1, flow_step_ml_min)
+    t_in_pred = np.interp(q_pred, fit["flow_ml_min"], fit["t_in_c"])
+    ua_pred = np.interp(q_pred, fit["flow_ml_min"], fit["ua_w_per_k"])
+    p_pred = predicted_power_w(q_pred, t_bath, t_in_pred, ua_pred)
+
+    styles = {
+        "short_26cm_50mlmin": {"color": "tab:orange", "marker": "s"},
+        "short_26cm_22mlmin": {"color": "tab:green", "marker": "^"},
+        "short_26cm_70mlmin": {"color": "tab:red", "marker": "D"},
+    }
+
+    fig, ax = plt.subplots(figsize=(8.5, 5))
+    (h_p,) = ax.plot(
+        q_pred,
+        p_pred,
+        color="0.35",
+        ls="--",
+        lw=1.3,
+        marker="o",
+        markersize=6,
+        markerfacecolor="white",
+        label=f"Predicted P every {flow_step_ml_min:.0f} ml/min",
+        zorder=2,
+    )
+    for q, p in zip(q_pred, p_pred):
+        ax.annotate(
+            f"{p:.1f}",
+            (q, p),
+            textcoords="offset points",
+            xytext=(0, 7),
+            ha="center",
+            fontsize=7,
+            color="0.35",
+        )
+
+    measured_handles = []
+    for _, row in measured.iterrows():
+        style = styles.get(row["run"], {"color": "tab:blue", "marker": "o"})
+        h = ax.scatter(
+            row["flow_ml_min"],
+            row["power_w"],
+            color=style["color"],
+            marker=style["marker"],
+            s=80,
+            zorder=4,
+            label=f"{row['label']}  P = {row['power_w']:.1f} W",
+        )
+        ax.annotate(
+            f"{row['power_w']:.1f} W",
+            (row["flow_ml_min"], row["power_w"]),
+            textcoords="offset points",
+            xytext=(8, 6),
+            ha="left",
+            fontsize=8,
+            color=style["color"],
+        )
+        measured_handles.append(h)
+
+    ax.set_xlabel("Flow (ml/min)")
+    ax.set_ylabel("Heat power (W)")
+    ax.set_title(
+        f"Catheter heat power vs flow at {t_bath:.1f} °C bath\n"
+        "26 cm tubing, last 45 s of each hold"
+    )
+    ax.grid(True, alpha=0.3)
+    ax.set_xlim(0, q_max + flow_step_ml_min)
+    ax.set_ylim(0, max(float(p_pred.max()), float(measured["power_w"].max())) * 1.18)
+    ax.legend(
+        [h_p, *measured_handles],
+        [h_p.get_label(), *[h.get_label() for h in measured_handles]],
+        loc="lower right",
+        framealpha=0.9,
+        fontsize=8,
+    )
+    OUTPUT_DATA.mkdir(parents=True, exist_ok=True)
+    out = OUTPUT_DATA / "heat_power_vs_flow_36C.png"
+    fig.tight_layout()
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"36 °C traces: T_bath={t_bath:.2f} °C")
     return out
 
 
@@ -344,15 +550,36 @@ def main() -> None:
         print(f"Wrote {out_png}")
 
         for step in steps:
-            rows.append({"run": run["name"], "label": run["label"], "tubing": run["tubing"], **step})
+            rows.append(
+                {
+                    "run": run["name"],
+                    "label": run["label"],
+                    "tubing": run["tubing"],
+                    "compare": run["compare"],
+                    "fit": run.get("fit", True),
+                    **step,
+                }
+            )
 
     results = pd.DataFrame(rows)
     csv_out = OUTPUT_DATA / "heat_power_by_bath_step.csv"
     results.to_csv(csv_out, index=False, float_format="%.4f")
     print(f"Wrote {csv_out}")
-    if not results.empty:
-        out_xy = plot_power_vs_bath(results)
+    if results.empty:
+        return
+    for plot in COMPARE_PLOTS:
+        subset = results[results["compare"] == plot["compare"]]
+        if subset.empty:
+            continue
+        out_xy = plot_power_vs_bath(
+            subset, out_name=plot["out_name"], title=plot["title"]
+        )
         print(f"Wrote {out_xy}")
+
+    cm26 = results[results["compare"] == "26cm"]
+    if not cm26.empty:
+        out_q = plot_power_vs_flow(cm26, t_bath_c=36.0)
+        print(f"Wrote {out_q}")
 
 
 if __name__ == "__main__":

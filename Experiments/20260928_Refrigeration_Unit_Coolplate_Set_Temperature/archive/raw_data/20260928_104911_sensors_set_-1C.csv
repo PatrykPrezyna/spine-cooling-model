@@ -1,4 +1,4 @@
-timestamp,tip_c,cartrige_out_c,catheter_in_c,catheter_out_c,cartrige_in_c,plate_1_c,plate_2_c,body_temp_c,hot_bath1_c,hot_bath2_c,ice_water_c,probe_4_c,set_temperature_c,peristaltic_pump_set_speed_rpm,pump_flow_ml_per_s,flow_sensor_ml_per_min,compressor_cooling,pump_in_bar,pump_out_bar,catheter_in_bar,catheter_out_bar
+timestamp,tip_c,cartrige_out_c,catheter_in_c,catheter_out_c,cartrige_in_c,plate_2_c,plate_1_c,body_temp_c,hot_bath1_c,hot_bath2_c,ice_water_c,probe_4_c,set_temperature_c,peristaltic_pump_set_speed_rpm,pump_flow_ml_per_s,flow_sensor_ml_per_min,compressor_cooling,pump_in_bar,pump_out_bar,catheter_in_bar,catheter_out_bar
 2026-09-28T10:49:11.753114,21.233,20.099,20.190,20.316,20.339,5.278,5.586,3.316,19.053,10.781,7.265,2.558,32.000,0.00,0.0000,-0.23,0,-0.00,-0.00,0.01,0.00
 2026-09-28T10:49:11.948481,21.225,20.145,20.202,20.305,20.156,5.381,5.586,3.221,19.075,10.789,7.279,2.558,32.000,0.00,0.0000,-0.23,0,-0.00,-0.00,0.01,0.00
 2026-09-28T10:49:12.154675,21.225,20.133,20.202,20.305,20.156,5.381,5.586,3.316,19.075,10.781,7.258,2.569,32.000,0.00,0.0000,-0.25,0,-0.00,-0.00,0.01,0.00

@@ -15,7 +15,7 @@ Prefer raw logs named `sensor_log_YYYYMMDD_HHMMSS_<condition>.csv`. Never hand-e
 ## Setup
 
 - Hardware: refrigeration unit (compressor and two cool plates). Cartridge to be added in later runs.
-- Probe names and backup-probe placement were changed after the archived runs. Current channels: `plate_1_c`, `plate_1b_c`, `plate_2_c`, `plate_2b_c`. Placement:
+- Probe names and backup-probe placement were changed after the archived runs. Current channels: `plate_1_c`, `plate_1b_c`, `plate_2_c`, `plate_2b_c`. Cool plate sensor 1 was renumbered to cool plate 2, and cool plate 2 to cool plate 1; the backup on each plate was renumbered the same way. Headers in `raw_data/` and `archive/raw_data/` use those corrected numbers. Placement:
 
 ![Probe placement](setup/probes_location.png)
 
@@ -32,7 +32,7 @@ New probe names and backup placement. Single-sample grounding spikes are removed
 
 Superseded runs from 2026-09-28, before the probe rename and backup-probe move. Do not mix these with the rerun.
 
-Old logger headers `ice_water_c` and `hot_bath2_c` were renamed in the −3 °C file to `cool_plate_backup_sensor_1_c` and `cool_plate_backup_sensor_2_c`. The −1 °C file still has the original headers. Logged `set_temperature_c` is 32 °C in both; the refrigeration set temperature is in the filename.
+Old logger headers `ice_water_c` and `hot_bath2_c` were renamed in the −3 °C file to `cool_plate_backup_sensor_1_c` and `cool_plate_backup_sensor_2_c`. The −1 °C file still has the original headers. After the renumber, `ice_water_c` is cool plate 2 backup and `hot_bath2_c` is cool plate 1 backup. Logged `set_temperature_c` is 32 °C in both; the refrigeration set temperature is in the filename.
 
 - [−3 °C plot](archive/output_data/coolplate_temperatures_20260928_094635_sensors_set_-3C.png) — [log](archive/raw_data/20260928_094635_sensors_set_-3C.csv). Compressor on: **0.22–5.60 min**, **6.60–8.68 min**, **9.69–54.07 min**.
 - [−1 °C plot](archive/output_data/coolplate_temperatures_20260928_104911_sensors_set_-1C.png) — [log](archive/raw_data/20260928_104911_sensors_set_-1C.csv). Compressor on: **0.18–2.68 min**, **3.69–5.15 min**, **6.15–8.35 min**, **9.35–11.15 min**, **12.15–13.92 min**, **14.93–16.68 min**, **17.69–19.46 min**, **20.46–22.23 min**.

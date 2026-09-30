@@ -53,11 +53,14 @@ TEMP_SERIES = (
     ("plate_2_c", "Cool plate 2", "#d94801", "-"),
     ("plate_2b_c", "Cool plate 2 backup", "#fdae6b", "--"),
 )
-# Archived logs used the old backup headers.
+# Archived logs used the old backup headers. Cool plate 1 was renumbered to
+# cool plate 2 (and 2 to 1); the numbered columns in the CSVs are already
+# swapped. ice_water was backup 1 and hot_bath2 was backup 2, so those
+# unnumbered headers map the other way.
 COLUMN_ALIASES = {
-    "ice_water_c": "plate_1b_c",
+    "ice_water_c": "plate_2b_c",
     "cool_plate_backup_sensor_1_c": "plate_1b_c",
-    "hot_bath2_c": "plate_2b_c",
+    "hot_bath2_c": "plate_1b_c",
     "cool_plate_backup_sensor_2_c": "plate_2b_c",
 }
 

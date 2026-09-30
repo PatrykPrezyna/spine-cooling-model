@@ -1,6 +1,8 @@
 """Plot cool-plate temperatures, set temperature, and real compressor-on time.
 
-Reads every CSV in raw_data/ and writes one PNG per log to output_data/.
+Reads every CSV in raw_data/ and writes one PNG and one interactive HTML
+per log to output_data/. Open the HTML in a browser to zoom, hide series,
+and read the timestamp and value.
 
 The logged compressor_cooling flag is the cooling command. After each real
 off, the compressor stays off for 60 s even if the command returns. Command
@@ -23,6 +25,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -60,6 +64,14 @@ COLUMN_ALIASES = {
 
 def _output_path(csv_path: Path) -> Path:
     return OUTPUT_DATA / f"coolplate_temperatures_{csv_path.stem}.png"
+
+
+def _html_path(csv_path: Path) -> Path:
+    return OUTPUT_DATA / f"coolplate_temperatures_{csv_path.stem}.html"
+
+
+def _plotly_dash(linestyle: str) -> str:
+    return "dash" if linestyle == "--" else "solid"
 
 
 def set_temperature_c_from_name(csv_path: Path) -> float | None:
@@ -132,6 +144,140 @@ def _on_intervals_min(t_min: np.ndarray, on: np.ndarray) -> list[tuple[float, fl
     return intervals
 
 
+def _on_index_spans(on: np.ndarray) -> list[tuple[int, int]]:
+    """Return [start, end) index pairs. end is the first off sample, or len(on)."""
+
+    spans: list[tuple[int, int]] = []
+    start = None
+    for i, is_on in enumerate(on):
+        if is_on and start is None:
+            start = i
+        elif not is_on and start is not None:
+            spans.append((start, i))
+            start = None
+    if start is not None:
+        spans.append((start, len(on)))
+    return spans
+
+
+def _write_html(
+    csv_path: Path,
+    timestamps: pd.Series,
+    t_min: np.ndarray,
+    series: list[tuple[str, str, str, np.ndarray]],
+    set_temperature_c: float | None,
+    really_on: np.ndarray,
+    debounced: np.ndarray,
+) -> Path:
+    """Interactive copy of the PNG. X axis is clock time; hover also shows minutes."""
+
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        row_heights=[0.75, 0.25],
+        vertical_spacing=0.06,
+    )
+
+    for start, end in _on_index_spans(really_on):
+        x1_index = min(end, len(timestamps) - 1)
+        fig.add_vrect(
+            x0=timestamps.iloc[start],
+            x1=timestamps.iloc[x1_index],
+            fillcolor="rgba(160,160,160,0.35)",
+            line_width=0,
+            row="all",
+            col=1,
+        )
+
+    for label, color, dash, values in series:
+        fig.add_trace(
+            go.Scatter(
+                x=timestamps,
+                y=values,
+                customdata=t_min,
+                mode="lines",
+                name=label,
+                line=dict(color=color, dash=dash, width=1.6),
+                hovertemplate="%{y:.3f} °C (%{customdata:.2f} min)<extra></extra>",
+            ),
+            row=1,
+            col=1,
+        )
+
+    if set_temperature_c is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=timestamps,
+                y=np.full(len(timestamps), set_temperature_c),
+                customdata=t_min,
+                mode="lines",
+                name=f"Set temperature ({set_temperature_c:.0f} °C)",
+                line=dict(color="black", dash="dash", width=1.2),
+                hovertemplate="%{y:.2f} °C (%{customdata:.2f} min)<extra></extra>",
+            ),
+            row=1,
+            col=1,
+        )
+
+    fig.add_trace(
+        go.Scatter(
+            x=timestamps,
+            y=debounced.astype(int),
+            customdata=np.where(debounced, "on", "off"),
+            mode="lines",
+            name="Cooling command",
+            line=dict(color="rgb(140,140,140)", shape="hv", width=1.4),
+            hovertemplate="%{customdata} (%{y:.0f})<extra></extra>",
+        ),
+        row=2,
+        col=1,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=timestamps,
+            y=really_on.astype(int),
+            customdata=np.where(really_on, "on", "off"),
+            mode="lines",
+            name="Compressor on",
+            line=dict(color="rgb(70,70,70)", shape="hv", width=1.4),
+            fill="tozeroy",
+            fillcolor="rgba(70,70,70,0.25)",
+            hovertemplate="%{customdata} (%{y:.0f})<extra></extra>",
+        ),
+        row=2,
+        col=1,
+    )
+
+    fig.update_layout(
+        title=csv_path.name,
+        hovermode="x unified",
+        template="plotly_white",
+        height=720,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
+        margin=dict(t=80),
+    )
+    fig.update_yaxes(title_text="Temperature (°C)", row=1, col=1)
+    fig.update_yaxes(
+        title_text="Compressor",
+        range=[-0.05, 1.25],
+        tickvals=[0, 1],
+        ticktext=["off", "on"],
+        row=2,
+        col=1,
+    )
+    fig.update_xaxes(title_text="Time", hoverformat="%Y-%m-%d %H:%M:%S.%L", row=2, col=1)
+    fig.update_xaxes(hoverformat="%Y-%m-%d %H:%M:%S.%L", row=1, col=1)
+
+    out = _html_path(csv_path)
+    fig.write_html(
+        out,
+        include_plotlyjs=True,
+        config={"scrollZoom": True, "displaylogo": False},
+    )
+    return out
+
+
 def plot_log(csv_path: Path) -> Path:
     df = load_sensor_csv(csv_path)
     df = df.rename(columns=COLUMN_ALIASES)
@@ -162,12 +308,14 @@ def plot_log(csv_path: Path) -> Path:
         linewidth=0,
     )
 
+    plotted: list[tuple[str, str, str, np.ndarray]] = []
     for column, label, color, linestyle in TEMP_SERIES:
         if column not in df.columns:
             continue
         cleaned = despike(df[column])
         n_spikes = int(((df[column] - cleaned).abs() > 0).sum())
         print(f"  {label}: removed {n_spikes} spike samples")
+        plotted.append((label, color, _plotly_dash(linestyle), cleaned.to_numpy()))
         ax_temp.plot(
             t_min,
             cleaned,
@@ -224,8 +372,18 @@ def plot_log(csv_path: Path) -> Path:
     out = _output_path(csv_path)
     fig.savefig(out, dpi=150)
     plt.close(fig)
+    html_out = _write_html(
+        csv_path,
+        df["timestamp"],
+        t_min,
+        plotted,
+        set_temperature_c,
+        really_on,
+        debounced,
+    )
 
     print(f"Saved {out}")
+    print(f"Saved {html_out}")
     for start_min, end_min in _on_intervals_min(t_min, really_on):
         print(f"  compressor on {start_min:.2f}–{end_min:.2f} min")
     return out

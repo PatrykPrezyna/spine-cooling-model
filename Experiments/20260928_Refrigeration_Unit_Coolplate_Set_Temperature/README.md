@@ -23,7 +23,7 @@ Prefer raw logs named `sensor_log_YYYYMMDD_HHMMSS_<condition>.csv`. Never hand-e
 
 ## Results
 
-New probe names and backup placement. Single-sample grounding spikes are removed in the plot only. Regenerate with `python plot_coolplate_temperatures.py` from this folder.
+New probe names and backup placement. Single-sample grounding spikes are removed in the plot only. Regenerate with `python plot_coolplate_temperatures.py` from this folder. Each log also writes an interactive HTML file next to the PNG: open it in a browser to zoom, hide series from the legend, and hover for the clock time and temperature.
 
 - [−1 °C plot](output_data/coolplate_temperatures_20260929_085741_sensors_sensors_set_-1C.png) — [log](raw_data/20260929_085741_sensors_sensors_set_-1C.csv). Compressor on: **0.32–4.68 min**, **5.68–7.42 min**, **8.42–10.32 min**, **11.32–14.62 min**, **15.62–17.52 min**, **18.52–20.53 min**, **21.53–23.35 min**, **24.36–26.15 min**, **27.16–28.96 min**, **29.97–31.74 min**, **32.75–34.50 min**, **35.50–37.28 min**, **38.29–40.04 min**, **41.04–42.85 min**, **43.86–45.66 min**, **46.66–48.44 min**, **49.44–51.21 min**.
 - [−2 °C plot](output_data/coolplate_temperatures_20260929_095055_sensors_sensors_set_-2C.png) — [log](raw_data/20260929_095055_sensors_sensors_set_-2C.csv). Compressor on: **0.48–2.77 min**, **3.77–5.53 min**, **6.53–8.46 min**, **9.46–11.44 min**, **12.44–14.47 min**, **15.47–17.60 min**, **18.60–20.66 min**, **21.66–23.79 min**, **24.79–26.87 min**, **27.87–30.09 min**, **31.09–33.21 min**.

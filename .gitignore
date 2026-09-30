@@ -1,4 +1,6 @@
 *.png
+# Interactive Plotly HTML regenerated next to experiment PNGs
+Experiments/*/output_data/*.html
 # README-embedded figures (setup photos + result plots cited in experiment READMEs)
 !Experiments/20260616_cooling_plate_time/setup/image.png
 !Experiments/20260616_cooling_plate_time/output_data/heat_exchanger_stabilization.png

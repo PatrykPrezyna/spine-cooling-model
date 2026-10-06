@@ -1,0 +1,57 @@
+timestamp,event,severity,previous_state,state,fault_code,message
+2026-10-05T09:08:40.637748,session_start,info,,,,Logging started
+2026-10-05T09:08:40.748002,state_change,info,Init,Ready,,Initialization complete
+2026-10-05T09:08:40.749906,usb,info,,,,USB not writable: [Errno 13] Permission denied: '/media/spine/SPINELOGS/logs'
+2026-10-05T09:08:41.123484,setpoint,info,,,,set_temperature_c=32.0
+2026-10-05T09:08:41.123743,setpoint,info,,,,pump_speed_rpm=20
+2026-10-05T09:08:41.123795,setpoint,info,,,,pump_flow_ml_per_min=19
+2026-10-05T09:08:41.123825,setpoint,info,,,,compressor_off_c=-5.0
+2026-10-05T09:08:41.123854,setpoint,info,,,,compressor_on_c=1.0
+2026-10-05T09:08:46.515970,setpoint,info,,,,pump_speed_rpm=33
+2026-10-05T09:08:46.516333,setpoint,info,,,,pump_flow_ml_per_min=30
+2026-10-05T09:08:47.645964,setpoint,info,,,,pump_speed_rpm=45
+2026-10-05T09:08:47.646408,setpoint,info,,,,pump_flow_ml_per_min=40
+2026-10-05T09:08:48.453162,setpoint,info,,,,pump_speed_rpm=57
+2026-10-05T09:08:48.453408,setpoint,info,,,,pump_flow_ml_per_min=50
+2026-10-05T09:08:50.786255,state_change,info,Ready,Cooling,,All conditions met
+2026-10-05T09:08:50.982662,error,stop,Cooling,Error,CSF_LOW_TEMP,CSF low temp
+2026-10-05T09:08:54.553939,setpoint,info,,,,compressor_off_c=-4.9
+2026-10-05T09:08:54.756163,setpoint,info,,,,compressor_off_c=-4.8
+2026-10-05T09:08:54.976331,setpoint,info,,,,compressor_off_c=-4.7
+2026-10-05T09:08:55.168130,setpoint,info,,,,compressor_off_c=-4.6
+2026-10-05T09:08:55.360036,setpoint,info,,,,compressor_off_c=-4.5
+2026-10-05T09:08:55.608586,setpoint,info,,,,compressor_off_c=-4.4
+2026-10-05T09:08:55.816095,setpoint,info,,,,compressor_off_c=-4.3
+2026-10-05T09:08:56.684051,setpoint,info,,,,compressor_off_c=-4.2
+2026-10-05T09:08:56.900045,setpoint,info,,,,compressor_off_c=-4.1
+2026-10-05T09:08:57.096017,setpoint,info,,,,compressor_off_c=-4.0
+2026-10-05T09:08:57.312055,setpoint,info,,,,compressor_off_c=-3.9
+2026-10-05T09:08:57.504027,setpoint,info,,,,compressor_off_c=-3.8
+2026-10-05T09:08:57.708111,setpoint,info,,,,compressor_off_c=-3.7
+2026-10-05T09:08:57.924140,setpoint,info,,,,compressor_off_c=-3.6
+2026-10-05T09:08:58.144395,setpoint,info,,,,compressor_off_c=-3.5
+2026-10-05T09:08:58.312080,setpoint,info,,,,compressor_off_c=-3.4
+2026-10-05T09:08:58.532077,setpoint,info,,,,compressor_off_c=-3.3
+2026-10-05T09:08:58.752102,setpoint,info,,,,compressor_off_c=-3.2
+2026-10-05T09:08:58.971975,setpoint,info,,,,compressor_off_c=-3.1
+2026-10-05T09:08:59.201987,setpoint,info,,,,compressor_off_c=-3.0
+2026-10-05T09:08:59.395775,setpoint,info,,,,compressor_off_c=-2.9
+2026-10-05T09:08:59.611833,setpoint,info,,,,compressor_off_c=-2.8
+2026-10-05T09:08:59.838705,setpoint,info,,,,compressor_off_c=-2.7
+2026-10-05T09:09:00.031208,setpoint,info,,,,compressor_off_c=-2.6
+2026-10-05T09:09:00.252126,setpoint,info,,,,compressor_off_c=-2.5
+2026-10-05T09:09:00.468224,setpoint,info,,,,compressor_off_c=-2.4
+2026-10-05T09:09:00.692031,setpoint,info,,,,compressor_off_c=-2.3
+2026-10-05T09:09:00.908106,setpoint,info,,,,compressor_off_c=-2.2
+2026-10-05T09:09:01.156089,setpoint,info,,,,compressor_off_c=-2.1
+2026-10-05T09:09:01.420054,setpoint,info,,,,compressor_off_c=-2.0
+2026-10-05T09:15:47.640573,setpoint,info,,,,pump_speed_rpm=10
+2026-10-05T09:15:47.640911,setpoint,info,,,,pump_flow_ml_per_min=10
+2026-10-05T09:15:49.404074,setpoint,info,,,,pump_speed_rpm=21
+2026-10-05T09:15:49.404281,setpoint,info,,,,pump_flow_ml_per_min=20
+2026-10-05T09:15:49.731977,setpoint,info,,,,pump_speed_rpm=33
+2026-10-05T09:15:49.732229,setpoint,info,,,,pump_flow_ml_per_min=30
+2026-10-05T09:15:50.075831,setpoint,info,,,,pump_speed_rpm=45
+2026-10-05T09:15:50.076084,setpoint,info,,,,pump_flow_ml_per_min=40
+2026-10-05T09:15:51.453696,setpoint,info,,,,pump_speed_rpm=57
+2026-10-05T09:15:51.453903,setpoint,info,,,,pump_flow_ml_per_min=50

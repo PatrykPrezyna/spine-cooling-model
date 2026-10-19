@@ -5,8 +5,9 @@ Reads ``*_sensors.csv`` for ``flow_sensor_ml_per_min`` and the matching
 PNG per pair to ``output_data/``.
 
 The 100 Hz pressure log is drawn as a 10 s min–max band plus the 10 s mean so
-the peristaltic pulsation and the slow trend are both visible. Raw logs are
-not modified.
+the peristaltic pulsation and the slow trend are both visible. A short pump
+stop near the end, after which measured flow steps up and stays up, is marked
+as the tubing exchange. Raw logs are not modified.
 """
 
 from __future__ import annotations
@@ -31,10 +32,22 @@ OUTPUT_DATA = HERE / "output_data"
 
 FLOW_SMOOTH = "30s"
 PRESSURE_BIN = "10s"
+# A tubing change is a short stop, not the multi-hour pump-off in the middle.
+TUBING_STOP_MIN_S = 20.0
+TUBING_STOP_MAX_S = 15 * 60.0
+TUBING_FLOW_STEP_ML_MIN = 1.5
+COMPARE_WINDOW_H = 10.0 / 60.0
 
 
 def sensor_logs() -> list[Path]:
-    return sorted(p for p in RAW_DATA.glob("*_sensors.csv") if p.is_file())
+    """Full-run logs only. Period slices are written beside them and plotted separately."""
+
+    skip = ("tube1_", "tube2_")
+    return sorted(
+        p
+        for p in RAW_DATA.glob("*_sensors.csv")
+        if p.is_file() and not any(token in p.name for token in skip)
+    )
 
 
 def pressure_log_for(sensor_path: Path) -> Path:
@@ -49,6 +62,57 @@ def _output_path(sensor_path: Path) -> Path:
 
 def _elapsed_hours(timestamps: pd.Series, t0: pd.Timestamp) -> pd.Series:
     return (timestamps - t0).dt.total_seconds() / 3600.0
+
+
+def pump_off_intervals(rpm: pd.Series, hours: pd.Series) -> list[tuple[float, float]]:
+    """Return (start_h, end_h) for each stretch with the pump commanded off."""
+
+    off = (rpm.to_numpy() <= 1.0)
+    elapsed = hours.to_numpy()
+    intervals: list[tuple[float, float]] = []
+    start: int | None = None
+    for i, is_off in enumerate(off):
+        if is_off and start is None:
+            start = i
+        elif not is_off and start is not None:
+            if (elapsed[i - 1] - elapsed[start]) * 3600.0 >= TUBING_STOP_MIN_S:
+                intervals.append((float(elapsed[start]), float(elapsed[i - 1])))
+            start = None
+    if start is not None and (elapsed[-1] - elapsed[start]) * 3600.0 >= TUBING_STOP_MIN_S:
+        intervals.append((float(elapsed[start]), float(elapsed[-1])))
+    return intervals
+
+
+def _median_flow(
+    measured: pd.Series, hours: pd.Series, start_h: float, end_h: float
+) -> float | None:
+    window = measured[(hours >= start_h) & (hours < end_h) & (measured > 5.0)]
+    if len(window) < 10:
+        return None
+    return float(window.median())
+
+
+def tubing_exchange(
+    measured: pd.Series, hours: pd.Series, intervals: list[tuple[float, float]]
+) -> tuple[float, float, float] | None:
+    """Last short stop after which measured flow stays higher.
+
+    Returns (mark_h, flow_before, flow_after). The mark is the restart, when
+    the new tube is in the circuit.
+    """
+
+    found: tuple[float, float, float] | None = None
+    for start_h, end_h in intervals:
+        duration_s = (end_h - start_h) * 3600.0
+        if duration_s > TUBING_STOP_MAX_S or start_h < 1.0:
+            continue
+        before = _median_flow(measured, hours, start_h - COMPARE_WINDOW_H, start_h)
+        after = _median_flow(measured, hours, end_h, end_h + COMPARE_WINDOW_H)
+        if before is None or after is None:
+            continue
+        if after - before >= TUBING_FLOW_STEP_ML_MIN:
+            found = (end_h, before, after)
+    return found
 
 
 def plot_pair(sensor_path: Path, pressure_path: Path) -> Path:
@@ -96,7 +160,42 @@ def plot_pair(sensor_path: Path, pressure_path: Path) -> Path:
     )
     ax_f.set_ylabel("Flow (ml/min)")
     ax_f.grid(True, alpha=0.3)
-    ax_f.legend(loc="lower right", framealpha=0.9)
+
+    # Scale to the main setpoint. A few-second ramp to a higher set flow
+    # (100 ml/min at the restart) would otherwise hide the wear trend.
+    set_on = set_ml_min[flow["peristaltic_pump_set_speed_rpm"] > 1.0]
+    if len(set_on):
+        setpoint = float(set_on.round().mode().iloc[0])
+        at_setpoint = measured[(set_ml_min - setpoint).abs() < 2.0]
+        low = float(at_setpoint.quantile(0.01)) if len(at_setpoint) else setpoint - 8.0
+        ax_f.set_ylim(low - 2.0, setpoint + 5.0)
+
+    off_intervals = pump_off_intervals(
+        flow["peristaltic_pump_set_speed_rpm"], flow_h
+    )
+    exchange = tubing_exchange(measured, flow_h, off_intervals)
+    for start_h, end_h in off_intervals:
+        if (end_h - start_h) * 60.0 < 30.0:
+            continue
+        for axis in (ax_f, ax_p):
+            axis.axvspan(start_h, end_h, color="0.75", alpha=0.35, linewidth=0, zorder=0)
+    long_offs = [
+        (start_h, end_h)
+        for start_h, end_h in off_intervals
+        if (end_h - start_h) >= 0.5
+    ]
+    if long_offs:
+        start_h, end_h = max(long_offs, key=lambda span: span[1] - span[0])
+        ax_f.text(
+            (start_h + end_h) / 2.0,
+            0.08,
+            "Pump off",
+            transform=ax_f.get_xaxis_transform(),
+            ha="center",
+            va="bottom",
+            fontsize=8,
+            color="0.25",
+        )
 
     series = (
         ("pump_in_bar", "Before pump", "tab:green"),
@@ -123,6 +222,28 @@ def plot_pair(sensor_path: Path, pressure_path: Path) -> Path:
     ax_p.set_xlabel("Elapsed time (h)")
     ax_p.grid(True, alpha=0.3)
     ax_p.legend(loc="upper right", framealpha=0.9)
+
+    if exchange is not None:
+        mark_h, flow_before, flow_after = exchange
+        for axis in (ax_f, ax_p):
+            axis.axvline(mark_h, color="0.15", linewidth=1.0, linestyle=":")
+        ax_f.annotate(
+            f"Tubing exchanged\n{flow_before:.1f} → {flow_after:.1f} ml/min",
+            xy=(mark_h, flow_after),
+            xytext=(-8, 14),
+            textcoords="offset points",
+            ha="right",
+            va="bottom",
+            fontsize=8,
+            color="0.15",
+            arrowprops={"arrowstyle": "-", "color": "0.15"},
+        )
+        print(
+            f"  tubing exchanged at {mark_h:.2f} h: "
+            f"{flow_before:.2f} -> {flow_after:.2f} ml/min"
+        )
+
+    ax_f.legend(loc="lower left", framealpha=0.9)
 
     duration_h = max(float(flow_h.iloc[-1]), float(bin_h.iloc[-1]))
     ax_p.set_xlim(0.0, duration_h)

@@ -121,6 +121,11 @@ COMPARE_PLOTS = [
         "out_name": "heat_power_vs_bath_temperature.png",
         "title": "Cooling power [W] vs Bath temperature",
         "tin_estimates_c": (0.0, -10.0),
+        "run_order": (
+            "short_26cm_70mlmin",
+            "short_26cm_50mlmin",
+            "short_26cm_22mlmin",
+        ),
     },
 ]
 
@@ -326,6 +331,7 @@ def plot_power_vs_bath(
     tin_estimates_c: tuple[float, ...] | None = None,
     estimate_run: str = "short_26cm_70mlmin",
     estimate_flow_ml_min: float = 70.0,
+    run_order: tuple[str, ...] | None = None,
 ) -> Path:
     """Heat power (y) vs measured bath temperature (x) for a comparison group."""
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -340,21 +346,21 @@ def plot_power_vs_bath(
         "short_26cm_50mlmin": {
             "color": "tab:orange",
             "marker": "s",
-            "label": "50 ml/min",
+            "label": "50 ml/min, T_in ≈ 5 °C",
             "offset_y": -14,
             "va": "top",
         },
         "short_26cm_22mlmin": {
             "color": "tab:green",
             "marker": "^",
-            "label": "25 ml/min",
+            "label": "25 ml/min, T_in ≈ 5 °C",
             "offset_y": -14,
             "va": "top",
         },
         "short_26cm_70mlmin": {
             "color": "tab:red",
             "marker": "D",
-            "label": "70 ml/min",
+            "label": "70 ml/min, T_in ≈ 5 °C",
             "offset_y": 8,
             "va": "bottom",
         },
@@ -373,8 +379,13 @@ def plot_power_vs_bath(
         {"color": "tab:purple", "marker": "D", "offset_y": 8, "va": "bottom"},
         {"color": "tab:red", "marker": "v", "offset_y": -14, "va": "top"},
     ]
-    run_names = [name for name in styles if name in set(results["run"])]
-    run_names.extend(name for name in results["run"].unique() if name not in styles)
+    present = set(results["run"])
+    if run_order:
+        run_names = [name for name in run_order if name in present]
+        run_names.extend(name for name in styles if name in present and name not in run_names)
+    else:
+        run_names = [name for name in styles if name in present]
+    run_names.extend(name for name in results["run"].unique() if name not in run_names)
     for i, run_name in enumerate(run_names):
         group = results[results["run"] == run_name].sort_values("t_bath_c")
         if group.empty:
@@ -394,13 +405,23 @@ def plot_power_vs_bath(
             zorder=3,
         )
         for _, row in group.iterrows():
+            offset_y = style["offset_y"]
+            va = style["va"]
+            # The lower-right legend covers the label under the 34 °C point.
+            if (
+                tin_estimates_c
+                and run_name == "short_26cm_22mlmin"
+                and 33.0 < row["t_bath_c"] < 35.5
+            ):
+                offset_y = 8
+                va = "bottom"
             ax.annotate(
                 f"{row['power_w']:.1f} W",
                 (row["t_bath_c"], row["power_w"]),
                 textcoords="offset points",
-                xytext=(0, style["offset_y"]),
+                xytext=(0, offset_y),
                 ha="center",
-                va=style["va"],
+                va=va,
                 fontsize=8,
                 color=style["color"],
             )
@@ -569,6 +590,75 @@ def plot_delta_t_vs_bath(results: pd.DataFrame) -> Path:
     ax.set_ylim(0, float(measured["delta_t_c"].max()) * 1.18)
     OUTPUT_DATA.mkdir(parents=True, exist_ok=True)
     out = OUTPUT_DATA / "delta_t_vs_bath_temperature.png"
+    fig.tight_layout()
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return out
+
+
+def plot_catheter_out_vs_bath(results: pd.DataFrame) -> Path:
+    """Inlet and outlet temperature at the 50 ml/min holds used for cooling power."""
+    measured = results[results["run"] == "short_26cm_50mlmin"].sort_values("t_bath_c")
+    if measured.empty:
+        raise ValueError("no 50 ml/min steps to plot")
+
+    series = (
+        {
+            "column": "t_in_c",
+            "color": "tab:blue",
+            "marker": "o",
+            "label": "Catheter in",
+            "offset_y": -12,
+            "va": "top",
+        },
+        {
+            "column": "t_out_c",
+            "color": "tab:orange",
+            "marker": "s",
+            "label": "Catheter out",
+            "offset_y": 8,
+            "va": "bottom",
+        },
+    )
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    for style in series:
+        ax.plot(
+            measured["t_bath_c"],
+            measured[style["column"]],
+            color=style["color"],
+            marker=style["marker"],
+            markersize=8,
+            linewidth=1.4,
+            label=style["label"],
+            zorder=3,
+        )
+        for _, row in measured.iterrows():
+            ax.annotate(
+                f"{row[style['column']]:.2f} °C",
+                (row["t_bath_c"], row[style["column"]]),
+                textcoords="offset points",
+                xytext=(0, style["offset_y"]),
+                ha="center",
+                va=style["va"],
+                fontsize=8,
+                color=style["color"],
+            )
+
+    ax.set_xlabel("Bath temperature (°C)")
+    ax.set_ylabel("Catheter temperature (°C)")
+    ax.set_title(
+        "Catheter input and output temperature [°C] vs Bath temperature\n"
+        "26 cm tubing, ~50 ml/min, last 45 s of each hold"
+    )
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="center right", framealpha=0.9, fontsize=9)
+    ymin = float(measured["t_in_c"].min())
+    ymax = float(measured["t_out_c"].max())
+    pad = max(1.2, (ymax - ymin) * 0.12)
+    ax.set_ylim(ymin - pad, ymax + pad)
+    OUTPUT_DATA.mkdir(parents=True, exist_ok=True)
+    out = OUTPUT_DATA / "catheter_out_vs_bath_temperature_50mlmin.png"
     fig.tight_layout()
     fig.savefig(out, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -820,6 +910,7 @@ def main() -> None:
             out_name=plot["out_name"],
             title=plot["title"],
             tin_estimates_c=plot.get("tin_estimates_c"),
+            run_order=plot.get("run_order"),
         )
         print(f"Wrote {out_xy}")
 
@@ -829,6 +920,8 @@ def main() -> None:
         print(f"Wrote {out_q}")
         out_dt = plot_delta_t_vs_bath(cm26)
         print(f"Wrote {out_dt}")
+        out_tout = plot_catheter_out_vs_bath(results)
+        print(f"Wrote {out_tout}")
         out_ua = plot_ua_vs_bath(cm26)
         print(f"Wrote {out_ua}")
 

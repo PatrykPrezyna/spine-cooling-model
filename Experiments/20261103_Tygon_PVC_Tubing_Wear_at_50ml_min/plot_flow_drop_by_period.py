@@ -1,11 +1,12 @@
-"""Split the wear log into three runs and plot the flow drop in each.
+"""Split the wear log into two runs and plot the flow drop in each.
 
-The original CSVs stay in ``raw_data/``. This writes three period files beside
+The original CSVs stay in ``raw_data/``. This writes two period files beside
 them (sensor log and the matching 100 Hz pressure log):
 
 1. Start through the long pump-off.
 2. Switch-on of the same tubing after that pump-off.
-3. ``20261006_153226_tube2_first_on``, recorded after the exchange.
+
+The 2026-10-06 log (``20261006_153226_tube2_first_on``) is not used.
 
 On each plot the flow drop is the change from the flow just after the
 50 ml/min run is established to the flow at the end of that continuous run.
@@ -52,11 +53,6 @@ PERIODS = (
     },
 )
 
-# Continuation recorded after the tubing exchange. Not a slice of the first log.
-NEW_TUBING_STEM = "20261006_153226_tube2_first_on"
-NEW_TUBING_TITLE = "New tubing, switched on after the exchange"
-
-
 def _source(kind: str) -> Path:
     return RAW_DATA / f"{SOURCE_STEM}_{kind}.csv"
 
@@ -89,7 +85,7 @@ def off_spans(sensors: pd.DataFrame) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
 def period_bounds(
     sensors: pd.DataFrame,
 ) -> list[tuple[pd.Timestamp | None, pd.Timestamp | None]]:
-    """Return (start, end) pairs, end exclusive, for the three runs."""
+    """Return (start, end) pairs, end exclusive, for the two runs."""
 
     spans = off_spans(sensors)
     if not spans:
@@ -130,7 +126,7 @@ def period_bounds(
         return later_than.iloc[0]
 
     # End bounds are exclusive. Runs do not include the pump-off gaps.
-    # The new-tubing run is a separate log and is not sliced from this file.
+    # The 2026-10-06 tubing log is not part of this split.
     return [
         (None, first_end),
         (first_after(long_off[1]), tube_off[0]),
@@ -432,16 +428,6 @@ def main() -> None:
         print(f"\n{period['title']}")
         out = plot_period(sensor_path, pressure_path, period["title"])
         print(f"  {sensor_path.name} -> {out.name}")
-
-    new_sensors = RAW_DATA / f"{NEW_TUBING_STEM}_sensors.csv"
-    new_pressure = RAW_DATA / f"{NEW_TUBING_STEM}_pressure_100Hz.csv"
-    if not new_sensors.is_file() or not new_pressure.is_file():
-        raise FileNotFoundError(
-            f"New-tubing log missing: {new_sensors.name} and {new_pressure.name}"
-        )
-    print(f"\n{NEW_TUBING_TITLE}")
-    out = plot_period(new_sensors, new_pressure, NEW_TUBING_TITLE)
-    print(f"  {new_sensors.name} -> {out.name}")
 
 
 if __name__ == "__main__":

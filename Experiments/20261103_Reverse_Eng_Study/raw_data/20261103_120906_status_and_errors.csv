@@ -1,0 +1,22 @@
+timestamp,event,severity,previous_state,state,fault_code,message
+2026-11-03T12:09:06.864875,session_start,info,,,,Logging started
+2026-11-03T12:09:06.981588,state_change,info,Init,Ready,,Initialization complete
+2026-11-03T12:09:06.983420,usb,info,,,,USB not writable: [Errno 13] Permission denied: '/media/spine/SPINELOGS/logs'
+2026-11-03T12:09:07.384494,setpoint,info,,,,set_temperature_c=32.0
+2026-11-03T12:09:07.384764,setpoint,info,,,,pump_speed_rpm=20
+2026-11-03T12:09:07.384819,setpoint,info,,,,pump_flow_ml_per_min=19
+2026-11-03T12:09:07.384849,setpoint,info,,,,compressor_off_c=-2.0
+2026-11-03T12:09:07.384878,setpoint,info,,,,compressor_on_c=0.0
+2026-11-03T12:09:12.216321,setpoint,info,,,,pump_speed_rpm=33
+2026-11-03T12:09:12.216534,setpoint,info,,,,pump_flow_ml_per_min=30
+2026-11-03T12:09:12.544016,setpoint,info,,,,pump_speed_rpm=45
+2026-11-03T12:09:12.544333,setpoint,info,,,,pump_flow_ml_per_min=40
+2026-11-03T12:09:12.835885,setpoint,info,,,,pump_speed_rpm=57
+2026-11-03T12:09:12.836093,setpoint,info,,,,pump_flow_ml_per_min=50
+2026-11-03T12:09:13.251844,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T12:09:13.252058,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T12:09:14.103907,setpoint,info,,,,pump_speed_rpm=57
+2026-11-03T12:09:14.104107,setpoint,info,,,,pump_flow_ml_per_min=50
+2026-11-03T12:09:17.022669,state_change,info,Ready,Cooling,,All conditions met
+2026-11-03T12:09:17.204364,error,stop,Cooling,Error,CSF_LOW_TEMP,CSF low temp
+2026-11-03T13:36:19.009899,session_stop,info,Error,Error,,Session ended

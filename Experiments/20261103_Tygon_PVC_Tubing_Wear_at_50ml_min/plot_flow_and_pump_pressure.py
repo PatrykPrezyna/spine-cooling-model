@@ -42,7 +42,8 @@ COMPARE_WINDOW_H = 10.0 / 60.0
 def sensor_logs() -> list[Path]:
     """Full-run logs only. Period slices are written beside them and plotted separately."""
 
-    skip = ("tube1_", "tube2_")
+    # 20261006 is the archived tube-2 run and is not part of this analysis.
+    skip = ("tube1_", "tube2_", "20261006")
     return sorted(
         p
         for p in RAW_DATA.glob("*_sensors.csv")

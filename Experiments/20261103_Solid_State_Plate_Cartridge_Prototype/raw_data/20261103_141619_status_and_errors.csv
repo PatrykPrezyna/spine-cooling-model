@@ -1,0 +1,45 @@
+timestamp,event,severity,previous_state,state,fault_code,message
+2026-11-03T14:16:19.339766,session_start,info,,,,Logging started
+2026-11-03T14:16:19.450373,state_change,info,Init,Ready,,Initialization complete
+2026-11-03T14:16:19.452141,usb,info,,,,USB not writable: [Errno 13] Permission denied: '/media/spine/SPINELOGS/logs'
+2026-11-03T14:16:19.831442,setpoint,info,,,,set_temperature_c=32.0
+2026-11-03T14:16:19.831708,setpoint,info,,,,pump_speed_rpm=20
+2026-11-03T14:16:19.831760,setpoint,info,,,,pump_flow_ml_per_min=19
+2026-11-03T14:16:19.831790,setpoint,info,,,,compressor_off_c=-2.0
+2026-11-03T14:16:19.831819,setpoint,info,,,,compressor_on_c=0.0
+2026-11-03T14:16:27.025342,setpoint,info,,,,pump_speed_rpm=33
+2026-11-03T14:16:27.025644,setpoint,info,,,,pump_flow_ml_per_min=30
+2026-11-03T14:16:27.699783,setpoint,info,,,,pump_speed_rpm=45
+2026-11-03T14:16:27.700231,setpoint,info,,,,pump_flow_ml_per_min=40
+2026-11-03T14:16:28.031854,setpoint,info,,,,pump_speed_rpm=57
+2026-11-03T14:16:28.032144,setpoint,info,,,,pump_flow_ml_per_min=50
+2026-11-03T14:16:28.953194,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T14:16:28.953454,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T14:16:29.263852,setpoint,info,,,,pump_speed_rpm=81
+2026-11-03T14:16:29.264095,setpoint,info,,,,pump_flow_ml_per_min=70
+2026-11-03T14:16:29.479472,state_change,info,Ready,Cooling,,All conditions met
+2026-11-03T14:16:29.687634,error,stop,Cooling,Error,CSF_LOW_TEMP,CSF low temp
+2026-11-03T14:16:30.107905,setpoint,info,,,,pump_speed_rpm=92
+2026-11-03T14:16:30.108108,setpoint,info,,,,pump_flow_ml_per_min=80
+2026-11-03T14:16:31.825305,setpoint,info,,,,pump_speed_rpm=81
+2026-11-03T14:16:31.825593,setpoint,info,,,,pump_flow_ml_per_min=70
+2026-11-03T14:16:32.355846,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T14:16:32.356057,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T14:16:34.074460,setpoint,info,,,,pump_speed_rpm=57
+2026-11-03T14:16:34.074856,setpoint,info,,,,pump_flow_ml_per_min=50
+2026-11-03T14:33:41.441632,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T14:33:41.441873,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T14:33:42.335932,setpoint,info,,,,pump_speed_rpm=81
+2026-11-03T14:33:42.336214,setpoint,info,,,,pump_flow_ml_per_min=70
+2026-11-03T14:34:16.762760,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T14:34:16.763113,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T14:34:17.224694,setpoint,info,,,,pump_speed_rpm=57
+2026-11-03T14:34:17.225107,setpoint,info,,,,pump_flow_ml_per_min=50
+2026-11-03T14:34:46.737887,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T14:34:46.738148,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T14:34:49.970596,setpoint,info,,,,pump_speed_rpm=81
+2026-11-03T14:34:49.971068,setpoint,info,,,,pump_flow_ml_per_min=70
+2026-11-03T14:34:59.553214,setpoint,info,,,,pump_speed_rpm=69
+2026-11-03T14:34:59.553488,setpoint,info,,,,pump_flow_ml_per_min=60
+2026-11-03T14:35:00.638905,setpoint,info,,,,pump_speed_rpm=57
+2026-11-03T14:35:00.639363,setpoint,info,,,,pump_flow_ml_per_min=50

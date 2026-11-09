@@ -16,4 +16,5 @@ Python toolkit for simulating and verifying thermal dynamics in tissue cooling s
 ## Structure
 - **Models/** — Simulation models
 - **Experiments/** — Experiments conducteddurint the work on Cool Spine prototype (see Dropbox for destribtion)
+- **Design_Decisions/** — Design decision records (rationale, options, follow-ups)
 - **Archive/** — Previous iterations and prototypes

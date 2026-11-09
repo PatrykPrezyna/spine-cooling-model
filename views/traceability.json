@@ -19,91 +19,91 @@
     "CoolSpineSystem::PressureSensor",
     "CoolSpineSystem::TemperatureSensor",
     "CoolSpineSystem::Controller",
-    "CoolSpineSystem::CoolSpine"
+    "CoolSpineSystem::CoolSpineDevice"
   ],
   "nodes": {
-    "CoolSpineUseCases::DeliverTherapeuticCooling": {
-      "x": -520,
-      "y": 80
-    },
-    "CoolSpineUseCases::OperateWithoutGroundPower": {
-      "x": -520,
-      "y": 420
-    },
     "CoolSpineRequirements::PeakCoolingPower": {
-      "x": -80,
-      "y": -80
+      "x": -337.5,
+      "y": 720
     },
     "CoolSpineRequirements::SteadyStateCoolingPower": {
-      "x": -80,
-      "y": 40
-    },
-    "CoolSpineRequirements::OperatingPressure": {
-      "x": -80,
-      "y": 160
-    },
-    "CoolSpineRequirements::MaximumPressure": {
-      "x": -80,
-      "y": 280
-    },
-    "CoolSpineRequirements::AppropriateUserInterface": {
-      "x": -80,
-      "y": 400
-    },
-    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
-      "x": -80,
-      "y": 520
+      "x": -76.5,
+      "y": 720
     },
     "CoolSpineRequirements::OperationWithoutGroundPower": {
-      "x": -80,
-      "y": 640
+      "x": -141,
+      "y": 360
     },
     "CoolSpineRequirements::PortableFormFactor": {
-      "x": -80,
-      "y": 760
-    },
-    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
-      "x": 380,
-      "y": -40
-    },
-    "CoolSpineSystem::PeristalticPump": {
-      "x": 380,
-      "y": 100
-    },
-    "CoolSpineSystem::PressureSensor": {
-      "x": 380,
+      "x": -270.5,
       "y": 240
     },
-    "CoolSpineSystem::TouchDisplay": {
-      "x": 380,
-      "y": 380
+    "CoolSpineRequirements::OperatingPressure": {
+      "x": -531,
+      "y": 840
     },
-    "CoolSpineSystem::Controller": {
-      "x": 380,
-      "y": 520
+    "CoolSpineRequirements::MaximumPressure": {
+      "x": -269,
+      "y": 840
     },
-    "CoolSpineSystem::TemperatureSensor": {
-      "x": 380,
-      "y": 660
+    "CoolSpineRequirements::AppropriateUserInterface": {
+      "x": -206.5,
+      "y": 480
     },
-    "CoolSpineSystem::Battery": {
-      "x": 380,
-      "y": 800
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
+      "x": -0.5,
+      "y": 240
     },
     "CoolSpineSystem::UPS": {
-      "x": 620,
-      "y": 800
+      "x": -140,
+      "y": 600
     },
-    "CoolSpineSystem::CoolSpine": {
-      "x": 747,
-      "y": 316
+    "CoolSpineSystem::Battery": {
+      "x": 96.5,
+      "y": 480
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": -7,
+      "y": 840
+    },
+    "CoolSpineSystem::PeristalticPump": {
+      "x": 251,
+      "y": 840
+    },
+    "CoolSpineSystem::PressureSensor": {
+      "x": 421,
+      "y": 840
+    },
+    "CoolSpineSystem::TemperatureSensor": {
+      "x": -153.5,
+      "y": 0
+    },
+    "CoolSpineSystem::TouchDisplay": {
+      "x": 30,
+      "y": 600
+    },
+    "CoolSpineSystem::Controller": {
+      "x": 227.5,
+      "y": 720
+    },
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 37.5,
+      "y": 0
+    },
+    "CoolSpineUseCases::DeliverTherapeuticCooling": {
+      "x": -214,
+      "y": 120
+    },
+    "CoolSpineUseCases::OperateWithoutGroundPower": {
+      "x": 20,
+      "y": 120
     }
   },
   "hiddenEdges": [],
   "view": {
-    "tx": 753,
-    "ty": 192,
-    "s": 0.55
+    "tx": 673.1364660883816,
+    "ty": 117.42535113831435,
+    "s": 0.3712268309642084
   },
   "options": {
     "attrs": false,

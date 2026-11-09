@@ -1,17 +1,8 @@
 package CoolSpineViews {
 
-    // SysML v2 views / viewpoints (Systems Library Views + StandardViewDefinitions).
-    //
-    // Why not one diagram with use cases + all requirements + all parts?
-    // SysML v2 separates stakeholder concerns via viewpoints; each view
-    // *exposes* only the elements that answer that concern. Dumping every
-    // element onto a GeneralView recreates an unreadable "everything"
-    // diagram. Prefer:
-    //   1. Clinical use-case view — actors + use cases (+ subject system)
-    //   2. Traceability view — use cases ↔ requirements ↔ key parts
-    //   3. Structure views — already in explorer (Context / Internals)
-    // Explorer `views/*.json` files are the practical canvas for (1)–(3);
-    // the textual views below are the model-level source of truth.
+    // Model-level view definitions (which stakeholder questions each picture
+    // answers). Day-to-day diagrams you drag around live in views/*.json for
+    // the explorer; keep these in sync when you change the story of a view.
 
     private import Views::*;
     private import StandardViewDefinitions::*;
@@ -21,26 +12,26 @@ package CoolSpineViews {
     private import CoolSpineSystemContext::*;
 
     // ------------------------------------------------------------------
-    // Concerns (subject must be the first parameter)
+    // What question each picture answers
     // ------------------------------------------------------------------
 
     concern def ClinicalOperationConcern {
         doc /*
-        How clinicians interact with CoolSpine during a procedure — who
-        initiates therapy, who sets flow / temperature, who benefits.
+        For clinicians: who starts therapy, who sets flow / temperature, and
+        who benefits — without diving into internal hardware wiring.
         */
-        subject coolSpine : CoolSpine;
+        subject coolSpine : CoolSpineDevice;
         stakeholder anesthesiologist : Anesthesiologist;
         stakeholder surgeon : Surgeon;
     }
 
     concern def TraceabilityConcern {
         doc /*
-        Which requirements each use case addresses, and which device parts
-        implement those requirements — without showing full fluid / power
-        interconnection detail.
+        For engineers / QA: which requirements a use case covers, and which
+        hardware blocks implement those requirements — without the full fluid
+        / power schematic.
         */
-        subject coolSpine : CoolSpine;
+        subject coolSpine : CoolSpineDevice;
         stakeholder anesthesiologist : Anesthesiologist;
     }
 
@@ -68,20 +59,20 @@ package CoolSpineViews {
     }
 
     // ------------------------------------------------------------------
-    // Views (typed by GeneralView — graph of exposed elements / relations)
+    // Named pictures
     // ------------------------------------------------------------------
 
     view clinicalUseCases : GeneralView {
         doc /*
-        Clinical use-case presentation: CoolSpine as subject, clinical
-        actors, and the two use cases. Intentionally omits requirements
-        and internal parts so the interaction picture stays readable.
+        Clinical story only: CoolSpine, surgeon, anesthesiologist, patient,
+        and the two use cases. Leave requirements and internal parts out so
+        the interaction stays readable.
         */
 
         viewpoint vp : ClinicalUserViewpoint;
 
         expose CoolSpineUseCases::*;
-        expose CoolSpineSystem::CoolSpine;
+        expose CoolSpineSystem::CoolSpineDevice;
         expose CoolSpineSystemContext::Anesthesiologist;
         expose CoolSpineSystemContext::Surgeon;
         expose CoolSpineSystemContext::Patient;
@@ -91,17 +82,16 @@ package CoolSpineViews {
 
     view useCaseRequirementsTraceability : GeneralView {
         doc /*
-        Traceability presentation: use cases, the requirements they
-        satisfy, and the main parts that satisfy those same requirements.
-        Prefer this over mixing full interconnection structure into the
-        use-case picture.
+        Traceability story: use cases ↔ requirements ↔ main implementing
+        parts (controller, pump, fridge, power, sensors, UI). Prefer this over
+        stuffing the full interconnect diagram into the use-case picture.
         */
 
         viewpoint vp : TraceabilityViewpoint;
 
         expose CoolSpineUseCases::*;
         expose CoolSpineRequirements::*;
-        expose CoolSpineSystem::CoolSpine;
+        expose CoolSpineSystem::CoolSpineDevice;
         expose CoolSpineSystem::CustomMicroRefrigerationUnit;
         expose CoolSpineSystem::Battery;
         expose CoolSpineSystem::UPS;

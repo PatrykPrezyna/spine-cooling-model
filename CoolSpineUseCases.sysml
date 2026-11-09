@@ -1,8 +1,7 @@
 package CoolSpineUseCases {
 
-    // Spec-compliant SysML v2 use cases (see Systems Library UseCases / Cases).
-    // Actors are part defs from the operational context — not `actor def`
-    // (that form is non-standard and rejected by the official parser).
+    // Clinical scenarios. People come from CoolSpineSystemContext; the machine
+    // is CoolSpineDevice from CoolSpineSystem.
     private import CoolSpineRequirements::*;
     private import CoolSpineSystem::*;
     private import CoolSpineSystemContext::*;
@@ -13,14 +12,12 @@ package CoolSpineUseCases {
 
     use case def DeliverTherapeuticCooling {
         doc /*
-        Primary clinical use case: during a spinal / neurosurgical procedure,
-        the surgeon decides whether CoolSpine is used; if yes, the
-        anesthesiologist powers it on, setpoints are agreed and entered, and
-        CoolSpine delivers cooling until a stop command. The patient is the
-        beneficiary of the heat exchange.
+        Main clinical scenario: during spinal / neurosurgery the surgeon
+        decides whether to use CoolSpine. If yes, the anesthesiologist powers
+        it on, setpoints are agreed and entered, and CoolSpine cools until
+        someone stops it. The patient benefits from the heat exchange.
         */
 
-        // Swimlane order (left → right): surgeon, anesthesiologist, CoolSpine
         actor surgeon : Surgeon {
             perform deliverCooling.decideWhetherToUse;
             perform deliverCooling.decideSetpoint;
@@ -31,7 +28,7 @@ package CoolSpineUseCases {
             perform deliverCooling.enterSetpoint;
         }
 
-        subject coolSpine : CoolSpine {
+        subject coolSpine : CoolSpineDevice {
             perform deliverCooling.completeSelfCheck;
             perform deliverCooling.startCoolingAndAwaitStop;
         }
@@ -40,8 +37,8 @@ package CoolSpineUseCases {
 
         objective {
             doc /*
-            CoolSpine maintains commanded flow and cooling within safe pressure
-            limits for the duration of the therapy request.
+            Keep commanded flow and cooling within safe pressure limits for
+            as long as therapy is requested.
             */
         }
 
@@ -52,48 +49,45 @@ package CoolSpineUseCases {
         satisfy 'REQ-CP-007';  // AppropriateUserInterface
         satisfy 'REQ-CP-008';  // SafetyMonitoringAndFailSafes
 
-        // Activity with decision after the surgeon's use/no-use choice.
-        // Swimlanes via perform on subject / actors above.
         perform action deliverCooling {
             doc /*
-            Surgeon decides whether to use CoolSpine; yes → power on →
-            self-check → setpoints → cooling until stop; no → done.
+            Happy path: decide to use → power on → self-check → setpoints →
+            cool until stop. If the surgeon decides not to use CoolSpine,
+            the flow ends immediately.
             */
 
             action decideWhetherToUse {
                 doc /*
-                Surgeon decides whether CoolSpine will be used for this
-                procedure.
+                Surgeon decides if CoolSpine will be used for this case.
                 */
             }
 
             action switchDeviceOn {
-                doc /* Anesthesiologist switches CoolSpine on. */
+                doc /* Anesthesiologist powers CoolSpine on. */
             }
             then completeSelfCheck;
 
             action completeSelfCheck {
                 doc /*
-                CoolSpine runs power-on self-check; continues only when
-                the check is OK.
+                Device runs power-on checks; therapy continues only if OK.
                 */
             }
             then decideSetpoint;
 
             action decideSetpoint {
-                doc /* Surgeon decides the flow / temperature setpoint. */
+                doc /* Surgeon picks the flow / temperature target. */
             }
             then enterSetpoint;
 
             action enterSetpoint {
-                doc /* Anesthesiologist enters the setpoint on the device. */
+                doc /* Anesthesiologist enters that target on the device UI. */
             }
             then startCoolingAndAwaitStop;
 
             action startCoolingAndAwaitStop {
                 doc /*
-                After the setpoint is written, CoolSpine starts cooling
-                automatically and waits for a stop command.
+                After setpoints are set, CoolSpine starts cooling and waits
+                for a stop command.
                 */
             }
             then done;
@@ -108,20 +102,19 @@ package CoolSpineUseCases {
 
     use case def OperateWithoutGroundPower {
         doc /*
-        Continuity use case: CoolSpine keeps delivering therapy when wall /
-        ground power is unavailable (transport between clinical settings or
-        temporary AC loss), drawing on UPS + battery for at least the required
-        hold-up time.
+        Keep therapy going when there is no wall power — moving between rooms
+        or a short AC outage. UPS + battery must cover at least the required
+        hold-up time while safety monitoring stays active.
         */
 
-        subject coolSpine : CoolSpine;
+        subject coolSpine : CoolSpineDevice;
 
         actor anesthesiologist : Anesthesiologist;
 
         objective {
             doc /*
-            Therapy continues without ground power for at least 30 minutes
-            while safety monitoring and fail-safes remain active.
+            Therapy continues without wall power for at least 30 minutes, with
+            safety monitoring and fail-safes still working.
             */
         }
 

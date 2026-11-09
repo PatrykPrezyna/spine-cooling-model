@@ -1,0 +1,207 @@
+{
+  "version": 1,
+  "name": "req",
+  "elements": [
+    "CoolSpineRequirements::CoolSpineRequirement",
+    "CoolSpineRequirements::CoolSpineSystemRequirements",
+    "CoolSpineRequirements::PeakCoolingPower",
+    "CoolSpineRequirements::SteadyStateCoolingPower",
+    "CoolSpineRequirements::OperationWithoutGroundPower",
+    "CoolSpineRequirements::PortableFormFactor",
+    "CoolSpineRequirements::OperatingPressure",
+    "CoolSpineRequirements::MaximumPressure",
+    "CoolSpineRequirements::AppropriateUserInterface",
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes",
+    "CoolSpineSystem::CoolSpineDevice",
+    "CoolSpineUseCases::OperateWithoutGroundPower",
+    "CoolSpineSystem::TouchDisplay",
+    "CoolSpineUseCases::DeliverTherapeuticCooling",
+    "CoolSpineSystem::UPS",
+    "CoolSpineSystem::Battery",
+    "CoolSpineSystem::Compressor",
+    "CoolSpineSystem::CoolPlate",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange1",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange2",
+    "CoolSpineSystem::FluidReservoir",
+    "CoolSpineSystem::FluidReservoir::inputTempSensor",
+    "CoolSpineSystem::FluidReservoir::outputTempSensor",
+    "CoolSpineSystem::Catheter",
+    "CoolSpineSystem::Catheter::csfTempSensor",
+    "CoolSpineSystem::PeristalticPump",
+    "CoolSpineSystem::PeristalticPump::inputPressureSensor",
+    "CoolSpineSystem::PeristalticPump::outputPressureSensor",
+    "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::TemperatureSensor",
+    "CoolSpineSystem::Thermistor",
+    "CoolSpineSystem::Thermocouple",
+    "CoolSpineSystem::RaspberryPi",
+    "CoolSpineSystem::PowerHat",
+    "CoolSpineSystem::AdafruitAnalogInput",
+    "CoolSpineSystem::Controller"
+  ],
+  "nodes": {
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 391,
+      "y": -116
+    },
+    "CoolSpineSystem::TouchDisplay": {
+      "x": 863,
+      "y": 302
+    },
+    "CoolSpineUseCases::OperateWithoutGroundPower": {
+      "x": 449,
+      "y": 356
+    },
+    "CoolSpineRequirements::CoolSpineRequirement": {
+      "x": -344.5,
+      "y": 0
+    },
+    "CoolSpineRequirements::CoolSpineSystemRequirements": {
+      "x": -440.5,
+      "y": 460
+    },
+    "CoolSpineRequirements::PeakCoolingPower": {
+      "x": -1185.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::SteadyStateCoolingPower": {
+      "x": -894.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::OperationWithoutGroundPower": {
+      "x": -590.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::PortableFormFactor": {
+      "x": -248.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::OperatingPressure": {
+      "x": 53.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::MaximumPressure": {
+      "x": 339.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::AppropriateUserInterface": {
+      "x": 611.5,
+      "y": 694
+    },
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
+      "x": 914.5,
+      "y": 694
+    },
+    "CoolSpineUseCases::DeliverTherapeuticCooling": {
+      "x": -110.5,
+      "y": 460
+    },
+    "CoolSpineSystem::UPS": {
+      "x": -374,
+      "y": 1316
+    },
+    "CoolSpineSystem::Battery": {
+      "x": 41.5,
+      "y": 1114
+    },
+    "CoolSpineSystem::Compressor": {
+      "x": -578,
+      "y": 1706
+    },
+    "CoolSpineSystem::CoolPlate": {
+      "x": -286,
+      "y": 1706
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": -75,
+      "y": 2210
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange1": {
+      "x": 0,
+      "y": 1706
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange2": {
+      "x": 170,
+      "y": 1706
+    },
+    "CoolSpineSystem::FluidReservoir": {
+      "x": -366,
+      "y": 2494
+    },
+    "CoolSpineSystem::FluidReservoir::inputTempSensor": {
+      "x": -386.5,
+      "y": 1926
+    },
+    "CoolSpineSystem::FluidReservoir::outputTempSensor": {
+      "x": -206.5,
+      "y": 1926
+    },
+    "CoolSpineSystem::Catheter": {
+      "x": -75,
+      "y": 2494
+    },
+    "CoolSpineSystem::Catheter::csfTempSensor": {
+      "x": -17.5,
+      "y": 1926
+    },
+    "CoolSpineSystem::PeristalticPump": {
+      "x": -121,
+      "y": 2730
+    },
+    "CoolSpineSystem::PeristalticPump::inputPressureSensor": {
+      "x": 229,
+      "y": 2494
+    },
+    "CoolSpineSystem::PeristalticPump::outputPressureSensor": {
+      "x": 229,
+      "y": 2210
+    },
+    "CoolSpineSystem::PressureSensor": {
+      "x": 435,
+      "y": 2210
+    },
+    "CoolSpineSystem::TemperatureSensor": {
+      "x": -160,
+      "y": 0
+    },
+    "CoolSpineSystem::Thermistor": {
+      "x": 340,
+      "y": 1706
+    },
+    "CoolSpineSystem::Thermocouple": {
+      "x": -94.5,
+      "y": 1502
+    },
+    "CoolSpineSystem::RaspberryPi": {
+      "x": 193.5,
+      "y": 1502
+    },
+    "CoolSpineSystem::PowerHat": {
+      "x": 471.5,
+      "y": 1502
+    },
+    "CoolSpineSystem::AdafruitAnalogInput": {
+      "x": -86,
+      "y": 1316
+    },
+    "CoolSpineSystem::Controller": {
+      "x": 152.5,
+      "y": 1926
+    }
+  },
+  "hiddenEdges": [],
+  "view": {
+    "tx": 1006.0766766472716,
+    "ty": 178.16777525495598,
+    "s": 0.7957576808266406
+  },
+  "options": {
+    "attrs": true,
+    "parts": true,
+    "keywords": false,
+    "edgeLabels": false,
+    "packages": false,
+    "docsOnNode": true
+  }
+}

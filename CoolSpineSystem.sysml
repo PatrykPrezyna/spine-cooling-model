@@ -4,36 +4,45 @@ package CoolSpineSystem {
     private import CoolSpineRequirements::*;
 
     // ------------------------------------------------------------------
-    // Part definitions (device only — clinical context is in CoolSpineSystemContext)
-    // Connections are simple part-to-part links (same style everywhere).
+    // Device hardware (clinical people / OR setup: CoolSpineSystemContext)
     // ------------------------------------------------------------------
 
     part def UPS {
         doc /*
-        Uninterruptible power supply: AC input conditioning and DC distribution
-        with battery-backed hold-up. Supplies the controller and other DC loads.
+        Wall-power box for the device. Takes AC from the room, outputs DC
+        for the controller, and can keep running from the battery if wall
+        power is lost.
         */
     }
 
     part def Battery {
-        doc /* Backup battery pack for operation without ground power. */
+        doc /*
+        Backup battery so CoolSpine can keep running when unplugged or
+        during transport (target: at least 30 minutes).
+        */
 
         satisfy 'REQ-CP-003';  // OperationWithoutGroundPower
     }
 
     part def Compressor {
-        doc /* Refrigerant compressor driving the micro-refrigeration loop. */
+        doc /*
+        Small compressor in the cooling module. Pushes refrigerant through
+        the cold plate so heat can be pulled out of the saline.
+        */
     }
 
     part def CoolPlate {
-        doc /* Cold plate that transfers heat from the saline to the refrigerant loop. */
+        doc /*
+        Metal cold plate where saline is chilled. Heat moves from the saline
+        into the refrigerant loop on the other side of the plate.
+        */
     }
 
     part def CustomMicroRefrigerationUnit {
         doc /*
-        Compact refrigeration loop that cools saline; switched by the
-        controller. Compressor and cold plate, instrumented with a
-        temperature sensor on each side of the heat exchange.
+        On-board fridge for the saline. The controller turns it on/off.
+        Inside: compressor + cold plate, plus two temperature probes on the
+        heat exchanger so software can watch cooling performance.
         */
 
         satisfy 'REQ-CP-001';  // PeakCoolingPower
@@ -41,28 +50,28 @@ package CoolSpineSystem {
 
         part compressor : Compressor;
         part coolPlate : CoolPlate;
-        part heatExchange1TempSensor : Thermocouple;
-        part heatExchange2TempSensor : Thermocouple;
+        part heatExchange1 : Thermocouple;
+        part heatExchange2 : Thermocouple;
 
         connection refrigerantLoop
             connect compressor to coolPlate {
-            doc /* Compressed refrigerant into the cold plate and back. */
+            doc /* Refrigerant circulates between compressor and cold plate. */
         }
         connection senseHeatExchange1
-            connect coolPlate to heatExchange1TempSensor {
-            doc /* Heat Exchange 1 temperature at the cold plate. */
+            connect coolPlate to heatExchange1 {
+            doc /* Temperature probe 1 on the cold-plate heat exchanger. */
         }
         connection senseHeatExchange2
-            connect coolPlate to heatExchange2TempSensor {
-            doc /* Heat Exchange 2 temperature at the cold plate. */
+            connect coolPlate to heatExchange2 {
+            doc /* Temperature probe 2 on the cold-plate heat exchanger. */
         }
     }
 
     part def FluidReservoir {
         doc /*
-        Warm and cold saline reservoirs. Cold supply leaves toward the
-        catheter; warm return arrives from the pump. Instrumented with an
-        input and an output saline temperature sensor.
+        Saline tanks on the device: cold saline goes out to the patient
+        catheter; warmer saline comes back from the pump. Two thermistors
+        measure saline temperature on the way in and out.
         */
 
         satisfy 'REQ-CP-005';  // OperatingPressure
@@ -74,9 +83,9 @@ package CoolSpineSystem {
 
     part def Catheter {
         doc /*
-        Patient-inserted catheter. Cold saline enters, exchanges heat with
-        tissue, and leaves as warm saline toward the pump. Carries a CSF
-        temperature sensor at the tip.
+        Tube placed in the patient. Cold saline flows in, takes up heat from
+        tissue / CSF, and returns warmer toward the pump. Tip sensor measures
+        CSF temperature for the controller.
         */
 
         part csfTempSensor : Thermistor;
@@ -84,9 +93,9 @@ package CoolSpineSystem {
 
     part def PeristalticPump {
         doc /*
-        Circulates warm return saline from the catheter back to the reservoir.
-        Flow rate is commanded by the controller. Pressure is measured on the
-        pump inlet and outlet.
+        Pump that moves saline around the closed loop (catheter → reservoir).
+        Speed/flow is set by the controller. Pressure sensors sit before and
+        after the pump head for safety monitoring.
         */
 
         satisfy 'REQ-CP-005';  // OperatingPressure
@@ -97,12 +106,15 @@ package CoolSpineSystem {
 
         connection salineThroughPump
             connect inputPressureSensor to outputPressureSensor {
-            doc /* Saline path across the pump head, inlet to outlet. */
+            doc /* Saline path through the pump (inlet → outlet). */
         }
     }
 
     part def PressureSensor {
-        doc /* In-line fluid pressure sensor on the saline circuit. */
+        doc /*
+        Fluid pressure sensor in the saline circuit (used at the pump inlet
+        and outlet). Controller reads it for operating / max pressure limits.
+        */
 
         satisfy 'REQ-CP-005';  // OperatingPressure
         satisfy 'REQ-CP-006';  // MaximumPressure
@@ -110,8 +122,9 @@ package CoolSpineSystem {
 
     abstract part def TemperatureSensor {
         doc /*
-        Temperature probe read by the controller. Realization may be either
-        a thermistor or a thermocouple (see specializations).
+        Any temperature probe the controller can read. Two kinds are used
+        in this design: thermistor (more accurate, saline/CSF) and
+        thermocouple (cooling module heat exchanger).
         */
 
         attribute accuracy : Real;  // measurement accuracy, ± °C
@@ -119,8 +132,9 @@ package CoolSpineSystem {
 
     part def Thermistor :> TemperatureSensor {
         doc /*
-        Resistance-based temperature sensor (e.g. NTC). Analog voltage from a
-        divider / conditioning circuit is read by the controller ADC.
+        Cheap, accurate temperature sensor (±0.1 °C). Resistance changes with
+        temperature; the Pi reads it through the analog ADC. Used for saline
+        and CSF temperatures.
         */
 
         attribute :>> accuracy = 0.1;  // ± 0.1 °C
@@ -128,48 +142,51 @@ package CoolSpineSystem {
 
     part def Thermocouple :> TemperatureSensor {
         doc /*
-        Thermoelectric temperature sensor. Requires cold-junction compensation
-        and a thermocouple DAQ front-end (see Spec/Thermocouples
-        DAQ 8-Layer Stackable HAT/).
+        Temperature sensor for the refrigeration heat exchanger (±1 °C).
+        Needs a thermocouple input board (see Spec/Thermocouples DAQ …/).
         */
 
         attribute :>> accuracy = 1.0;  // ± 1 °C
     }
 
     // ------------------------------------------------------------------
-    // Controller internals (Pi + power HAT + Adafruit ADC + GPIO)
+    // Controller stack (Pi + power + ADC + screen)
     // ------------------------------------------------------------------
 
     part def RaspberryPi {
         doc /*
-        Single-board computer hosting control / monitoring software.
-        See Spec/Pi & Screen/.
+        Computer that runs CoolSpine control software (setpoints, sensing,
+        safety). Hardware details: Spec/Pi & Screen/.
         */
     }
 
     part def PowerHat {
-        doc /* Power HAT that conditions UPS DC and supplies the Raspberry Pi. */
+        doc /*
+        Board that takes DC from the UPS and cleanly powers the Raspberry Pi.
+        */
     }
 
     part def AdafruitAnalogInput {
         doc /*
-        Adafruit ADS1115 (or equivalent) multi-channel ADC for temperature
-        and pressure analog inputs. See Spec/ads1115/.
+        Multi-channel ADC (ADS1115 or equivalent) that digitizes temperature
+        and pressure analog signals for the Pi. See Spec/ads1115/.
         */
     }
 
     part def TouchDisplay {
-        doc /* Operator touch display: controls and status, driven by the controller. */
+        doc /*
+        Touch screen for the clinician: start/stop, setpoints, status and
+        alarms. Driven by the Pi.
+        */
 
         satisfy 'REQ-CP-007';  // AppropriateUserInterface
     }
 
     part def Controller {
         doc /*
-        Device controller: Raspberry Pi with power HAT, Adafruit analog
-        inputs for temp/pressure, operator touch display, and digital GPIO
-        to switch the micro-refrigeration unit. Powered from the UPS; wired
-        to all sensors.
+        Brain of the device: Raspberry Pi + power board + ADC + touch screen.
+        Powered from the UPS. Reads all sensors, shows the UI, sets pump flow,
+        and switches the refrigeration module on/off.
         */
 
         part raspberryPi : RaspberryPi;
@@ -179,35 +196,38 @@ package CoolSpineSystem {
 
         connection supplyPiPower
             connect powerHat to raspberryPi {
-            doc /* Power HAT supplies the Raspberry Pi. */
+            doc /* DC power from the power board to the Pi. */
         }
 
         connection adcInterface
             connect raspberryPi to adc {
-            doc /* I2C between Raspberry Pi and Adafruit ADS1115. */
+            doc /* Digital bus (I2C) from Pi to the ADC chip. */
         }
 
         connection operatorInterface
             connect raspberryPi to touchDisplay {
-            doc /* Operator controls and status between the Pi and the touch display. */
+            doc /* Screen and touch input between Pi and display. */
         }
     }
 
     // ------------------------------------------------------------------
-    // System composition
+    // Whole CoolSpine device
     // ------------------------------------------------------------------
 
-    part def CoolSpine {
+    part def CoolSpineDevice {
         doc /*
-        Therapeutic temperature-control device. Closed fluid loop:
-        reservoir (cold) → catheter (warms) → pump → reservoir. Pressure is
-        measured inside the pump (inlet/outlet), saline temperature inside
-        the reservoir (input/output), CSF temperature in the catheter, and
-        heat-exchange temperature in the micro-refrigeration unit. Controller
-        (Pi-based) is powered from the UPS, reads sensors, hosts the
-        operator touch display, drives pump setpoints, and switches the
-        micro-refrigeration unit.
-        Patient and clinical staff live in CoolSpineSystemContext::Kontext.
+        CoolSpine — portable device that cools a patient during spinal /
+        neurosurgery by circulating cold saline through a catheter.
+
+        How the fluid moves (closed loop):
+          cold reservoir → catheter (in the patient) → pump → reservoir
+
+        What the controller does: powered from UPS (+ battery backup), reads
+        pressures and temperatures, shows the touch UI, sets pump flow, and
+        turns the mini-fridge (micro-ref) on/off.
+
+        People and the OR setup are modeled separately (operating context);
+        this block is only the machine.
         */
 
         satisfy 'REQ-CP-004';  // PortableFormFactor
@@ -224,67 +244,65 @@ package CoolSpineSystem {
         // Power
         connection supplyBackupPower
             connect battery to ups {
-            doc /* Battery backup into the UPS. */
+            doc /* Battery feeds the UPS when wall power is gone. */
         }
         connection supplyControllerPower
             connect ups to controller {
-            doc /* UPS DC supply to the controller. */
+            doc /* UPS provides DC power to the controller. */
         }
 
         // Commands
         connection setFlowRate
             connect controller to pump {
-            doc /* Controller commands pump flow rate. */
+            doc /* Software commands how fast the pump runs. */
         }
         connection enableRefrigeration
             connect controller to microRef {
-            doc /* Digital on/off control of the micro-refrigeration unit. */
+            doc /* Software turns the cooling module on or off. */
         }
 
-        // Sensing (probes live inside the parts they instrument)
+        // Sensing (sensors sit on the parts they measure)
         connection sensePumpInletPressure
             connect pump.inputPressureSensor to controller {
-            doc /* Pump inlet pressure read by controller ADC. */
+            doc /* Pump inlet pressure → controller. */
         }
         connection sensePumpOutletPressure
             connect pump.outputPressureSensor to controller {
-            doc /* Pump outlet pressure read by controller ADC. */
+            doc /* Pump outlet pressure → controller. */
         }
         connection senseReservoirInputTemp
             connect reservoir.inputTempSensor to controller {
-            doc /* Warm saline temperature entering the reservoir. */
+            doc /* Warmer return saline temperature into the reservoir. */
         }
         connection senseReservoirOutputTemp
             connect reservoir.outputTempSensor to controller {
-            doc /* Cooled saline temperature leaving the reservoir. */
+            doc /* Cold saline temperature leaving the reservoir. */
         }
         connection senseCsfTemp
             connect catheter.csfTempSensor to controller {
-            doc /* CSF temperature at the catheter, read by the controller. */
+            doc /* CSF temperature at the catheter tip → controller. */
         }
         connection senseHeatExchange1Temp
-            connect microRef.heatExchange1TempSensor to controller {
-            doc /* Heat Exchange 1 temperature read by controller ADC. */
+            connect microRef.heatExchange1 to controller {
+            doc /* Cooling-module temperature probe 1 → controller. */
         }
         connection senseHeatExchange2Temp
-            connect microRef.heatExchange2TempSensor to controller {
-            doc /* Heat Exchange 2 temperature read by controller ADC. */
+            connect microRef.heatExchange2 to controller {
+            doc /* Cooling-module temperature probe 2 → controller. */
         }
 
         // Closed saline loop
         connection coldSalineSupply
             connect reservoir to catheter {
-            doc /* Cold saline from reservoir to catheter. */
+            doc /* Cold saline out to the patient catheter. */
         }
         connection warmSalineReturn
             connect catheter to pump {
-            doc /* Warm return saline from catheter into the pump inlet. */
+            doc /* Warmer saline from the catheter into the pump. */
         }
         connection warmSalineToReservoir
             connect pump to reservoir {
-            doc /* Warm saline from the pump outlet back to the reservoir. */
+            doc /* Pump returns saline to the reservoir. */
         }
     }
-
-    part coolSpine : CoolSpine;
 }

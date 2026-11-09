@@ -2,133 +2,165 @@
   "version": 1,
   "name": "2 Decomposition",
   "elements": [
-    "CoolSpineSystem::CoolSpine",
+    "CoolSpineSystem::CoolSpineDevice",
     "CoolSpineSystem::Battery",
-    "CoolSpineSystem::UPS",
+    "CoolSpineSystem::Catheter",
     "CoolSpineSystem::Controller",
     "CoolSpineSystem::CustomMicroRefrigerationUnit",
     "CoolSpineSystem::FluidReservoir",
-    "CoolSpineSystem::Catheter",
     "CoolSpineSystem::PeristalticPump",
-    "CoolSpineSystem::PressureSensor",
-    "CoolSpineSystem::TemperatureSensor",
+    "CoolSpineSystem::UPS",
+    "CoolSpineSystem::AdafruitAnalogInput",
     "CoolSpineSystem::PowerHat",
     "CoolSpineSystem::RaspberryPi",
-    "CoolSpineSystem::AdafruitAnalogInput",
     "CoolSpineSystem::TouchDisplay",
-    "CoolSpineSystem::Thermistor",
+    "CoolSpineSystem::Compressor",
+    "CoolSpineSystem::CoolPlate",
     "CoolSpineSystem::Thermocouple",
-    "CoolSpineRequirements::PeakCoolingPower",
-    "CoolSpineRequirements::SteadyStateCoolingPower",
-    "CoolSpineRequirements::AppropriateUserInterface",
-    "CoolSpineRequirements::SafetyMonitoringAndFailSafes"
+    "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::FluidReservoir::inputTempSensor",
+    "CoolSpineSystem::FluidReservoir::outputTempSensor",
+    "CoolSpineSystem::TemperatureSensor",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::compressor",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::coolPlate",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange1",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange2",
+    "CoolSpineSystem::Thermistor",
+    "CoolSpineSystem::PeristalticPump::inputPressureSensor",
+    "CoolSpineSystem::PeristalticPump::outputPressureSensor"
   ],
   "nodes": {
-    "CoolSpineSystem::CoolSpine": {
-      "x": 0,
-      "y": 0
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 281,
+      "y": -531
     },
     "CoolSpineSystem::Battery": {
-      "x": -1485,
-      "y": 300
-    },
-    "CoolSpineSystem::UPS": {
-      "x": -1155,
-      "y": 300
-    },
-    "CoolSpineSystem::Controller": {
-      "x": -495,
-      "y": 300
-    },
-    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
-      "x": -165,
-      "y": 300
-    },
-    "CoolSpineSystem::FluidReservoir": {
-      "x": 165,
-      "y": 300
+      "x": -380,
+      "y": -122
     },
     "CoolSpineSystem::Catheter": {
-      "x": 495,
-      "y": 300
+      "x": 670,
+      "y": -128
+    },
+    "CoolSpineSystem::Controller": {
+      "x": -144,
+      "y": -136
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": 109,
+      "y": -134
+    },
+    "CoolSpineSystem::FluidReservoir": {
+      "x": 383,
+      "y": -124
     },
     "CoolSpineSystem::PeristalticPump": {
-      "x": 825,
-      "y": 300
+      "x": 964,
+      "y": -131
     },
-    "CoolSpineSystem::PressureSensor": {
-      "x": 1157,
-      "y": 306
-    },
-    "CoolSpineSystem::TemperatureSensor": {
-      "x": 1485,
-      "y": 300
-    },
-    "CoolSpineSystem::PowerHat": {
-      "x": -825,
-      "y": 620
-    },
-    "CoolSpineSystem::RaspberryPi": {
-      "x": -495,
-      "y": 620
+    "CoolSpineSystem::UPS": {
+      "x": -654,
+      "y": -127
     },
     "CoolSpineSystem::AdafruitAnalogInput": {
-      "x": -165,
-      "y": 620
+      "x": -568,
+      "y": 334
+    },
+    "CoolSpineSystem::PowerHat": {
+      "x": -759,
+      "y": 208
+    },
+    "CoolSpineSystem::RaspberryPi": {
+      "x": -761,
+      "y": 83
     },
     "CoolSpineSystem::TouchDisplay": {
-      "x": 165,
-      "y": 620
+      "x": -139,
+      "y": 193
     },
-    "CoolSpineSystem::Thermistor": {
-      "x": 1320,
-      "y": 620
+    "CoolSpineSystem::Compressor": {
+      "x": 16,
+      "y": 82
+    },
+    "CoolSpineSystem::CoolPlate": {
+      "x": 334,
+      "y": 83
     },
     "CoolSpineSystem::Thermocouple": {
-      "x": 1662,
-      "y": 608
+      "x": 312,
+      "y": 394
     },
-    "CoolSpineRequirements::AppropriateUserInterface": {
-      "x": 228,
-      "y": 709
+    "CoolSpineSystem::PressureSensor": {
+      "x": 1020,
+      "y": 267
     },
-    "CoolSpineRequirements::SteadyStateCoolingPower": {
-      "x": -61,
-      "y": 399
+    "CoolSpineSystem::FluidReservoir::outputTempSensor": {
+      "x": 611,
+      "y": 168
     },
-    "CoolSpineRequirements::PeakCoolingPower": {
-      "x": 274,
-      "y": 406
+    "CoolSpineSystem::FluidReservoir::inputTempSensor": {
+      "x": 763,
+      "y": 167
     },
-    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
-      "x": 222,
-      "y": -15
+    "CoolSpineSystem::TemperatureSensor": {
+      "x": 432,
+      "y": 564
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange2": {
+      "x": 351,
+      "y": 234
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange1": {
+      "x": 166,
+      "y": 237
+    },
+    "CoolSpineSystem::Thermistor": {
+      "x": 573,
+      "y": 370
+    },
+    "CoolSpineSystem::PeristalticPump::outputPressureSensor": {
+      "x": 905,
+      "y": 117
+    },
+    "CoolSpineSystem::PeristalticPump::inputPressureSensor": {
+      "x": 1163,
+      "y": 119
     }
   },
   "hiddenEdges": [
+    "connector|CoolSpineSystem::Compressor|CoolSpineSystem::CoolPlate|refrigerantLoop",
+    "connector|CoolSpineSystem::CoolPlate|CoolSpineSystem::Thermocouple|senseHeatExchange1",
+    "connector|CoolSpineSystem::CoolPlate|CoolSpineSystem::Thermocouple|senseHeatExchange2",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::PressureSensor|salineThroughPump",
+    "connector|CoolSpineSystem::PowerHat|CoolSpineSystem::RaspberryPi|supplyPiPower",
+    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::AdafruitAnalogInput|adcInterface",
+    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::TouchDisplay|operatorInterface",
     "connector|CoolSpineSystem::Battery|CoolSpineSystem::UPS|supplyBackupPower",
     "connector|CoolSpineSystem::UPS|CoolSpineSystem::Controller|supplyControllerPower",
     "connector|CoolSpineSystem::Controller|CoolSpineSystem::PeristalticPump|setFlowRate",
     "connector|CoolSpineSystem::Controller|CoolSpineSystem::CustomMicroRefrigerationUnit|enableRefrigeration",
-    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::Controller|sensePumpInletPressure",
-    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::Controller|sensePumpOutletPressure",
-    "connector|CoolSpineSystem::TemperatureSensor|CoolSpineSystem::Controller|senseTemperature",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpInletPressure \u00b7 inputPressureSensor",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpOutletPressure \u00b7 outputPressureSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirInputTemp \u00b7 inputTempSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirOutputTemp \u00b7 outputTempSensor",
+    "connector|CoolSpineSystem::Catheter|CoolSpineSystem::Controller|senseCsfTemp \u00b7 csfTempSensor",
+    "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange1Temp \u00b7 heatExchange1",
+    "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange2Temp \u00b7 heatExchange2",
     "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Catheter|coldSalineSupply",
-    "connector|CoolSpineSystem::Catheter|CoolSpineSystem::PressureSensor|warmSalineReturn",
-    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::PeristalticPump|salineIntoPump",
-    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::PressureSensor|salineFromPump",
-    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::FluidReservoir|warmSalineToReservoir",
-    "connector|CoolSpineSystem::PowerHat|CoolSpineSystem::RaspberryPi|supplyPiPower",
-    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::AdafruitAnalogInput|adcInterface",
-    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::TouchDisplay|operatorInterface"
+    "connector|CoolSpineSystem::Catheter|CoolSpineSystem::PeristalticPump|warmSalineReturn",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir"
   ],
   "view": {
-    "tx": 858.6083569884963,
-    "ty": 176.9629315306564,
-    "s": 0.5138930625555889
+    "tx": 818.88286757592,
+    "ty": 511.55038179831286,
+    "s": 0.7047216303680984
   },
   "options": {
-    "attrs": false,
-    "parts": false
+    "attrs": true,
+    "parts": false,
+    "keywords": false,
+    "edgeLabels": false,
+    "packages": false,
+    "docsOnNode": true
   }
 }

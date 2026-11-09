@@ -1,17 +1,25 @@
 {
   "name": "Clinical use cases",
   "elements": [
-    "CoolSpineSystem::CoolSpine",
+    "CoolSpineSystem::CoolSpineDevice",
     "CoolSpineSystemContext::Anesthesiologist",
     "CoolSpineSystemContext::Surgeon",
     "CoolSpineSystemContext::Patient",
     "CoolSpineUseCases::DeliverTherapeuticCooling",
-    "CoolSpineUseCases::OperateWithoutGroundPower"
+    "CoolSpineUseCases::OperateWithoutGroundPower",
+    "CoolSpineRequirements::PeakCoolingPower",
+    "CoolSpineRequirements::SteadyStateCoolingPower",
+    "CoolSpineRequirements::OperatingPressure",
+    "CoolSpineRequirements::MaximumPressure",
+    "CoolSpineRequirements::AppropriateUserInterface",
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes",
+    "CoolSpineRequirements::OperationWithoutGroundPower",
+    "CoolSpineRequirements::PortableFormFactor"
   ],
   "nodes": {
     "CoolSpineSystemContext::Surgeon": {
-      "x": -420,
-      "y": -40
+      "x": -360,
+      "y": -212
     },
     "CoolSpineSystemContext::Anesthesiologist": {
       "x": -420,
@@ -22,22 +30,54 @@
       "y": 320
     },
     "CoolSpineUseCases::DeliverTherapeuticCooling": {
-      "x": -40,
-      "y": 40
+      "x": -70,
+      "y": -157
     },
     "CoolSpineUseCases::OperateWithoutGroundPower": {
-      "x": -40,
-      "y": 280
+      "x": 13,
+      "y": 376
     },
-    "CoolSpineSystem::CoolSpine": {
-      "x": 360,
-      "y": 140
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 596,
+      "y": 288
+    },
+    "CoolSpineRequirements::PeakCoolingPower": {
+      "x": -1134.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::SteadyStateCoolingPower": {
+      "x": -874.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::OperationWithoutGroundPower": {
+      "x": -570.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::PortableFormFactor": {
+      "x": -229.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::OperatingPressure": {
+      "x": 39.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::MaximumPressure": {
+      "x": 301.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::AppropriateUserInterface": {
+      "x": 562.5,
+      "y": 120
+    },
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
+      "x": 864.5,
+      "y": 120
     }
   },
   "hiddenEdges": [],
   "view": {
-    "tx": 520,
-    "ty": 280,
+    "tx": 804,
+    "ty": 432,
     "s": 0.85
   },
   "options": {

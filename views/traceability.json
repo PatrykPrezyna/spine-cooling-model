@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "name": "4 Traceability",
+  "elements": [
+    "CoolSpineUserNeeds::LocalisedSpinalHypothermia",
+    "CoolSpineUserNeeds::LocalizedNeuroprotection",
+    "CoolSpineUserNeeds::ClinicianAdjustableControl",
+    "CoolSpineUserNeeds::ReliableCatheterInterface",
+    "CoolSpineUserNeeds::ContinuousTemperatureMonitoring",
+    "CoolSpineUserNeeds::FollowPatientThroughCare",
+    "CoolSpineUserNeeds::CompactMobileFootprint",
+    "CoolSpineUserNeeds::OperationalSafetyMonitoring",
+    "CoolSpineRequirements::CoolSpineSystemRequirements",
+    "CoolSpineRequirements::PeakCoolingPower",
+    "CoolSpineRequirements::SteadyStateCoolingPower",
+    "CoolSpineRequirements::OperationWithoutGroundPower",
+    "CoolSpineRequirements::PortableFormFactor",
+    "CoolSpineRequirements::OperatingPressure",
+    "CoolSpineRequirements::MaximumFlowRate",
+    "CoolSpineRequirements::AppropriateUserInterface",
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes",
+    "CoolSpineRequirements::UncalibratedTemperatureAccuracy",
+    "CoolSpineRequirements::TemperatureSensorSize",
+    "CoolSpineRequirements::CommonTemperatureSensorTechnology",
+    "CoolSpineRequirements::AssemblyTemperatureResilience",
+    "CoolSpineSystem::CoolSpineDevice",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit",
+    "CoolSpineSystem::Battery",
+    "CoolSpineSystem::FluidReservoir",
+    "CoolSpineSystem::PeristalticPump",
+    "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::Thermistor",
+    "CoolSpineSystem::Controller",
+    "CoolSpineSystem::TouchDisplay"
+  ],
+  "nodes": {
+    "CoolSpineUserNeeds::LocalisedSpinalHypothermia": {
+      "x": 0,
+      "y": 0
+    },
+    "CoolSpineUserNeeds::LocalizedNeuroprotection": {
+      "x": 0,
+      "y": 240
+    },
+    "CoolSpineUserNeeds::ClinicianAdjustableControl": {
+      "x": 0,
+      "y": 520
+    },
+    "CoolSpineUserNeeds::ReliableCatheterInterface": {
+      "x": 0,
+      "y": 760
+    },
+    "CoolSpineUserNeeds::ContinuousTemperatureMonitoring": {
+      "x": 0,
+      "y": 1000
+    },
+    "CoolSpineUserNeeds::FollowPatientThroughCare": {
+      "x": 0,
+      "y": 1240
+    },
+    "CoolSpineUserNeeds::CompactMobileFootprint": {
+      "x": 0,
+      "y": 1480
+    },
+    "CoolSpineUserNeeds::OperationalSafetyMonitoring": {
+      "x": 0,
+      "y": 1720
+    },
+    "CoolSpineRequirements::CoolSpineSystemRequirements": {
+      "x": 500,
+      "y": 0
+    },
+    "CoolSpineRequirements::PeakCoolingPower": {
+      "x": 500,
+      "y": 180
+    },
+    "CoolSpineRequirements::SteadyStateCoolingPower": {
+      "x": 500,
+      "y": 340
+    },
+    "CoolSpineRequirements::AppropriateUserInterface": {
+      "x": 500,
+      "y": 520
+    },
+    "CoolSpineRequirements::OperatingPressure": {
+      "x": 500,
+      "y": 700
+    },
+    "CoolSpineRequirements::MaximumFlowRate": {
+      "x": 500,
+      "y": 860
+    },
+    "CoolSpineRequirements::OperationWithoutGroundPower": {
+      "x": 500,
+      "y": 1240
+    },
+    "CoolSpineRequirements::PortableFormFactor": {
+      "x": 500,
+      "y": 1480
+    },
+    "CoolSpineRequirements::SafetyMonitoringAndFailSafes": {
+      "x": 500,
+      "y": 1720
+    },
+    "CoolSpineRequirements::UncalibratedTemperatureAccuracy": {
+      "x": 500,
+      "y": 1960
+    },
+    "CoolSpineRequirements::TemperatureSensorSize": {
+      "x": 500,
+      "y": 2140
+    },
+    "CoolSpineRequirements::CommonTemperatureSensorTechnology": {
+      "x": 500,
+      "y": 2320
+    },
+    "CoolSpineRequirements::AssemblyTemperatureResilience": {
+      "x": 500,
+      "y": 2500
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": 1020,
+      "y": 240
+    },
+    "CoolSpineSystem::TouchDisplay": {
+      "x": 1020,
+      "y": 520
+    },
+    "CoolSpineSystem::FluidReservoir": {
+      "x": 1020,
+      "y": 680
+    },
+    "CoolSpineSystem::PressureSensor": {
+      "x": 1020,
+      "y": 800
+    },
+    "CoolSpineSystem::PeristalticPump": {
+      "x": 1020,
+      "y": 920
+    },
+    "CoolSpineSystem::Controller": {
+      "x": 1025,
+      "y": 1080
+    },
+    "CoolSpineSystem::Battery": {
+      "x": 1020,
+      "y": 1240
+    },
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 1020,
+      "y": 1600
+    },
+    "CoolSpineSystem::Thermistor": {
+      "x": 1020,
+      "y": 2200
+    }
+  },
+  "hiddenEdges": [
+    "composition|CoolSpineSystem::PeristalticPump|CoolSpineSystem::PressureSensor|inputPressureSensor",
+    "composition|CoolSpineSystem::PeristalticPump|CoolSpineSystem::PressureSensor|outputPressureSensor",
+    "composition|CoolSpineSystem::Controller|CoolSpineSystem::TouchDisplay|touchDisplay",
+    "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::Battery|battery",
+    "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::Controller|controller",
+    "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::CustomMicroRefrigerationUnit|microRef",
+    "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::FluidReservoir|reservoir",
+    "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::PeristalticPump|pump",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::PressureSensor|salineThroughPump",
+    "connector|CoolSpineSystem::Controller|CoolSpineSystem::PeristalticPump|setFlowRate",
+    "connector|CoolSpineSystem::Controller|CoolSpineSystem::CustomMicroRefrigerationUnit|enableRefrigeration",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpInletPressure \u00b7 inputPressureSensor",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpOutletPressure \u00b7 outputPressureSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirInputTemp \u00b7 inputTempSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirOutputTemp \u00b7 outputTempSensor",
+    "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange1Temp \u00b7 heatExchange1",
+    "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange2Temp \u00b7 heatExchange2",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir",
+    "composition|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Thermistor|outputTempSensor",
+    "composition|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Thermistor|inputTempSensor",
+    "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange2",
+    "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange1"
+  ],
+  "view": {
+    "tx": 829.2142019189833,
+    "ty": 96.93478681876815,
+    "s": 0.28832215813714557
+  },
+  "options": {
+    "attrs": false,
+    "parts": false,
+    "keywords": false,
+    "edgeLabels": true,
+    "packages": false,
+    "docsOnNode": true
+  }
+}

@@ -47,3 +47,10 @@ Experiments/*/output_data/*.html
 !Experiments/20260916_Heat_Capacity_Characterisation_of_the_Catheter/output_data/heat_power_20260918_142602_sensors_22mlmin.png
 !Experiments/20260916_Heat_Capacity_Characterisation_of_the_Catheter/output_data/heat_power_20260921_093450_sensors_70mlmin.png
 !Experiments/20260916_Heat_Capacity_Characterisation_of_the_Catheter/output_data/heat_power_20260921_101547_sensors_50mlmin_other_catheter.png
+
+# Local specification documents and supporting files
+Spec/
+
+# Launcher build output (keep OpenViewer.exe in the repo root)
+scripts/OpenViewer/bin/
+scripts/OpenViewer/obj/

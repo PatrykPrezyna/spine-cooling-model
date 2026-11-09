@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "name": "2 Decomposition",
+  "elements": [
+    "CoolSpineSystem::CoolSpineDevice",
+    "CoolSpineSystem::Battery",
+    "CoolSpineSystem::Catheter",
+    "CoolSpineSystem::Controller",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit",
+    "CoolSpineSystem::FluidReservoir",
+    "CoolSpineSystem::PeristalticPump",
+    "CoolSpineSystem::UPS",
+    "CoolSpineSystem::AdafruitAnalogInput",
+    "CoolSpineSystem::PowerHat",
+    "CoolSpineSystem::RaspberryPi",
+    "CoolSpineSystem::TouchDisplay",
+    "CoolSpineSystem::Compressor",
+    "CoolSpineSystem::CoolPlate",
+    "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::FluidReservoir::inputTempSensor",
+    "CoolSpineSystem::FluidReservoir::outputTempSensor",
+    "CoolSpineSystem::TemperatureSensor",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::compressor",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::coolPlate",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange1",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange2",
+    "CoolSpineSystem::Thermistor",
+    "CoolSpineSystem::PeristalticPump::inputPressureSensor",
+    "CoolSpineSystem::PeristalticPump::outputPressureSensor",
+    "CoolSpineSystem::CartridgeInPlaceSensor",
+    "CoolSpineSystem::CoolSpineDevice::cartridgeInPlaceSensor"
+  ],
+  "nodes": {
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 281,
+      "y": -531
+    },
+    "CoolSpineSystem::Battery": {
+      "x": -380,
+      "y": -122
+    },
+    "CoolSpineSystem::Catheter": {
+      "x": 670,
+      "y": -128
+    },
+    "CoolSpineSystem::Controller": {
+      "x": -144,
+      "y": -136
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": {
+      "x": 109,
+      "y": -134
+    },
+    "CoolSpineSystem::FluidReservoir": {
+      "x": 393,
+      "y": -124
+    },
+    "CoolSpineSystem::PeristalticPump": {
+      "x": 964,
+      "y": -131
+    },
+    "CoolSpineSystem::UPS": {
+      "x": -654,
+      "y": -127
+    },
+    "CoolSpineSystem::AdafruitAnalogInput": {
+      "x": -568,
+      "y": 334
+    },
+    "CoolSpineSystem::PowerHat": {
+      "x": -759,
+      "y": 208
+    },
+    "CoolSpineSystem::RaspberryPi": {
+      "x": -761,
+      "y": 83
+    },
+    "CoolSpineSystem::TouchDisplay": {
+      "x": -139,
+      "y": 193
+    },
+    "CoolSpineSystem::Compressor": {
+      "x": 16,
+      "y": 82
+    },
+    "CoolSpineSystem::CoolPlate": {
+      "x": 334,
+      "y": 83
+    },
+    "CoolSpineSystem::PressureSensor": {
+      "x": 1020,
+      "y": 267
+    },
+    "CoolSpineSystem::FluidReservoir::outputTempSensor": {
+      "x": 611,
+      "y": 168
+    },
+    "CoolSpineSystem::FluidReservoir::inputTempSensor": {
+      "x": 763,
+      "y": 167
+    },
+    "CoolSpineSystem::TemperatureSensor": {
+      "x": 573,
+      "y": 577
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange2": {
+      "x": 351,
+      "y": 234
+    },
+    "CoolSpineSystem::CustomMicroRefrigerationUnit::heatExchange1": {
+      "x": 166,
+      "y": 237
+    },
+    "CoolSpineSystem::Thermistor": {
+      "x": 573,
+      "y": 370
+    },
+    "CoolSpineSystem::PeristalticPump::outputPressureSensor": {
+      "x": 905,
+      "y": 117
+    },
+    "CoolSpineSystem::PeristalticPump::inputPressureSensor": {
+      "x": 1163,
+      "y": 119
+    },
+    "CoolSpineSystem::CartridgeInPlaceSensor": {
+      "x": 760,
+      "y": -360
+    },
+    "CoolSpineSystem::CoolSpineDevice::cartridgeInPlaceSensor": {
+      "x": 500,
+      "y": -360
+    }
+  },
+  "hiddenEdges": [
+    "connector|CoolSpineSystem::Compressor|CoolSpineSystem::CoolPlate|refrigerantLoop",
+    "connector|CoolSpineSystem::CoolPlate|CoolSpineSystem::Thermistor|senseHeatExchange1",
+    "connector|CoolSpineSystem::CoolPlate|CoolSpineSystem::Thermistor|senseHeatExchange2",
+    "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::PressureSensor|salineThroughPump",
+    "connector|CoolSpineSystem::PowerHat|CoolSpineSystem::RaspberryPi|supplyPiPower",
+    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::AdafruitAnalogInput|adcInterface",
+    "connector|CoolSpineSystem::RaspberryPi|CoolSpineSystem::TouchDisplay|operatorInterface",
+    "connector|CoolSpineSystem::Battery|CoolSpineSystem::UPS|supplyBackupPower",
+    "connector|CoolSpineSystem::UPS|CoolSpineSystem::Controller|supplyControllerPower",
+    "connector|CoolSpineSystem::Controller|CoolSpineSystem::PeristalticPump|setFlowRate",
+    "connector|CoolSpineSystem::Controller|CoolSpineSystem::CustomMicroRefrigerationUnit|enableRefrigeration",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpInletPressure \u00b7 inputPressureSensor",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpOutletPressure \u00b7 outputPressureSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirInputTemp \u00b7 inputTempSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirOutputTemp \u00b7 outputTempSensor",
+    "connector|CoolSpineSystem::Catheter|CoolSpineSystem::Controller|senseCsfTemp \u00b7 csfTempSensor",
+    "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange1Temp \u00b7 heatExchange1",
+    "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange2Temp \u00b7 heatExchange2",
+    "connector|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::Controller|senseCartridgeInPlace \u00b7 cartridgeInPlaceSensor",
+    "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Catheter|coldSalineSupply",
+    "connector|CoolSpineSystem::Catheter|CoolSpineSystem::PeristalticPump|warmSalineReturn",
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir"
+  ],
+  "view": {
+    "tx": 593.2212865282393,
+    "ty": 216.1922377209669,
+    "s": 0.7736696574225126
+  },
+  "options": {
+    "attrs": true,
+    "parts": false,
+    "keywords": false,
+    "edgeLabels": false,
+    "packages": false,
+    "docsOnNode": true
+  }
+}

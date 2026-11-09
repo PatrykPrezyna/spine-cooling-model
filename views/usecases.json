@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "name": "Clinical use cases",
+  "description": "CoolSpine, clinicians, patient, and the clinical use cases.",
+  "elements": [
+    "CoolSpineSystem::CoolSpineDevice",
+    "CoolSpineSystemContext::Anesthesiologist",
+    "CoolSpineSystemContext::Surgeon",
+    "CoolSpineSystemContext::Patient",
+    "CoolSpineUseCases::PatientTransfer",
+    "CoolSpineUseCases::OperateWithoutGroundPower"
+  ],
+  "nodes": {
+    "CoolSpineSystemContext::Surgeon": {
+      "x": -360,
+      "y": -212
+    },
+    "CoolSpineSystemContext::Anesthesiologist": {
+      "x": -367,
+      "y": -6
+    },
+    "CoolSpineSystemContext::Patient": {
+      "x": 229,
+      "y": -275
+    },
+    "CoolSpineUseCases::PatientTransfer": {
+      "x": -70,
+      "y": -157
+    },
+    "CoolSpineUseCases::OperateWithoutGroundPower": {
+      "x": -122,
+      "y": 140
+    },
+    "CoolSpineSystem::CoolSpineDevice": {
+      "x": 343,
+      "y": -10
+    }
+  },
+  "hiddenEdges": [],
+  "view": {
+    "tx": 804,
+    "ty": 432,
+    "s": 0.85
+  },
+  "options": {
+    "attrs": false,
+    "parts": false,
+    "keywords": true,
+    "edgeLabels": true,
+    "packages": false,
+    "docsOnNode": false
+  }
+}

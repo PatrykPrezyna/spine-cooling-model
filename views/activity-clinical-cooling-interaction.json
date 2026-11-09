@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "6 Activity — ClinicalCoolingInteraction",
+  "kind": "activity",
+  "activityOwner": "CoolSpineSystemContext::ClinicalCoolingInteraction",
+  "description": "OR workflow: request cooling, setpoints, deliver, adjust, stop.",
+  "elements": [],
+  "nodes": {},
+  "hiddenEdges": [],
+  "view": null,
+  "options": {
+    "attrs": false,
+    "parts": false,
+    "keywords": true,
+    "edgeLabels": true,
+    "packages": false,
+    "docsOnNode": false
+  }
+}

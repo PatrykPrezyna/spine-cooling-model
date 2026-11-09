@@ -10,93 +10,112 @@ package CoolSpineUseCases {
     // Use cases
     // ------------------------------------------------------------------
 
-    use case def DeliverTherapeuticCooling {
+    use case def PatientTransfer {
         doc /*
-        Main clinical scenario: during spinal / neurosurgery the surgeon
-        decides whether to use CoolSpine. If yes, the anesthesiologist powers
-        it on, setpoints are agreed and entered, and CoolSpine cools until
-        someone stops it. The patient benefits from the heat exchange.
+        Move the patient with CoolSpine: the surgeon first decides whether
+        cooling should continue after transfer. If not, the anesthesiologist
+        switches the device off. If yes, they unplug it and CoolSpine
+        automatically runs from battery. After the move, the anesthesiologist
+        plugs wall power back in and the device returns to charging mode.
         */
 
         actor surgeon : Surgeon {
-            perform deliverCooling.decideWhetherToUse;
-            perform deliverCooling.decideSetpoint;
+            perform transferPatient.decideCoolAfterTransfer;
         }
 
         actor anesthesiologist : Anesthesiologist {
-            perform deliverCooling.switchDeviceOn;
-            perform deliverCooling.enterSetpoint;
+            perform transferPatient.switchDeviceOff;
+            perform transferPatient.unplugFromWall;
+            perform transferPatient.movePatient;
+            perform transferPatient.reconnectWallPower;
         }
 
         subject coolSpine : CoolSpineDevice {
-            perform deliverCooling.completeSelfCheck;
-            perform deliverCooling.startCoolingAndAwaitStop;
+            perform transferPatient.enterBatteryMode;
+            perform transferPatient.enterChargingMode;
         }
 
         actor patient : Patient;
 
         objective {
             doc /*
-            Keep commanded flow and cooling within safe pressure limits for
-            as long as therapy is requested.
+            Keep the device in a safe power state during the move: either
+            powered down, or on battery if cooling continues; restore wall
+            power and charging afterwards.
             */
         }
 
-        satisfy 'REQ-CP-001';  // PeakCoolingPower
-        satisfy 'REQ-CP-002';  // SteadyStateCoolingPower
-        satisfy 'REQ-CP-005';  // OperatingPressure
-        satisfy 'REQ-CP-006';  // MaximumPressure
+        satisfy 'REQ-CP-003';  // OperationWithoutGroundPower
+        satisfy 'REQ-CP-004';  // PortableFormFactor
         satisfy 'REQ-CP-007';  // AppropriateUserInterface
         satisfy 'REQ-CP-008';  // SafetyMonitoringAndFailSafes
 
-        perform action deliverCooling {
+        perform action transferPatient {
             doc /*
-            Happy path: decide to use → power on → self-check → setpoints →
-            cool until stop. If the surgeon decides not to use CoolSpine,
-            the flow ends immediately.
+            Surgeon decides → switch off, or unplug and auto battery →
+            transfer → plug back in → charging mode.
             */
 
-            action decideWhetherToUse {
+            action decideCoolAfterTransfer {
                 doc /*
-                Surgeon decides if CoolSpine will be used for this case.
+                Surgeon decides whether the patient should still be cooled
+                after they are transferred.
                 */
             }
 
-            action switchDeviceOn {
-                doc /* Anesthesiologist powers CoolSpine on. */
-            }
-            then completeSelfCheck;
-
-            action completeSelfCheck {
+            action switchDeviceOff {
                 doc /*
-                Device runs power-on checks; therapy continues only if OK.
+                Anesthesiologist switches CoolSpine off because cooling will
+                not continue after transfer.
                 */
             }
-            then decideSetpoint;
+            then movePatient;
 
-            action decideSetpoint {
-                doc /* Surgeon picks the flow / temperature target. */
-            }
-            then enterSetpoint;
-
-            action enterSetpoint {
-                doc /* Anesthesiologist enters that target on the device UI. */
-            }
-            then startCoolingAndAwaitStop;
-
-            action startCoolingAndAwaitStop {
+            action unplugFromWall {
                 doc /*
-                After setpoints are set, CoolSpine starts cooling and waits
-                for a stop command.
+                Anesthesiologist pulls the power plug so the cart can move,
+                expecting cooling to continue.
+                */
+            }
+            then enterBatteryMode;
+
+            action enterBatteryMode {
+                doc /*
+                Unplugged from the wall, CoolSpine automatically switches to
+                battery mode.
+                */
+            }
+            then movePatient;
+
+            action movePatient {
+                doc /*
+                Patient is transferred with the device (off, or running on
+                battery).
+                */
+            }
+            then reconnectWallPower;
+
+            action reconnectWallPower {
+                doc /*
+                After the transfer, the anesthesiologist plugs wall power
+                back in.
+                */
+            }
+            then enterChargingMode;
+
+            action enterChargingMode {
+                doc /*
+                With the plug attached again, CoolSpine returns to charging
+                mode.
                 */
             }
             then done;
 
             first start;
-            then decideWhetherToUse;
+            then decideCoolAfterTransfer;
             then decide;
-              if yes then switchDeviceOn;
-              else done;
+              if yes then unplugFromWall;
+              else switchDeviceOff;
         }
     }
 

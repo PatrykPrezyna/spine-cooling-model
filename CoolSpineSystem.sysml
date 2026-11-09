@@ -75,7 +75,6 @@ package CoolSpineSystem {
         */
 
         satisfy 'REQ-CP-005';  // OperatingPressure
-        satisfy 'REQ-CP-006';  // MaximumPressure
 
         part inputTempSensor : Thermistor;
         part outputTempSensor : Thermistor;
@@ -94,12 +93,13 @@ package CoolSpineSystem {
     part def PeristalticPump {
         doc /*
         Pump that moves saline around the closed loop (catheter → reservoir).
-        Speed/flow is set by the controller. Pressure sensors sit before and
-        after the pump head for safety monitoring.
+        Speed/flow is set by the controller and must stay at or below
+        50 mL/min. Pressure sensors sit before and after the pump head for
+        safety monitoring.
         */
 
         satisfy 'REQ-CP-005';  // OperatingPressure
-        satisfy 'REQ-CP-006';  // MaximumPressure
+        satisfy 'REQ-CP-006';  // MaximumFlowRate
 
         part inputPressureSensor : PressureSensor;
         part outputPressureSensor : PressureSensor;
@@ -113,11 +113,10 @@ package CoolSpineSystem {
     part def PressureSensor {
         doc /*
         Fluid pressure sensor in the saline circuit (used at the pump inlet
-        and outlet). Controller reads it for operating / max pressure limits.
+        and outlet). Controller reads it for operating pressure limits.
         */
 
         satisfy 'REQ-CP-005';  // OperatingPressure
-        satisfy 'REQ-CP-006';  // MaximumPressure
     }
 
     abstract part def TemperatureSensor {
@@ -185,9 +184,11 @@ package CoolSpineSystem {
     part def Controller {
         doc /*
         Brain of the device: Raspberry Pi + power board + ADC + touch screen.
-        Powered from the UPS. Reads all sensors, shows the UI, sets pump flow,
-        and switches the refrigeration module on/off.
+        Powered from the UPS. Reads all sensors, shows the UI, sets pump flow
+        (never above 50 mL/min), and switches the refrigeration module on/off.
         */
+
+        satisfy 'REQ-CP-006';  // MaximumFlowRate
 
         part raspberryPi : RaspberryPi;
         part powerHat : PowerHat;

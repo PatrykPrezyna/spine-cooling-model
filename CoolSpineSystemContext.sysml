@@ -15,15 +15,10 @@ package CoolSpineSystemContext {
         arrest) who receives localized therapeutic hypothermia from CoolSpine.
 
         The multi-lumen catheter is placed percutaneously into the
-        intrathecal space (spinal cooling) or ventricular space (brain
-        cooling) and is the heat-exchange path in the patient: chilled saline
+        intrathecal space (spinal cooling) and is the heat-exchange path in the patient: chilled saline
         circulating in a closed loop cools the CSF, which cools the targeted
         neural tissue to about 30–34 °C while the rest of the body stays
         normothermic. The saline never contacts the CSF.
-
-        A third catheter lumen allows CSF to drain by gravity; the external
-        CSF drain set used for pressure / drainage monitoring is separate
-        hospital equipment, not part of the CoolSpine fluid loop.
         */
     }
 
@@ -31,19 +26,21 @@ package CoolSpineSystemContext {
         doc /*
         Lead clinician for the procedure (e.g. thoracic aortic repair or a
         neurosurgical case). Decides whether to use CoolSpine for
-        neuroprotection, places or oversees placement of the cooling
-        catheter, and may ask for changes to cooling or flow during the case;
-        does not usually drive the device UI (that is the anesthesiologist).
+        neuroprotection and whether cooling should continue after a patient
+        transfer; places or oversees placement of the cooling catheter, and
+        may ask for changes to cooling or flow during the case; does not
+        usually drive the device UI (that is the anesthesiologist).
         */
     }
 
     part def Anesthesiologist {
         doc /*
         Clinician who watches patient physiology and is the main operator of
-        CoolSpine (power on, setpoints, stop) during the case. Uses the
-        device's adjustable controls to fine-tune CSF temperature toward the
-        30–34 °C therapeutic range, and relies on the device's continuous
-        temperature and status monitoring to confirm safe operation.
+        CoolSpine (power, setpoints, stop, unplug / replug for transfer)
+        during the case. Uses the device's adjustable controls to fine-tune
+        CSF temperature toward the 30–34 °C therapeutic range, and relies on
+        the device's continuous temperature and status monitoring to confirm
+        safe operation.
         */
     }
 
@@ -96,13 +93,10 @@ package CoolSpineSystemContext {
 
     part def CsfDrain {
         doc /*
-        Standard external CSF drain set used beside CoolSpine when ICP /
-        drainage monitoring is needed. It receives CSF that leaves the
-        patient by gravity through the catheter's third (drainage) lumen.
+        Standard external CSF drain set used beside CoolSpine.
+        It receives CSF that leaves the patient by gravity through the catheter's third (drainage) lumen.
         Fluid path: stopcock → burette → bag, with pressure sense, optional
-        display, scale, and leveling. Hospital equipment — carries CSF only,
-        never the CoolSpine saline coolant, which stays in its own closed
-        loop isolated from the CSF.
+        display, scale, and leveling.
         */
 
         part pressureSensor : PressureSensor;
@@ -149,26 +143,6 @@ package CoolSpineSystemContext {
 
     part def Context {
         doc /*
-        Clinical-use snapshot of CoolSpine in service: the device, the
-        patient being cooled, the surgeon leading the case, the
-        anesthesiologist operating the device, and optionally an external
-        CSF drain set. The primary setting is the operating room, but the
-        same picture holds in the ICU, in recovery, and during patient
-        transport — the compact mobile controller is meant to "follow" the
-        patient from surgery through recovery and to serve emergent cases.
-
-        Purpose of the encounter: induce localized therapeutic hypothermia
-        (CSF at roughly 30–34 °C) in the spinal cord or brain for
-        neuroprotection during ischemic injury, while the patient stays
-        systemically normothermic — avoiding the arrhythmia, coagulopathy,
-        and pneumonia risks of whole-body cooling.
-
-        CoolSpine's chilled saline stays inside the device loop
-        (reservoir → catheter → pump → reservoir). The multi-lumen catheter
-        is the only part of that loop inside the patient, and the saline is
-        always isolated from the CSF. The CSF drain is separate hospital
-        gear that monitors and collects CSF draining by gravity through the
-        catheter's third lumen — it is not CoolSpine plumbing.
         */
 
         part coolSpine : CoolSpineDevice {

@@ -12,54 +12,6 @@
   "mode": "bdd",
   "ucdOwner": null,
   "drilldownNodes": {
-    "System::CoolSpineSystem::ibd::operatorControl": {
-      "x": -503,
-      "y": -178
-    },
-    "System::CoolSpineSystem::ibd::coldSalineOut": {
-      "x": -546,
-      "y": 253
-    },
-    "System::CoolSpineSystem::ibd::ui": {
-      "x": 54,
-      "y": -166
-    },
-    "System::CoolSpineSystem::ibd::psu": {
-      "x": -202,
-      "y": 15
-    },
-    "System::CoolSpineSystem::ibd::microRef": {
-      "x": 30,
-      "y": 105
-    },
-    "System::CoolSpineSystem::ibd::warmSalineOut": {
-      "x": -683,
-      "y": 230
-    },
-    "System::CoolSpineSystem::ibd::reservoir": {
-      "x": -371,
-      "y": 250
-    },
-    "System::CoolSpineSystem::ibd::pump": {
-      "x": -335,
-      "y": -106
-    },
-    "CoolSpineContext::Context::ibd::coolSpine": {
-      "x": -170,
-      "y": -199
-    },
-    "CoolSpineContext::Context::ibd::patient": {
-      "x": -171,
-      "y": -90
-    },
-    "CoolSpineContext::Context::ibd::surgeon": {
-      "x": -229,
-      "y": 13
-    },
-    "CoolSpineContext::Context::ibd::anesthesiologist": {
-      "x": -38,
-      "y": 14
-    },
     "CoolSpineSystemContext::Context::ibd::patient": {
       "x": -159,
       "y": -145
@@ -79,89 +31,16 @@
     "CoolSpineSystemContext::Context::ibd::csfDrain": {
       "x": 20,
       "y": 120
-    },
-    "CoolSpineSystem::CoolSpine::ibd::battery": {
-      "x": -596,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::ups": {
-      "x": -780,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::ui": {
-      "x": -440,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::microRef": {
-      "x": -270,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::reservoir": {
-      "x": -59,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::catheter": {
-      "x": 111,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::pressureBeforePump": {
-      "x": 281,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::pump": {
-      "x": 480,
-      "y": 0
-    },
-    "CoolSpineSystem::CoolSpine::ibd::pressureAfterPump": {
-      "x": 650,
-      "y": 0
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::start": {
-      "x": 240,
-      "y": 60
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::decideWhetherToUse": {
-      "x": 40,
-      "y": 108
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::switchDeviceOn": {
-      "x": 240,
-      "y": 210
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::completeSelfCheck": {
-      "x": 440,
-      "y": 209
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::decideSetpoint": {
-      "x": 40,
-      "y": 400
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::enterSetpoint": {
-      "x": 240,
-      "y": 405
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::startCoolingAndAwaitStop": {
-      "x": 440,
-      "y": 421
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::done": {
-      "x": 240,
-      "y": 665
-    },
-    "CoolSpineUseCases::DeliverTherapeuticCooling::act::decide": {
-      "x": 40,
-      "y": 210
     }
   },
-  "drilldownHiddenEdges": [
-    "connector|System::CoolSpineSystem::ibd::psu|System::CoolSpineSystem::ibd::microRef|dcOutput \u00b7 power",
-    "connector|System::CoolSpineSystem::ibd::psu|System::CoolSpineSystem::ibd::ui|dcOutput \u00b7 power"
-  ],
+  "drilldownHiddenEdges": [],
   "drilldownView": {
-    "tx": 636.09252862742,
-    "ty": 140.9100458199842,
-    "s": 0.8271660372490482
+    "tx": 649.6773141200028,
+    "ty": 116.65027729417318,
+    "s": 0.7519691247718621
   },
   "version": 1,
-  "activityOwner": null
+  "activityOwner": null,
+  "home": false,
+  "expertMode": false
 }

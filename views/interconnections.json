@@ -33,12 +33,12 @@
       "y": 462
     },
     "CoolSpineSystem::FluidReservoir": {
-      "x": -209,
-      "y": 4
+      "x": -257,
+      "y": 23
     },
     "CoolSpineSystem::PeristalticPump": {
-      "x": -23,
-      "y": 338
+      "x": -5,
+      "y": 328
     },
     "CoolSpineSystem::UPS": {
       "x": -949,
@@ -49,20 +49,20 @@
       "y": -45
     },
     "CoolSpineSystem::FluidReservoir::inputTempSensor": {
-      "x": -337,
-      "y": -50
+      "x": -412,
+      "y": -74
     },
     "CoolSpineSystem::Catheter::csfTempSensor": {
       "x": 399,
       "y": 1
     },
     "CoolSpineSystem::PeristalticPump::outputPressureSensor": {
-      "x": 128,
-      "y": 267
+      "x": 81,
+      "y": 449
     },
     "CoolSpineSystem::PeristalticPump::inputPressureSensor": {
-      "x": -165,
-      "y": 279
+      "x": -171,
+      "y": 440
     }
   },
   "hiddenEdges": [
@@ -70,8 +70,8 @@
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpOutletPressure \u00b7 outputPressureSensor"
   ],
   "view": {
-    "tx": 1348.25101216726,
-    "ty": 233.73178098932044,
+    "tx": 1455.25101216726,
+    "ty": 228.73178098932044,
     "s": 0.8372472238457044
   },
   "options": {

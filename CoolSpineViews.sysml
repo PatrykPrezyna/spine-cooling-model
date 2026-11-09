@@ -7,6 +7,7 @@ package CoolSpineViews {
     private import Views::*;
     private import StandardViewDefinitions::*;
     private import CoolSpineUseCases::*;
+    private import CoolSpineUserNeeds::*;
     private import CoolSpineRequirements::*;
     private import CoolSpineSystem::*;
     private import CoolSpineSystemContext::*;
@@ -27,9 +28,9 @@ package CoolSpineViews {
 
     concern def TraceabilityConcern {
         doc /*
-        For engineers / QA: which requirements a use case covers, and which
-        hardware blocks implement those requirements — without the full fluid
-        / power schematic.
+        For engineers / QA: user needs on the left, system requirements in
+        the middle, and the hardware that satisfies those requirements on
+        the right — without the full fluid / power schematic.
         */
         subject coolSpine : CoolSpineDevice;
         stakeholder anesthesiologist : Anesthesiologist;
@@ -65,8 +66,8 @@ package CoolSpineViews {
     view clinicalUseCases : GeneralView {
         doc /*
         Clinical story only: CoolSpine, surgeon, anesthesiologist, patient,
-        and the two use cases. Leave requirements and internal parts out so
-        the interaction stays readable.
+        Patient Transfer, and Operate Without Ground Power. Leave
+        requirements and internal parts out so the interaction stays readable.
         */
 
         viewpoint vp : ClinicalUserViewpoint;
@@ -82,23 +83,23 @@ package CoolSpineViews {
 
     view useCaseRequirementsTraceability : GeneralView {
         doc /*
-        Traceability story: use cases ↔ requirements ↔ main implementing
-        parts (controller, pump, fridge, power, sensors, UI). Prefer this over
-        stuffing the full interconnect diagram into the use-case picture.
+        Traceability story, left to right: user needs → system requirements
+        → implementing parts (fridge, pump, battery, sensors, UI, device).
+        Refine and satisfy links are the connections; leave use cases and
+        the full interconnect diagram out of this picture.
         */
 
         viewpoint vp : TraceabilityViewpoint;
 
-        expose CoolSpineUseCases::*;
+        expose CoolSpineUserNeeds::*;
         expose CoolSpineRequirements::*;
         expose CoolSpineSystem::CoolSpineDevice;
         expose CoolSpineSystem::CustomMicroRefrigerationUnit;
         expose CoolSpineSystem::Battery;
-        expose CoolSpineSystem::UPS;
+        expose CoolSpineSystem::FluidReservoir;
         expose CoolSpineSystem::TouchDisplay;
         expose CoolSpineSystem::PeristalticPump;
         expose CoolSpineSystem::PressureSensor;
-        expose CoolSpineSystem::TemperatureSensor;
         expose CoolSpineSystem::Controller;
 
         render asTreeDiagram;

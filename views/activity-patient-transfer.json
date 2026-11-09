@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "5 Activity — PatientTransfer",
+  "kind": "activity",
+  "activityOwner": "CoolSpineUseCases::PatientTransfer",
+  "description": "Transfer: surgeon decides if cooling continues; switch off, or unplug to battery; then plug in and charge.",
+  "elements": [],
+  "nodes": {},
+  "hiddenEdges": [],
+  "view": null,
+  "options": {
+    "attrs": false,
+    "parts": false,
+    "keywords": true,
+    "edgeLabels": true,
+    "packages": false,
+    "docsOnNode": false
+  }
+}

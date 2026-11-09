@@ -51,7 +51,7 @@
       "y": -134
     },
     "CoolSpineSystem::FluidReservoir": {
-      "x": 383,
+      "x": 393,
       "y": -124
     },
     "CoolSpineSystem::PeristalticPump": {
@@ -151,9 +151,9 @@
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir"
   ],
   "view": {
-    "tx": 818.88286757592,
-    "ty": 511.55038179831286,
-    "s": 0.7047216303680984
+    "tx": 725.2212865282393,
+    "ty": 504.1922377209669,
+    "s": 0.7736696574225126
   },
   "options": {
     "attrs": true,

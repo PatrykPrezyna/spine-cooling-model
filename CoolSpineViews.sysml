@@ -100,6 +100,7 @@ package CoolSpineViews {
         expose CoolSpineSystem::TouchDisplay;
         expose CoolSpineSystem::PeristalticPump;
         expose CoolSpineSystem::PressureSensor;
+        expose CoolSpineSystem::Thermistor;
         expose CoolSpineSystem::Controller;
 
         render asTreeDiagram;

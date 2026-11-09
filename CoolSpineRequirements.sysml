@@ -12,8 +12,9 @@ package CoolSpineRequirements {
     requirement def <'SYS-CS-001'> CoolSpineSystemRequirements :> CoolSpineRequirement {
         doc /*
         Top-level need: CoolSpine must meet the cooling power, battery /
-        portability, fluid pressure and flow, user interface, and safety
-        rules listed below. Use this as the checklist for the whole product.
+        portability, fluid pressure and flow, temperature sensing, user
+        interface, and safety rules listed below. Use this as the checklist
+        for the whole product.
         */
         satisfy 'UN-CS-001';  // LocalisedSpinalHypothermia
         satisfy 'UN-CS-002';  // LocalizedNeuroprotection
@@ -102,5 +103,48 @@ package CoolSpineRequirements {
         */
         satisfy 'UN-CS-006';  // ContinuousTemperatureMonitoring
         satisfy 'UN-CS-009';  // OperationalSafetyMonitoring
+    }
+
+    // --- Temperature sensing ---
+
+    requirement def <'REQ-CP-009'> UncalibratedTemperatureAccuracy :> CoolSpineRequirement {
+        doc /*
+        Every temperature sensor must read within 0.2 °C (error strictly
+        below 0.2 °C) from 30 °C to 36 °C with no calibration. That is the
+        CSF target band the clinician is trying to hold.
+        */
+        attribute maxError_C : Real default 0.2;
+        attribute rangeMin_C : Real default 30.0;
+        attribute rangeMax_C : Real default 36.0;
+        satisfy 'UN-CS-001';  // LocalisedSpinalHypothermia
+        satisfy 'UN-CS-002';  // LocalizedNeuroprotection
+    }
+
+    requirement def <'REQ-CP-010'> TemperatureSensorSize :> CoolSpineRequirement {
+        doc /*
+        Every temperature sensor must be smaller than 0.5 mm in its largest
+        dimension so it can sit in the catheter / saline path without
+        blocking flow.
+        */
+        attribute maxSize_mm : Real default 0.5;
+        satisfy 'UN-CS-005';  // ReliableCatheterInterface
+    }
+
+    requirement def <'REQ-CP-011'> CommonTemperatureSensorTechnology :> CoolSpineRequirement {
+        doc /*
+        All temperature sensors in the device must use the same sensing
+        technology, so readings at the reservoir, catheter, and heat
+        exchanger are comparable on one readout path.
+        */
+        satisfy 'UN-CS-006';  // ContinuousTemperatureMonitoring
+    }
+
+    requirement def <'REQ-CP-012'> AssemblyTemperatureResilience :> CoolSpineRequirement {
+        doc /*
+        Every temperature sensor must survive 230 °C during assembly
+        (soldering / joining) and still meet its accuracy afterward.
+        Manufacturing constraint; no matching clinical user need.
+        */
+        attribute assemblyTemperature_C : Real default 230.0;
     }
 }

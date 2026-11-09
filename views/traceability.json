@@ -19,12 +19,17 @@
     "CoolSpineRequirements::MaximumFlowRate",
     "CoolSpineRequirements::AppropriateUserInterface",
     "CoolSpineRequirements::SafetyMonitoringAndFailSafes",
+    "CoolSpineRequirements::UncalibratedTemperatureAccuracy",
+    "CoolSpineRequirements::TemperatureSensorSize",
+    "CoolSpineRequirements::CommonTemperatureSensorTechnology",
+    "CoolSpineRequirements::AssemblyTemperatureResilience",
     "CoolSpineSystem::CoolSpineDevice",
     "CoolSpineSystem::CustomMicroRefrigerationUnit",
     "CoolSpineSystem::Battery",
     "CoolSpineSystem::FluidReservoir",
     "CoolSpineSystem::PeristalticPump",
     "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::Thermistor",
     "CoolSpineSystem::Controller",
     "CoolSpineSystem::TouchDisplay"
   ],
@@ -97,6 +102,22 @@
       "x": 500,
       "y": 1720
     },
+    "CoolSpineRequirements::UncalibratedTemperatureAccuracy": {
+      "x": 500,
+      "y": 1960
+    },
+    "CoolSpineRequirements::TemperatureSensorSize": {
+      "x": 500,
+      "y": 2140
+    },
+    "CoolSpineRequirements::CommonTemperatureSensorTechnology": {
+      "x": 500,
+      "y": 2320
+    },
+    "CoolSpineRequirements::AssemblyTemperatureResilience": {
+      "x": 500,
+      "y": 2500
+    },
     "CoolSpineSystem::CustomMicroRefrigerationUnit": {
       "x": 1020,
       "y": 240
@@ -128,6 +149,10 @@
     "CoolSpineSystem::CoolSpineDevice": {
       "x": 1020,
       "y": 1600
+    },
+    "CoolSpineSystem::Thermistor": {
+      "x": 1020,
+      "y": 2200
     }
   },
   "hiddenEdges": [
@@ -148,12 +173,16 @@
     "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirOutputTemp \u00b7 outputTempSensor",
     "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange1Temp \u00b7 heatExchange1",
     "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange2Temp \u00b7 heatExchange2",
-    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir"
+    "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir",
+    "composition|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Thermistor|outputTempSensor",
+    "composition|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Thermistor|inputTempSensor",
+    "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange2",
+    "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange1"
   ],
   "view": {
-    "tx": 643.32961957916,
-    "ty": 75.13590402016862,
-    "s": 0.4221324717285947
+    "tx": 829.2142019189833,
+    "ty": 96.93478681876815,
+    "s": 0.28832215813714557
   },
   "options": {
     "attrs": false,

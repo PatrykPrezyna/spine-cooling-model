@@ -8,7 +8,7 @@
     "CoolSpineSystem::PressureSensor": "Spec/Pressure sensing/Pressure_Sensors_Spec_Sheet.pdf"
   },
   "treeOpen": true,
-  "activeView": "context",
+  "activeView": "traceability",
   "mode": "bdd",
   "ucdOwner": null,
   "drilldownNodes": {

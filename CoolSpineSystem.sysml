@@ -50,8 +50,8 @@ package CoolSpineSystem {
 
         part compressor : Compressor;
         part coolPlate : CoolPlate;
-        part heatExchange1 : Thermocouple;
-        part heatExchange2 : Thermocouple;
+        part heatExchange1 : Thermistor;
+        part heatExchange2 : Thermistor;
 
         connection refrigerantLoop
             connect compressor to coolPlate {
@@ -119,11 +119,18 @@ package CoolSpineSystem {
         satisfy 'REQ-CP-005';  // OperatingPressure
     }
 
+    part def CartridgeInPlaceSensor {
+        doc /*
+        Sensor that reports whether the disposable cartridge is seated
+        in the device. The controller reads it before running the fluid loop.
+        */
+    }
+
     abstract part def TemperatureSensor {
         doc /*
-        Any temperature probe the controller can read. Two kinds are used
-        in this design: thermistor (more accurate, saline/CSF) and
-        thermocouple (cooling module heat exchanger).
+        Any temperature probe the controller can read. Every probe in this
+        design is a thermistor (saline, CSF, and the cooling-module heat
+        exchanger).
         */
 
         attribute accuracy : Real;  // measurement accuracy, ± °C
@@ -132,20 +139,16 @@ package CoolSpineSystem {
     part def Thermistor :> TemperatureSensor {
         doc /*
         Cheap, accurate temperature sensor (±0.1 °C). Resistance changes with
-        temperature; the Pi reads it through the analog ADC. Used for saline
-        and CSF temperatures.
+        temperature; the Pi reads it through the analog ADC. Used for saline,
+        CSF, and refrigeration heat-exchanger temperatures.
         */
 
         attribute :>> accuracy = 0.1;  // ± 0.1 °C
-    }
 
-    part def Thermocouple :> TemperatureSensor {
-        doc /*
-        Temperature sensor for the refrigeration heat exchanger (±1 °C).
-        Needs a thermocouple input board (see Spec/Thermocouples DAQ …/).
-        */
-
-        attribute :>> accuracy = 1.0;  // ± 1 °C
+        satisfy 'REQ-CP-009';  // UncalibratedTemperatureAccuracy
+        satisfy 'REQ-CP-010';  // TemperatureSensorSize
+        satisfy 'REQ-CP-011';  // CommonTemperatureSensorTechnology
+        satisfy 'REQ-CP-012';  // AssemblyTemperatureResilience
     }
 
     // ------------------------------------------------------------------
@@ -224,8 +227,9 @@ package CoolSpineSystem {
           cold reservoir → catheter (in the patient) → pump → reservoir
 
         What the controller does: powered from UPS (+ battery backup), reads
-        pressures and temperatures, shows the touch UI, sets pump flow, and
-        turns the mini-fridge (micro-ref) on/off.
+        pressures, temperatures, and whether the cartridge is in place,
+        shows the touch UI, sets pump flow, and turns the mini-fridge
+        (micro-ref) on/off.
 
         People and the OR setup are modeled separately (operating context);
         this block is only the machine.
@@ -241,6 +245,7 @@ package CoolSpineSystem {
         part reservoir : FluidReservoir;
         part catheter : Catheter;
         part pump : PeristalticPump;
+        part cartridgeInPlaceSensor : CartridgeInPlaceSensor;
 
         // Power
         connection supplyBackupPower
@@ -290,6 +295,10 @@ package CoolSpineSystem {
         connection senseHeatExchange2Temp
             connect microRef.heatExchange2 to controller {
             doc /* Cooling-module temperature probe 2 → controller. */
+        }
+        connection senseCartridgeInPlace
+            connect cartridgeInPlaceSensor to controller {
+            doc /* Cartridge seated / not seated → controller. */
         }
 
         // Closed saline loop

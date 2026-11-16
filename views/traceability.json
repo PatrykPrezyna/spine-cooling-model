@@ -87,8 +87,8 @@
       "y": 700
     },
     "CoolSpineRequirements::MaximumFlowRate": {
-      "x": 500,
-      "y": 860
+      "x": 506,
+      "y": 891
     },
     "CoolSpineRequirements::OperationWithoutGroundPower": {
       "x": 500,
@@ -180,9 +180,9 @@
     "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange1"
   ],
   "view": {
-    "tx": 829.2142019189833,
-    "ty": 96.93478681876815,
-    "s": 0.28832215813714557
+    "tx": 319.58012637727415,
+    "ty": 123.37057565389114,
+    "s": 0.6798485670436196
   },
   "options": {
     "attrs": false,

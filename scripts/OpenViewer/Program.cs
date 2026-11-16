@@ -6,18 +6,18 @@ var modelDir = Path.GetDirectoryName(exePath)
     ?? throw new InvalidOperationException("Could not determine the model folder.");
 Directory.SetCurrentDirectory(modelDir);
 
-Console.Title = "CoolSpine SysML Explorer";
-Console.WriteLine("Starting sysml-explorer in:");
+Console.Title = "CoolSpine System Explorer";
+Console.WriteLine("Starting system-explorer in:");
 Console.WriteLine("  " + modelDir);
 Console.WriteLine();
 
-var explorer = FindSysmlExplorer();
+var explorer = FindSystemExplorer();
 if (explorer is null)
 {
-    Console.Error.WriteLine("Could not find sysml-explorer.");
+    Console.Error.WriteLine("Could not find system-explorer.");
     Console.Error.WriteLine();
     Console.Error.WriteLine("Install it once with:");
-    Console.Error.WriteLine("  pip install \"git+https://github.com/PatrykPrezyna/SE_assistant.git#subdirectory=tools/sysml_explorer\"");
+    Console.Error.WriteLine("  pip install \"git+https://github.com/PatrykPrezyna/SE_assistant.git\"");
     Console.Error.WriteLine();
     Console.WriteLine("Press Enter to close...");
     Console.ReadLine();
@@ -42,7 +42,7 @@ try
 }
 catch (Exception ex)
 {
-    Console.Error.WriteLine("Failed to start sysml-explorer.");
+    Console.Error.WriteLine("Failed to start system-explorer.");
     Console.Error.WriteLine(ex.Message);
     Console.Error.WriteLine();
     Console.WriteLine("Press Enter to close...");
@@ -50,19 +50,19 @@ catch (Exception ex)
     return 1;
 }
 
-static LaunchCommand? FindSysmlExplorer()
+static LaunchCommand? FindSystemExplorer()
 {
     foreach (var dir in PathDirs())
     {
-        var exe = Path.Combine(dir, "sysml-explorer.exe");
+        var exe = Path.Combine(dir, "system-explorer.exe");
         if (File.Exists(exe))
             return new LaunchCommand(exe, ".");
     }
 
     foreach (var python in FindPythons())
     {
-        if (CanRunModule(python, "sysml_explorer"))
-            return new LaunchCommand(python, "-m sysml_explorer .");
+        if (CanRunModule(python, "system_explorer"))
+            return new LaunchCommand(python, "-m system_explorer .");
     }
 
     return null;

@@ -2,9 +2,13 @@
 
 Systems Engineering workspace for the **CoolSpine** therapeutic temperature-control device.
 
-The **SysML model** is the main content of this repository: the `.sysml` files, `views/`, and `layout.json` at the repository root. The diagram viewer is a **separate tool** (`sysml-explorer`) — it is not included here; you install it once from elsewhere, then point it at this folder.
+**Open the explorer:** double-click `SystemExplorer.exe` in this folder. It starts the web viewer for the model.
 
-Most people only need the **browser viewer**: open a view, rearrange boxes, attach a datasheet link, and save. You do not need to edit SysML by hand for that.
+**Edit the SysML:** open this folder in VS Code and use your preferred chat to change the `.sysml` files.
+
+The **SysML model** is the main content of this repository: the `.sysml` files, `views/`, and `layout.json` at the repository root. The diagram viewer is a **separate tool** (`system-explorer`) — it is not included here; you install it once from elsewhere, then point it at this folder.
+
+Most people only need the **web viewer**: `system-explorer` serves the model in your browser so you can open a view, rearrange boxes, attach a datasheet link, and save. You do not need to edit SysML by hand for that.
 
 Bench experiments, analytical thermal models, and design-decision records live in this same repository because they belong to the Cool Spine project. They are **not** part of the SysML model.
 
@@ -30,13 +34,13 @@ You should see something like `Python 3.12.x`.
 
 ### 2. Install the viewer (separate tool)
 
-`sysml-explorer` lives in the [SE_assistant](https://github.com/PatrykPrezyna/SE_assistant) project, not in this repo. Install it with:
+`system-explorer` lives in the [SE_assistant](https://github.com/PatrykPrezyna/SE_assistant) project, not in this repo. Install it with:
 
 ```bash
-pip install "git+https://github.com/PatrykPrezyna/SE_assistant.git#subdirectory=tools/sysml_explorer"
+pip install "git+https://github.com/PatrykPrezyna/SE_assistant.git"
 ```
 
-That puts the `sysml-explorer` command on your PATH. You only need to do this once. To get a newer version of the viewer later, run the same command again (pip will refresh it).
+That puts the `system-explorer` command on your PATH. You only need to do this once. To get a newer version of the viewer later, run the same command again with `--upgrade`.
 
 ### 3. Get this project
 
@@ -45,12 +49,12 @@ Clone or download **this** repository, then open a terminal **in this folder** (
 ### 4. Start the viewer
 
 ```bash
-sysml-explorer .
+system-explorer .
 ```
 
-Your browser should open at `http://127.0.0.1:8199/`. Leave the terminal window open while you work; close it (or press `Ctrl+C`) when you are done.
+On Windows you can instead double-click `SystemExplorer.exe` in this folder. It runs the same command.
 
-The viewer reads the `.sysml` files and `views/` in this folder and writes your layout changes back here — nothing of the viewer itself is stored in this repo.
+Your browser should open at `http://127.0.0.1:8199/`. That page is the web viewer: it reads the `.sysml` files and `views/` in this folder and writes your layout changes back here. Leave the terminal window open while you work; close it (or press `Ctrl+C`) when you are done. Nothing of the viewer itself is stored in this repo.
 
 To run experiment scripts or the analytical models, use the project virtual environment:
 
@@ -62,7 +66,7 @@ pip install -r requirements.txt
 
 ---
 
-## Everyday work (browser)
+## Everyday work (web viewer)
 
 | Task | How |
 |------|-----|
@@ -100,7 +104,8 @@ The model is at the repository root:
 ├── views/                  # Named diagrams (one JSON file per view)
 ├── layout.json             # Doc links, active view, shared UI state
 ├── Spec/                   # Local specs, datasheets, drawings (git-ignored)
-├── scripts/                # OpenViewer launcher source
+├── SystemExplorer.exe      # Double-click launcher for the web viewer
+├── scripts/                # Launcher source (builds SystemExplorer.exe)
 ├── ProjectChartar/         # Project charter
 ├── TODO.md                 # Modeling methodology notes
 ├── Experiments/            # Bench runs (same project, not the model)
@@ -127,4 +132,4 @@ Views and layout are **not** part of the SysML text — they stay in `views/` an
 | `Analytical_Models/` | Tissue, cartridge, catheter, and tubing thermal models. Example: `Analytical_Models/SpringSemester_Body_and_Catheder/finalcombined.ipynb` |
 | `Design_Decisions/` | Design decision records (rationale, options, follow-ups) |
 
-The viewer tool itself is documented in [SE_assistant / tools/sysml_explorer](https://github.com/PatrykPrezyna/SE_assistant/tree/main/tools/sysml_explorer).
+The viewer tool itself is documented in [SE_assistant](https://github.com/PatrykPrezyna/SE_assistant) (`system-explorer`, package `system_explorer`).

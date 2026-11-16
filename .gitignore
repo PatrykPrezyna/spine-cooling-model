@@ -51,6 +51,6 @@ Experiments/*/output_data/*.html
 # Local specification documents and supporting files
 Spec/
 
-# Launcher build output (keep OpenViewer.exe in the repo root)
+# Launcher build output (keep SystemExplorer.exe in the repo root)
 scripts/OpenViewer/bin/
 scripts/OpenViewer/obj/

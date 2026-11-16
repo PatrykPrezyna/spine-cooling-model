@@ -23,8 +23,8 @@
       "y": 109
     },
     "CoolSpineSystem::CoolSpineDevice": {
-      "x": 466,
-      "y": -393
+      "x": 465,
+      "y": -403
     },
     "CoolSpineSystemContext::Patient": {
       "x": 453,
@@ -37,8 +37,8 @@
   },
   "hiddenEdges": [],
   "view": {
-    "tx": 607.5462662337662,
-    "ty": 417.3862012987013,
+    "tx": 320.54626623376623,
+    "ty": 399.3862012987013,
     "s": 0.8483766233766233
   },
   "options": {

@@ -8,39 +8,8 @@
     "CoolSpineSystem::PressureSensor": "Spec/Pressure sensing/Pressure_Sensors_Spec_Sheet.pdf"
   },
   "treeOpen": true,
-  "activeView": "traceability",
-  "mode": "bdd",
-  "ucdOwner": null,
-  "drilldownNodes": {
-    "CoolSpineSystemContext::Context::ibd::patient": {
-      "x": -159,
-      "y": -145
-    },
-    "CoolSpineSystemContext::Context::ibd::coolSpine": {
-      "x": -305,
-      "y": -39
-    },
-    "CoolSpineSystemContext::Context::ibd::surgeon": {
-      "x": -10,
-      "y": -54
-    },
-    "CoolSpineSystemContext::Context::ibd::anesthesiologist": {
-      "x": 199,
-      "y": 0
-    },
-    "CoolSpineSystemContext::Context::ibd::csfDrain": {
-      "x": 20,
-      "y": 120
-    }
-  },
-  "drilldownHiddenEdges": [],
-  "drilldownView": {
-    "tx": 649.6773141200028,
-    "ty": 116.65027729417318,
-    "s": 0.7519691247718621
-  },
+  "activeView": "context",
   "version": 1,
-  "activityOwner": null,
   "home": false,
   "expertMode": false
 }

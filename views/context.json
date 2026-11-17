@@ -15,31 +15,31 @@
       "y": -17
     },
     "CoolSpineSystemContext::Surgeon": {
-      "x": 55,
-      "y": -299
+      "x": 164,
+      "y": -188
     },
     "CoolSpineSystemContext::Anesthesiologist": {
-      "x": 56,
-      "y": 109
+      "x": 193,
+      "y": 76
     },
     "CoolSpineSystem::CoolSpineDevice": {
       "x": 465,
-      "y": -403
+      "y": -368
     },
     "CoolSpineSystemContext::Patient": {
-      "x": 453,
-      "y": 226
+      "x": 464,
+      "y": 120
     },
     "CoolSpineSystemContext::CsfDrain": {
-      "x": 862,
-      "y": 74
+      "x": 775,
+      "y": -31
     }
   },
   "hiddenEdges": [],
   "view": {
-    "tx": 320.54626623376623,
-    "ty": 399.3862012987013,
-    "s": 0.8483766233766233
+    "tx": 467.65274725274725,
+    "ty": 414.2901098901099,
+    "s": 0.8703296703296703
   },
   "options": {
     "attrs": false,

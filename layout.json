@@ -10,8 +10,8 @@
     "CoolSpineSystem::CustomMicroRefrigerationUnit": "https://www.dropbox.com/scl/fo/rwwuora3x7bf1qo13sulp/ACGZ9-D2Z6uweMqT-YVSev0?rlkey=zgtrfle92x671ryg11jcmmb7p&dl=0"
   },
   "treeOpen": true,
-  "activeView": "decomposition",
+  "activeView": "usecases",
   "version": 1,
-  "home": false,
+  "home": true,
   "expertMode": false
 }

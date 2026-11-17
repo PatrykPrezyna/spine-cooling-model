@@ -48,7 +48,7 @@
       "y": -136
     },
     "CoolSpineSystem::CustomMicroRefrigerationUnit": {
-      "x": 109,
+      "x": 122,
       "y": -134
     },
     "CoolSpineSystem::FluidReservoir": {
@@ -80,12 +80,12 @@
       "y": 193
     },
     "CoolSpineSystem::Compressor": {
-      "x": 16,
-      "y": 82
+      "x": -15,
+      "y": 57
     },
     "CoolSpineSystem::CoolPlate": {
-      "x": 334,
-      "y": 83
+      "x": 309,
+      "y": 68
     },
     "CoolSpineSystem::PressureSensor": {
       "x": 1020,
@@ -124,8 +124,8 @@
       "y": 119
     },
     "CoolSpineSystem::CartridgeInPlaceSensor": {
-      "x": 760,
-      "y": -360
+      "x": 895,
+      "y": -304
     },
     "CoolSpineSystem::CoolSpineDevice::cartridgeInPlaceSensor": {
       "x": 500,
@@ -157,9 +157,9 @@
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir"
   ],
   "view": {
-    "tx": 593.2212865282393,
-    "ty": 216.1922377209669,
-    "s": 0.7736696574225126
+    "tx": 590.0702371218315,
+    "ty": 396.017170891251,
+    "s": 0.6372853638593623
   },
   "options": {
     "attrs": true,

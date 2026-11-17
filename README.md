@@ -2,7 +2,9 @@
 
 Systems Engineering workspace for the **CoolSpine** therapeutic temperature-control device.
 
-**Open the explorer:** double-click `SystemExplorer.exe` in this folder. It starts the web viewer for the model.
+**Open the explorer:** double-click `SystemExplorer.exe` in this folder. It starts the web viewer for the model, where you arrange Views.
+
+**Open the Viewer:** double-click `Viewer.cmd` in this folder. It rebuilds the view-only page from the current model and opens it in the browser. Nothing on that page can be moved. The page is written to `_site\` and is not committed.
 
 **Edit the SysML:** open this folder in VS Code and use your preferred chat to change the `.sysml` files.
 
@@ -54,6 +56,14 @@ system-explorer .
 
 On Windows you can instead double-click `SystemExplorer.exe` in this folder. It runs the same command.
 
+To open the view-only Viewer instead (the same page GitHub Pages serves), double-click `Viewer.cmd`, or run:
+
+```bash
+system-explorer . --publish _site
+```
+
+Then open `_site\index.html`. Rebuild it after you change the model or a View; `_site\` is git-ignored.
+
 Your browser should open at `http://127.0.0.1:8199/`. That page is the web viewer: it reads the `.sysml` files and `views/` in this folder and writes your layout changes back here. Leave the terminal window open while you work; close it (or press `Ctrl+C`) when you are done. Nothing of the viewer itself is stored in this repo.
 
 To run experiment scripts or the analytical models, use the project virtual environment:
@@ -104,7 +114,8 @@ The model is at the repository root:
 ├── views/                  # Named diagrams (one JSON file per view)
 ├── layout.json             # Doc links, active view, shared UI state
 ├── Spec/                   # Local specs, datasheets, drawings (git-ignored)
-├── SystemExplorer.exe      # Double-click launcher for the web viewer
+├── SystemExplorer.exe      # Double-click launcher for the Explorer
+├── Viewer.cmd              # Rebuilds and opens the view-only Viewer
 ├── scripts/                # Launcher source (builds SystemExplorer.exe)
 ├── ProjectChartar/         # Project charter
 ├── TODO.md                 # Modeling methodology notes

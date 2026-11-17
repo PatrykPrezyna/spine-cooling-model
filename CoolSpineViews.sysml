@@ -9,6 +9,7 @@ package CoolSpineViews {
     private import CoolSpineUseCases::*;
     private import CoolSpineUserNeeds::*;
     private import CoolSpineRequirements::*;
+    private import CoolSpineVerification::*;
     private import CoolSpineSystem::*;
     private import CoolSpineSystemContext::*;
 
@@ -85,7 +86,8 @@ package CoolSpineViews {
         doc /*
         Traceability story, left to right: user needs → system requirements
         → implementing parts (fridge, pump, battery, sensors, UI, device).
-        Refine and satisfy links are the connections; leave use cases and
+        VER-CP-003 sits with the battery requirement it verifies. Refine,
+        satisfy, and verify links are the connections; leave use cases and
         the full interconnect diagram out of this picture.
         */
 
@@ -93,6 +95,7 @@ package CoolSpineViews {
 
         expose CoolSpineUserNeeds::*;
         expose CoolSpineRequirements::*;
+        expose CoolSpineVerification::*;
         expose CoolSpineSystem::CoolSpineDevice;
         expose CoolSpineSystem::CustomMicroRefrigerationUnit;
         expose CoolSpineSystem::Battery;

@@ -127,6 +127,7 @@ The model is at the repository root:
 | Model file | Role |
 |------------|------|
 | `CoolSpineRequirements.sysml` | Requirements |
+| `CoolSpineVerification.sysml` | Design verification tests (not requirements) |
 | `CoolSpineUserNeeds.sysml` | User needs |
 | `CoolSpineSystem.sysml` | Device structure and `satisfy` links |
 | `CoolSpineSystemContext.sysml` | Clinical / operating context |

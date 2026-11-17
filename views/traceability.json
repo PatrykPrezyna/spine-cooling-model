@@ -14,6 +14,7 @@
     "CoolSpineRequirements::PeakCoolingPower",
     "CoolSpineRequirements::SteadyStateCoolingPower",
     "CoolSpineRequirements::OperationWithoutGroundPower",
+    "CoolSpineVerification::InternalElectricalPowerSourceOperatingTime",
     "CoolSpineRequirements::PortableFormFactor",
     "CoolSpineRequirements::OperatingPressure",
     "CoolSpineRequirements::MaximumFlowRate",
@@ -93,6 +94,10 @@
     "CoolSpineRequirements::OperationWithoutGroundPower": {
       "x": 500,
       "y": 1240
+    },
+    "CoolSpineVerification::InternalElectricalPowerSourceOperatingTime": {
+      "x": 760,
+      "y": 1080
     },
     "CoolSpineRequirements::PortableFormFactor": {
       "x": 500,

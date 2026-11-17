@@ -49,6 +49,8 @@ package CoolSpineRequirements {
         Must run at least 30 minutes without wall power (never less; up to
         +60 min acceptable) — e.g. moving the patient or brief AC loss.
         Battery + UPS design; aligned with clinical practice / IEC 60601-2-24.
+        Design verification (bench test, not a second requirement): VER-CP-003
+        InternalElectricalPowerSourceOperatingTime.
         */
         attribute batteryRuntime_min : Real default 30.0;
         satisfy 'UN-CS-007';  // FollowPatientThroughCare

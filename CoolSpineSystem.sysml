@@ -17,9 +17,23 @@ package CoolSpineSystem {
 
     part def Battery {
         doc /*
-        Backup battery so CoolSpine can keep running when unplugged or
-        during transport (target: at least 30 minutes).
+        Design output for REQ-CP-003: one K2 Energy K2B24V11EB
+        (LiFePO4, datasheet Rev C) on the UPS battery input. The
+        requirement only sets the time without mains (at least 30
+        minutes). Which battery, and the ratings below, are the design.
+
+        Runtime is not a rating of this part. It is nominal capacity
+        divided by whatever current the device actually draws, checked
+        in VER-CP-003. At a steady 9 A — inside the 11.1 A recommended
+        continuous discharge — the Rev C constant-current table still
+        delivers the full 11.1 Ah (it gives 60 min at 11.1 A), so
+        11.1 Ah / 9 A = 74 min down to the 20.0 V battery cutoff.
         */
+
+        attribute nominalCapacity_Ah : Real = 11.1;                 // at C/5
+        attribute averageOperatingVoltage_V : Real = 25.6;          // at C/5
+        attribute recommendedContinuousDischarge_A : Real = 11.1;
+        attribute dischargeCutoff_V : Real = 20.0;
 
         satisfy 'REQ-CP-003';  // OperationWithoutGroundPower
     }

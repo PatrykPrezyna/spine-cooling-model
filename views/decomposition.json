@@ -44,40 +44,40 @@
       "y": -128
     },
     "CoolSpineSystem::Controller": {
-      "x": -144,
-      "y": -136
+      "x": 1455,
+      "y": -101
     },
     "CoolSpineSystem::CustomMicroRefrigerationUnit": {
-      "x": 122,
-      "y": -134
+      "x": 56,
+      "y": -132
     },
     "CoolSpineSystem::FluidReservoir": {
       "x": 393,
       "y": -124
     },
     "CoolSpineSystem::PeristalticPump": {
-      "x": 964,
-      "y": -131
+      "x": 989,
+      "y": -109
     },
     "CoolSpineSystem::UPS": {
       "x": -654,
       "y": -127
     },
     "CoolSpineSystem::AdafruitAnalogInput": {
-      "x": -568,
-      "y": 334
+      "x": 1301,
+      "y": 197
     },
     "CoolSpineSystem::PowerHat": {
-      "x": -759,
-      "y": 208
+      "x": 1549,
+      "y": 189
     },
     "CoolSpineSystem::RaspberryPi": {
-      "x": -761,
-      "y": 83
+      "x": 1798,
+      "y": 191
     },
     "CoolSpineSystem::TouchDisplay": {
-      "x": -139,
-      "y": 193
+      "x": 1923,
+      "y": 85
     },
     "CoolSpineSystem::Compressor": {
       "x": -15,
@@ -157,8 +157,8 @@
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir"
   ],
   "view": {
-    "tx": 590.0702371218315,
-    "ty": 396.017170891251,
+    "tx": 498.0702371218315,
+    "ty": 334.017170891251,
     "s": 0.6372853638593623
   },
   "options": {

@@ -48,7 +48,7 @@ package CoolSpineSystemContext {
     // Optional CSF drain (hospital equipment next to CoolSpine)
     // ------------------------------------------------------------------
 
-    part def PressureSensor {
+    part def CsfPressureSensor {
         doc /*
         Measures CSF pressure at the stopcock. Reading can go to an optional
         bedside display. (Different from CoolSpine's saline pressure sensors.)
@@ -99,7 +99,7 @@ package CoolSpineSystemContext {
         display, scale, and leveling.
         */
 
-        part pressureSensor : PressureSensor;
+        part pressureSensor : CsfPressureSensor;
         part display : Display [0..1];
         part stopcock : Stopcock;
         part burette : Burette;

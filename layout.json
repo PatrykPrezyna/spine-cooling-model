@@ -1,11 +1,13 @@
 {
   "docs": {
-    "CoolSpineSystem::PeristalticPump": "Spec/Pump+StepperDrive/400 ST RXMD pump.pdf",
-    "CoolSpineSystem::Battery": "Spec/UPS & Battery/Data_Sheet_K2B24V11EB_BATTERY.pdf",
+    "CoolSpineSystem::PeristalticPump": "https://www.dropbox.com/scl/fo/8b3mw9g9ypl7wskv2l3ke/ABx2qa0SfmW5QyslOgWLLz4?rlkey=e0a45ap4vmilufxl12b8zvx47&dl=0",
+    "CoolSpineSystem::Battery": "https://www.dropbox.com/scl/fi/jt893x64xh7fg8q57two9/Data_Sheet_K2B24V11EB_BATTERY.pdf?rlkey=2gvr20ffl3ozbtzj3imzgav86&dl=0",
     "CoolSpineSystem::UPS": "Spec/UPS & Battery/UPS_db_en_trio_ups_2g_1ac_24dc_20_108984_en_00.pdf",
-    "CoolSpineSystem::RaspberryPi": "Spec/Pi & Screen/RaspberrypiGPIO.png",
-    "CoolSpineSystem::AdafruitAnalogInput": "Spec/ads1115/ads1115.pdf",
-    "CoolSpineSystem::PressureSensor": "Spec/Pressure sensing/Pressure_Sensors_Spec_Sheet.pdf"
+    "CoolSpineSystem::RaspberryPi": "https://www.dropbox.com/scl/fi/n51zv4jg7fjbn156hox63/RaspberrypiGPIO.png?rlkey=6c8ttyw2d8vbnnhl5zmiqitvz&dl=0",
+    "CoolSpineSystem::AdafruitAnalogInput": "https://www.dropbox.com/scl/fo/sukmep5wr3wyyyvnbibw8/AJgluE14TLV9cGsuUC0miYM?rlkey=2r0gebr1oly7sy7yuwlttx4j7&dl=0",
+    "CoolSpineSystem::PressureSensor": "https://www.dropbox.com/scl/fi/t3xd4nayjsrj9s2gguoaf/Pressure_Sensors_Spec_Sheet.pdf?rlkey=ayseegcvjvmu4jdppveagbq8y&dl=0",
+    "CoolSpineSystem::TouchDisplay": "https://www.dropbox.com/scl/fi/lg3iruldakswtdcjppcqr/RP-008246-DS-1-7-inch-display-mechanical-drawing.pdf?rlkey=mzaekzt4kevvg2uv4gfc8aqsw&dl=0",
+    "CoolSpineSystem::CustomMicroRefrigerationUnit": "https://www.dropbox.com/scl/fo/rwwuora3x7bf1qo13sulp/ACGZ9-D2Z6uweMqT-YVSev0?rlkey=zgtrfle92x671ryg11jcmmb7p&dl=0"
   },
   "treeOpen": true,
   "activeView": "decomposition",

@@ -96,8 +96,8 @@
       "y": 1240
     },
     "CoolSpineVerification::InternalElectricalPowerSourceOperatingTime": {
-      "x": 760,
-      "y": 1080
+      "x": 1399,
+      "y": 1066
     },
     "CoolSpineRequirements::PortableFormFactor": {
       "x": 500,
@@ -148,8 +148,8 @@
       "y": 1080
     },
     "CoolSpineSystem::Battery": {
-      "x": 1020,
-      "y": 1240
+      "x": 1027,
+      "y": 1276
     },
     "CoolSpineSystem::CoolSpineDevice": {
       "x": 1020,
@@ -185,9 +185,9 @@
     "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange1"
   ],
   "view": {
-    "tx": 319.58012637727415,
-    "ty": 123.37057565389114,
-    "s": 0.6798485670436196
+    "tx": 135.3038428078321,
+    "ty": 167.807023177985,
+    "s": 0.8647793460540079
   },
   "options": {
     "attrs": false,

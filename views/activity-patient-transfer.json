@@ -1,13 +1,58 @@
 {
   "version": 1,
-  "name": "5 Activity — PatientTransfer",
+  "name": "5 Activity \u2014 PatientTransfer",
   "kind": "activity",
   "activityOwner": "CoolSpineUseCases::PatientTransfer",
   "description": "Transfer: surgeon decides if cooling continues; switch off, or unplug to battery; then plug in and charge.",
   "elements": [],
-  "nodes": {},
+  "nodes": {
+    "CoolSpineUseCases::PatientTransfer::act::switchDeviceOff": {
+      "x": 240,
+      "y": 378
+    },
+    "CoolSpineUseCases::PatientTransfer::act::movePatient": {
+      "x": 240,
+      "y": 598
+    },
+    "CoolSpineUseCases::PatientTransfer::act::unplugFromWall": {
+      "x": 240,
+      "y": 378
+    },
+    "CoolSpineUseCases::PatientTransfer::act::enterBatteryMode": {
+      "x": 440,
+      "y": 488
+    },
+    "CoolSpineUseCases::PatientTransfer::act::reconnectWallPower": {
+      "x": 240,
+      "y": 708
+    },
+    "CoolSpineUseCases::PatientTransfer::act::enterChargingMode": {
+      "x": 440,
+      "y": 818
+    },
+    "CoolSpineUseCases::PatientTransfer::act::done": {
+      "x": 240,
+      "y": 928
+    },
+    "CoolSpineUseCases::PatientTransfer::act::start": {
+      "x": 240,
+      "y": 48
+    },
+    "CoolSpineUseCases::PatientTransfer::act::decideCoolAfterTransfer": {
+      "x": 40,
+      "y": 153
+    },
+    "CoolSpineUseCases::PatientTransfer::act::decide": {
+      "x": 40,
+      "y": 288
+    }
+  },
   "hiddenEdges": [],
-  "view": null,
+  "view": {
+    "tx": 696.8543689320388,
+    "ty": 43.41747572815535,
+    "s": 0.8543689320388349
+  },
   "options": {
     "attrs": false,
     "parts": false,

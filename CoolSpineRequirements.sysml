@@ -149,4 +149,94 @@ package CoolSpineRequirements {
         */
         attribute assemblyTemperature_C : Real default 230.0;
     }
+
+    // --- Cartridge physics ---
+
+    requirement def <'REQ-CP-013'> PeristalticPumpNoiseIsolation :> CoolSpineRequirement {
+        doc /*
+        Peristaltic pump noise (pulsation / pressure spikes) must be
+        isolated from the cartridge outlet so the downstream catheter and
+        patient see steady flow. May imply pump placement as a middle
+        step in the fluid path rather than directly at the inlet or outlet.
+        From 2026-11-23 whiteboard: pump inlet/outlet arrangement.
+        */
+        satisfy 'UN-CS-005';  // ReliableCatheterInterface
+        satisfy 'UN-CS-009';  // OperationalSafetyMonitoring
+    }
+
+    requirement def <'REQ-CP-014'> NoSuctionOnInlet :> CoolSpineRequirement {
+        doc /*
+        No suction on the cartridge inlet — avoids cavitation, air
+        ingestion, and cartridge structure failure. May imply pump
+        placement as a middle step in the fluid path. From 2026-11-23
+        whiteboard: inlet pressure constraint.
+        */
+        satisfy 'UN-CS-005';  // ReliableCatheterInterface
+        satisfy 'UN-CS-009';  // OperationalSafetyMonitoring
+    }
+
+    requirement def <'REQ-CP-015'> Debubbling :> CoolSpineRequirement {
+        doc /*
+        Cartridge must remove air bubbles from the saline loop so they
+        cannot reach the patient catheter. Prevents air embolism and
+        ensures predictable heat-transfer performance.
+        */
+        satisfy 'UN-CS-002';  // LocalizedNeuroprotection
+        satisfy 'UN-CS-009';  // OperationalSafetyMonitoring
+    }
+
+    requirement def <'REQ-CP-016'> ThermalTransferContactPlanes :> CoolSpineRequirement {
+        doc /*
+        Cartridge must have 1–2 thermal transfer contact planes where
+        saline exchanges heat with the cooling module (cold plate).
+        Trade-off between cooling effectiveness and mechanical complexity.
+        From 2026-11-23 whiteboard: "1-2 thermal transfer contact planes".
+        */
+        attribute minContactPlanes : Integer default 1;
+        attribute maxContactPlanes : Integer default 2;
+        satisfy 'UN-CS-002';  // LocalizedNeuroprotection
+    }
+
+    requirement def <'REQ-CP-017'> FluidVolumeAndDwellTime :> CoolSpineRequirement {
+        doc /*
+        Cartridge fluid volume directly determines saline dwell time at
+        the cold plate, which affects cooling power and thermal response.
+        Design must balance effective heat transfer against total fluid
+        volume (priming, spillage, thermal mass). From 2026-11-23
+        whiteboard: "fluid volume => dwell time".
+        */
+        satisfy 'UN-CS-002';  // LocalizedNeuroprotection
+    }
+
+    // --- Cartridge manufacturing + clinical ---
+
+    requirement def <'REQ-CP-018'> Sterilizable :> CoolSpineRequirement {
+        doc /*
+        Disposable cartridge must be sterilizable (autoclave, gamma, or
+        EtO) so it arrives ready for single-use clinical deployment.
+        Manufacturing / regulatory constraint; no matching clinical user need.
+        From 2026-11-23 whiteboard.
+        */
+    }
+
+    requirement def <'REQ-CP-019'> Fillable :> CoolSpineRequirement {
+        doc /*
+        Cartridge must be fillable with saline. Whether it ships prefilled
+        is negotiable (manufacturing / supply-chain trade-off; noted "john"
+        on the 2026-11-23 whiteboard). Design must support either prefill
+        or clinical-site fill without excessive steps or risk of contamination.
+        */
+        satisfy 'UN-CS-005';  // ReliableCatheterInterface
+    }
+
+    requirement def <'REQ-CP-020'> SimpleInstallationAssemblyFill :> CoolSpineRequirement {
+        doc /*
+        Cartridge installation, assembly, and fill must be simple and fast
+        for OR staff. Exact number of steps TBD. Cross-reference Zoll setup
+        for usability benchmark (2026-11-23 whiteboard: "go through Zoll
+        setup?"). Minimize training burden and opportunities for user error.
+        */
+        satisfy 'UN-CS-004';  // ClinicianAdjustableControl
+        satisfy 'UN-CS-007';  // FollowPatientThroughCare
+    }
 }

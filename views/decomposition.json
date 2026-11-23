@@ -7,6 +7,7 @@
     "CoolSpineSystem::Catheter",
     "CoolSpineSystem::Controller",
     "CoolSpineSystem::CustomMicroRefrigerationUnit",
+    "CoolSpineSystem::Cartridge",
     "CoolSpineSystem::FluidReservoir",
     "CoolSpineSystem::PeristalticPump",
     "CoolSpineSystem::UPS",
@@ -17,6 +18,8 @@
     "CoolSpineSystem::Compressor",
     "CoolSpineSystem::CoolPlate",
     "CoolSpineSystem::PressureSensor",
+    "CoolSpineSystem::Cartridge::inputTempSensor",
+    "CoolSpineSystem::Cartridge::outputTempSensor",
     "CoolSpineSystem::FluidReservoir::inputTempSensor",
     "CoolSpineSystem::FluidReservoir::outputTempSensor",
     "CoolSpineSystem::TemperatureSensor",
@@ -50,6 +53,10 @@
     "CoolSpineSystem::CustomMicroRefrigerationUnit": {
       "x": 56,
       "y": -132
+    },
+    "CoolSpineSystem::Cartridge": {
+      "x": 225,
+      "y": -128
     },
     "CoolSpineSystem::FluidReservoir": {
       "x": 393,
@@ -90,6 +97,14 @@
     "CoolSpineSystem::PressureSensor": {
       "x": 1020,
       "y": 267
+    },
+    "CoolSpineSystem::Cartridge::inputTempSensor": {
+      "x": 95,
+      "y": 234
+    },
+    "CoolSpineSystem::Cartridge::outputTempSensor": {
+      "x": 503,
+      "y": 231
     },
     "CoolSpineSystem::FluidReservoir::outputTempSensor": {
       "x": 611,
@@ -146,6 +161,8 @@
     "connector|CoolSpineSystem::Controller|CoolSpineSystem::CustomMicroRefrigerationUnit|enableRefrigeration",
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpInletPressure \u00b7 inputPressureSensor",
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpOutletPressure \u00b7 outputPressureSensor",
+    "connector|CoolSpineSystem::Cartridge|CoolSpineSystem::Controller|senseCartridgeInputTemp \u00b7 inputTempSensor",
+    "connector|CoolSpineSystem::Cartridge|CoolSpineSystem::Controller|senseCartridgeOutputTemp \u00b7 outputTempSensor",
     "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirInputTemp \u00b7 inputTempSensor",
     "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirOutputTemp \u00b7 outputTempSensor",
     "connector|CoolSpineSystem::Catheter|CoolSpineSystem::Controller|senseCsfTemp \u00b7 csfTempSensor",

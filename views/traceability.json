@@ -24,17 +24,18 @@
     "CoolSpineRequirements::TemperatureSensorSize",
     "CoolSpineRequirements::CommonTemperatureSensorTechnology",
     "CoolSpineRequirements::AssemblyTemperatureResilience",
-    "CoolSpineRequirements::PeristalticPumpNoiseIsolation",
+    "CoolSpineRequirements::CartridgePhysicsRequirements",
+    "CoolSpineRequirements::PeristalticPumpNoiseIsolatedFromOutlet",
     "CoolSpineRequirements::NoSuctionOnInlet",
     "CoolSpineRequirements::Debubbling",
     "CoolSpineRequirements::ThermalTransferContactPlanes",
     "CoolSpineRequirements::FluidVolumeAndDwellTime",
+    "CoolSpineRequirements::CartridgeManufacturingAndClinicalRequirements",
     "CoolSpineRequirements::Sterilizable",
     "CoolSpineRequirements::Fillable",
     "CoolSpineRequirements::SimpleInstallationAssemblyFill",
     "CoolSpineSystem::CoolSpineDevice",
     "CoolSpineSystem::CustomMicroRefrigerationUnit",
-    "CoolSpineSystem::Cartridge",
     "CoolSpineSystem::Battery",
     "CoolSpineSystem::FluidReservoir",
     "CoolSpineSystem::PeristalticPump",
@@ -132,45 +133,49 @@
       "x": 500,
       "y": 2500
     },
-    "CoolSpineRequirements::PeristalticPumpNoiseIsolation": {
+    "CoolSpineRequirements::CartridgePhysicsRequirements": {
       "x": 500,
       "y": 2680
     },
-    "CoolSpineRequirements::NoSuctionOnInlet": {
+    "CoolSpineRequirements::PeristalticPumpNoiseIsolatedFromOutlet": {
       "x": 500,
       "y": 2860
     },
-    "CoolSpineRequirements::Debubbling": {
+    "CoolSpineRequirements::NoSuctionOnInlet": {
       "x": 500,
       "y": 3040
     },
-    "CoolSpineRequirements::ThermalTransferContactPlanes": {
+    "CoolSpineRequirements::Debubbling": {
       "x": 500,
       "y": 3220
     },
-    "CoolSpineRequirements::FluidVolumeAndDwellTime": {
+    "CoolSpineRequirements::ThermalTransferContactPlanes": {
       "x": 500,
       "y": 3400
     },
-    "CoolSpineRequirements::Sterilizable": {
+    "CoolSpineRequirements::FluidVolumeAndDwellTime": {
       "x": 500,
       "y": 3580
     },
-    "CoolSpineRequirements::Fillable": {
+    "CoolSpineRequirements::CartridgeManufacturingAndClinicalRequirements": {
       "x": 500,
       "y": 3760
     },
-    "CoolSpineRequirements::SimpleInstallationAssemblyFill": {
+    "CoolSpineRequirements::Sterilizable": {
       "x": 500,
       "y": 3940
+    },
+    "CoolSpineRequirements::Fillable": {
+      "x": 500,
+      "y": 4120
+    },
+    "CoolSpineRequirements::SimpleInstallationAssemblyFill": {
+      "x": 500,
+      "y": 4300
     },
     "CoolSpineSystem::CustomMicroRefrigerationUnit": {
       "x": 1020,
       "y": 240
-    },
-    "CoolSpineSystem::Cartridge": {
-      "x": 1020,
-      "y": 3200
     },
     "CoolSpineSystem::TouchDisplay": {
       "x": 1020,
@@ -212,7 +217,6 @@
     "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::Battery|battery",
     "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::Controller|controller",
     "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::CustomMicroRefrigerationUnit|microRef",
-    "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::Cartridge|cartridge",
     "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::FluidReservoir|reservoir",
     "composition|CoolSpineSystem::CoolSpineDevice|CoolSpineSystem::PeristalticPump|pump",
     "connector|CoolSpineSystem::PressureSensor|CoolSpineSystem::PressureSensor|salineThroughPump",
@@ -222,15 +226,11 @@
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::Controller|sensePumpOutletPressure \u00b7 outputPressureSensor",
     "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirInputTemp \u00b7 inputTempSensor",
     "connector|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Controller|senseReservoirOutputTemp \u00b7 outputTempSensor",
-    "connector|CoolSpineSystem::Cartridge|CoolSpineSystem::Controller|senseCartridgeInputTemp \u00b7 inputTempSensor",
-    "connector|CoolSpineSystem::Cartridge|CoolSpineSystem::Controller|senseCartridgeOutputTemp \u00b7 outputTempSensor",
     "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange1Temp \u00b7 heatExchange1",
     "connector|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Controller|senseHeatExchange2Temp \u00b7 heatExchange2",
     "connector|CoolSpineSystem::PeristalticPump|CoolSpineSystem::FluidReservoir|warmSalineToReservoir",
     "composition|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Thermistor|outputTempSensor",
     "composition|CoolSpineSystem::FluidReservoir|CoolSpineSystem::Thermistor|inputTempSensor",
-    "composition|CoolSpineSystem::Cartridge|CoolSpineSystem::Thermistor|inputTempSensor",
-    "composition|CoolSpineSystem::Cartridge|CoolSpineSystem::Thermistor|outputTempSensor",
     "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange2",
     "composition|CoolSpineSystem::CustomMicroRefrigerationUnit|CoolSpineSystem::Thermistor|heatExchange1"
   ],

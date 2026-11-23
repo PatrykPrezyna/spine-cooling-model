@@ -81,29 +81,6 @@ package CoolSpineSystem {
         }
     }
 
-    part def Cartridge {
-        doc /*
-        Disposable single-use cartridge that sits between the cool plates and
-        holds the saline during cooling. Must be sterilizable, fillable, easy
-        to install, have 1–2 thermal contact planes, provide debubbling, and
-        keep pump pulsation from reaching the patient catheter. Inlet and
-        outlet temperature sensors measure saline entering and leaving the
-        cartridge. Seated status is detected by CartridgeInPlaceSensor.
-        */
-
-        satisfy 'REQ-CP-013';  // PeristalticPumpNoiseIsolation
-        satisfy 'REQ-CP-014';  // NoSuctionOnInlet
-        satisfy 'REQ-CP-015';  // Debubbling
-        satisfy 'REQ-CP-016';  // ThermalTransferContactPlanes
-        satisfy 'REQ-CP-017';  // FluidVolumeAndDwellTime
-        satisfy 'REQ-CP-018';  // Sterilizable
-        satisfy 'REQ-CP-019';  // Fillable
-        satisfy 'REQ-CP-020';  // SimpleInstallationAssemblyFill
-
-        part inputTempSensor : Thermistor;
-        part outputTempSensor : Thermistor;
-    }
-
     part def FluidReservoir {
         doc /*
         Saline tanks on the device: cold saline goes out to the patient
@@ -279,7 +256,6 @@ package CoolSpineSystem {
         part battery : Battery;
         part controller : Controller;
         part microRef : CustomMicroRefrigerationUnit;
-        part cartridge : Cartridge;
         part reservoir : FluidReservoir;
         part catheter : Catheter;
         part pump : PeristalticPump;
@@ -321,14 +297,6 @@ package CoolSpineSystem {
         connection senseReservoirOutputTemp
             connect reservoir.outputTempSensor to controller {
             doc /* Cold saline temperature leaving the reservoir. */
-        }
-        connection senseCartridgeInputTemp
-            connect cartridge.inputTempSensor to controller {
-            doc /* Saline temperature entering the cartridge. */
-        }
-        connection senseCartridgeOutputTemp
-            connect cartridge.outputTempSensor to controller {
-            doc /* Saline temperature leaving the cartridge. */
         }
         connection senseCsfTemp
             connect catheter.csfTempSensor to controller {

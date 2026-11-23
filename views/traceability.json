@@ -24,6 +24,16 @@
     "CoolSpineRequirements::TemperatureSensorSize",
     "CoolSpineRequirements::CommonTemperatureSensorTechnology",
     "CoolSpineRequirements::AssemblyTemperatureResilience",
+    "CoolSpineRequirements::CartridgePhysicsRequirements",
+    "CoolSpineRequirements::PeristalticPumpNoiseIsolatedFromOutlet",
+    "CoolSpineRequirements::NoSuctionOnInlet",
+    "CoolSpineRequirements::Debubbling",
+    "CoolSpineRequirements::ThermalTransferContactPlanes",
+    "CoolSpineRequirements::FluidVolumeAndDwellTime",
+    "CoolSpineRequirements::CartridgeManufacturingAndClinicalRequirements",
+    "CoolSpineRequirements::Sterilizable",
+    "CoolSpineRequirements::Fillable",
+    "CoolSpineRequirements::SimpleInstallationAssemblyFill",
     "CoolSpineSystem::CoolSpineDevice",
     "CoolSpineSystem::CustomMicroRefrigerationUnit",
     "CoolSpineSystem::Battery",
@@ -122,6 +132,46 @@
     "CoolSpineRequirements::AssemblyTemperatureResilience": {
       "x": 500,
       "y": 2500
+    },
+    "CoolSpineRequirements::CartridgePhysicsRequirements": {
+      "x": 500,
+      "y": 2680
+    },
+    "CoolSpineRequirements::PeristalticPumpNoiseIsolatedFromOutlet": {
+      "x": 500,
+      "y": 2860
+    },
+    "CoolSpineRequirements::NoSuctionOnInlet": {
+      "x": 500,
+      "y": 3040
+    },
+    "CoolSpineRequirements::Debubbling": {
+      "x": 500,
+      "y": 3220
+    },
+    "CoolSpineRequirements::ThermalTransferContactPlanes": {
+      "x": 500,
+      "y": 3400
+    },
+    "CoolSpineRequirements::FluidVolumeAndDwellTime": {
+      "x": 500,
+      "y": 3580
+    },
+    "CoolSpineRequirements::CartridgeManufacturingAndClinicalRequirements": {
+      "x": 500,
+      "y": 3760
+    },
+    "CoolSpineRequirements::Sterilizable": {
+      "x": 500,
+      "y": 3940
+    },
+    "CoolSpineRequirements::Fillable": {
+      "x": 500,
+      "y": 4120
+    },
+    "CoolSpineRequirements::SimpleInstallationAssemblyFill": {
+      "x": 500,
+      "y": 4300
     },
     "CoolSpineSystem::CustomMicroRefrigerationUnit": {
       "x": 1020,
